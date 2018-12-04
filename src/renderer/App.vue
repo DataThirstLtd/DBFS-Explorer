@@ -65,6 +65,7 @@
     font-family: 'Roboto-Medium';
     font-size: 14px;
     padding: 0 10px;
+    margin: 10px 0;
   }
   #sidebar {
     position: fixed;

@@ -1,7 +1,7 @@
 <template>
   <div id="application-bar" flat
     :white="$store.state.config.auth.dialog.status"
-    :small="platform === 'darwin'">
+    :small="$store.state.config.auth.dialog.status">
     <v-layout align-center row
       fill-height :class="`${platform === 'darwin' ? 'space-left' : null}`">
       <p v-if="platform !== 'darwin'" class="app-title">DBFS-Explorer</p>

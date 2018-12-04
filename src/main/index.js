@@ -30,6 +30,7 @@ function createWindow () {
     useContentSize: true,
     transparent: true,
     titleBarStyle: 'hiddenInset',
+    frame: false,
     show: false
   })
 

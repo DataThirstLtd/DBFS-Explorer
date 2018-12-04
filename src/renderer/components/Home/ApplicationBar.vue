@@ -1,13 +1,16 @@
 <template>
   <div id="application-bar" flat>
-    <v-layout align-center row fill-height>
-      <v-btn icon v-for="item in buttons.left"
-        :key="item.id" @click="item.callback">
+    <v-layout align-center row
+      fill-height class="wrapper">
+      <v-btn v-for="item in buttons.left" small
+        :key="item.id" @click="item.callback"
+        icon light class="drag-safe btn">
         <v-icon small>{{ item.icon }}</v-icon>
       </v-btn>
       <v-spacer />
-      <v-btn icon v-for="item in buttons.right"
-        :key="item.id" @click="item.callback">
+      <v-btn v-for="item in buttons.right" small
+        :key="item.id" @click="item.callback"
+        icon light class="drag-safe btn">
         <v-icon small>{{ item.icon }}</v-icon>
       </v-btn>
     </v-layout>

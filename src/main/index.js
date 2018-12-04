@@ -2,6 +2,9 @@
 
 import { app, BrowserWindow } from 'electron'
 
+const releaseInfo = require('os').release()
+console.log(releaseInfo)
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -26,13 +29,17 @@ function createWindow () {
     minWidth: 800,
     useContentSize: true,
     transparent: true,
-    frame: false
+    titleBarStyle: 'hiddenInset',
+    show: false
   })
 
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
     mainWindow = null
+  })
+  mainWindow.on('ready-to-show', () => {
+    mainWindow.show()
   })
 }
 

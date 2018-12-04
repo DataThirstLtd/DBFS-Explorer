@@ -34,7 +34,7 @@
   }
   #application-bar {
     position: fixed;
-    top: 0;
+    top: 1px;
     left: 0;
     right: 0;
     height: 60px;
@@ -62,7 +62,7 @@
   }
   #sidebar {
     position: fixed;
-    top: 60px;
+    top: 61px;
     left: 0;
     bottom: 0;
     width: 300px;
@@ -72,7 +72,7 @@
     border-right-width: 1px;
   }
   #sidebar[small] {
-    top: 38px;
+    top: 39px;
   }
   #main-content {
     position: fixed;
@@ -83,7 +83,7 @@
     background: white;
   }
   #main-content[small] {
-    top: 38px;
+    top: 39px;
   }
   .hero {
     position: absolute;

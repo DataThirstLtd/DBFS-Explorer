@@ -36,9 +36,9 @@ export default {
         ],
         right: [
           { id: 'id-app-about', text: 'About', icon: 'fa-star', callback: () => {} },
-          { id: 'id-app-maximize', text: 'About', icon: 'fa-window-maximize', callback: () => {} },
-          { id: 'id-app-minimize', text: 'About', icon: 'fa-minus', callback: () => {} },
-          { id: 'id-app-close', text: 'About', icon: 'fa-times', callback: () => {} }
+          { id: 'id-app-maximize', text: 'About', icon: 'fa-window-maximize', callback: this.maximizeApp },
+          { id: 'id-app-minimize', text: 'About', icon: 'fa-minus', callback: this.minimizeApp },
+          { id: 'id-app-close', text: 'About', icon: 'fa-times', callback: this.closeApp }
         ]
       }
     }
@@ -49,6 +49,15 @@ export default {
   methods: {
     connect: function () {
       console.log('on Click Connect')
+    },
+    maximizeApp: function () {
+      this.$electron.remote.getCurrentWindow().maximize()
+    },
+    minimizeApp: function () {
+      this.$electron.remote.getCurrentWindow().minimize()
+    },
+    closeApp: function () {
+      this.$electron.remote.getCurrentWindow().close()
     }
   }
 }

@@ -4,6 +4,7 @@
     :small="platform === 'darwin'">
     <v-layout align-center row
       fill-height :class="`${platform === 'darwin' ? 'space-left' : null}`">
+      <p v-if="platform !== 'darwin'" class="app-title">DBFS-Explorer</p>
       <v-btn v-if="!$store.state.config.auth.dialog.status"
         v-for="item in buttons.left" small
         :key="item.id" @click="item.callback"

@@ -55,6 +55,11 @@
   #application-bar .btn {
     color: #383838;
   }
+  #application-bar .app-title {
+    font-family: 'Roboto-Medium';
+    font-size: 14px;
+    padding: 0 10px;
+  }
   #sidebar {
     position: fixed;
     top: 60px;

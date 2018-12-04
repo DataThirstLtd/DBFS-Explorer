@@ -1,11 +1,12 @@
 <template>
-  <div id="application-bar" flat
-    :white="$store.state.config.auth.dialog.status"
-    :small="$store.state.config.auth.dialog.status">
+  <div id="application-bar" flat small
+    :white="$store.state.config.dialog.auth.status">
     <v-layout align-center row
       fill-height :class="`${platform === 'darwin' ? 'space-left' : null}`">
-      <p v-if="platform !== 'darwin'" class="app-title">DBFS-Explorer</p>
-      <v-btn v-if="!$store.state.config.auth.dialog.status"
+      <p v-if="$store.state.config.dialog.auth.status" class="app-title">
+        DBFS-Explorer : Authentication
+      </p>
+      <v-btn v-if="!$store.state.config.dialog.auth.status"
         v-for="item in buttons.left" small
         :key="item.id" @click="item.callback"
         icon light class="drag-safe btn">

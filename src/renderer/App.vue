@@ -41,16 +41,16 @@
     left: 0;
     right: 0;
     height: 60px;
-    background: #EAEAEA;
+    background: #FFFFFF;
     -webkit-app-region: drag;
     user-select: none;
+    border-bottom-style: solid;
+    border-bottom-color: rgba(155, 151, 151, 0.411);
+    border-bottom-width: 1px;
     z-index: 500;
   }
   #application-bar[small] {
     height: 38px;
-    border-bottom-style: solid;
-    border-bottom-color: rgba(155, 151, 151, 0.411);
-    border-bottom-width: 1px;
   }
   #application-bar[white] {
     background: #FFFFFF;

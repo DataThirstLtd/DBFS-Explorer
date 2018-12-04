@@ -3,11 +3,11 @@
     <v-dialog
       v-model="status"
       fullscreen
-      hide-overlay
+      hide-overlay style="background: yellow;"
       transition="dialog-bottom-transition">
-      <v-card style="height: 100%;">
+      <v-card>
         <div class="hero">
-          <v-card flat="" width="500px">
+          <v-card flat width="500px">
             <h1 class="light-text">
               Welcome to DBFS-Explorer
             </h1>
@@ -24,7 +24,8 @@
             </v-text-field>
             <v-btn
               color="primary"
-              depressed block>
+              depressed block
+              @click="authenticate">
               Continue
             </v-btn>
           </v-card>
@@ -39,17 +40,25 @@ export default {
   name: 'auth',
   data () {
     return {
-      status: true
+      status: this.$store.state.config.dialog.auth.status
     }
   },
   computed: {
     onAuthDialogStateChanged () {
-      return this.$store.state.config.auth.dialog.status
+      return this.$store.state.config.dialog.auth.status
     }
   },
   watch: {
     onAuthDialogStateChanged (status) {
       this.status = status
+    }
+  },
+  methods: {
+    authenticate: function () {
+      this.$store.dispatch('setState', {
+        name: 'auth',
+        data: false
+      })
     }
   }
 }

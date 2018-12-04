@@ -32,6 +32,9 @@
   ::-webkit-scrollbar-thumb {
     background: transparent;
   }
+  .light-text {
+    font-family: 'Roboto-Light'
+  }
   #application-bar {
     position: fixed;
     top: 1px;
@@ -45,6 +48,9 @@
   }
   #application-bar[small] {
     height: 38px;
+    border-bottom-style: solid;
+    border-bottom-color: rgba(155, 151, 151, 0.411);
+    border-bottom-width: 1px;
   }
   #application-bar[white] {
     background: #FFFFFF;

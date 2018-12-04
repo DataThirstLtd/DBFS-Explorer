@@ -1,5 +1,10 @@
 const state = {
-  platform: null
+  platform: null,
+  auth: {
+    dialog: {
+      status: true
+    }
+  }
 }
 
 const mutations = {

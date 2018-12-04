@@ -1,9 +1,11 @@
 <template>
   <div id="application-bar" flat
+    :white="$store.state.config.auth.dialog.status"
     :small="platform === 'darwin'">
     <v-layout align-center row
       fill-height :class="`${platform === 'darwin' ? 'space-left' : null}`">
-      <v-btn v-for="item in buttons.left" small
+      <v-btn v-if="!$store.state.config.auth.dialog.status"
+        v-for="item in buttons.left" small
         :key="item.id" @click="item.callback"
         icon light class="drag-safe btn">
         <v-icon small>{{ item.icon }}</v-icon>

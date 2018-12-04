@@ -41,10 +41,13 @@
     background: #EAEAEA;
     -webkit-app-region: drag;
     user-select: none;
-    z-index: 600;
+    z-index: 500;
   }
   #application-bar[small] {
     height: 38px;
+  }
+  #application-bar[white] {
+    background: #FFFFFF;
   }
   #application-bar > .space-left {
     margin-left: 70px;
@@ -77,11 +80,10 @@
   #main-content[small] {
     top: 38px;
   }
-  .layer-view {
+  .hero {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 </style>

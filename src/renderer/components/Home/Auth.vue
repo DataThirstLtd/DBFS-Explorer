@@ -36,24 +36,17 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'auth',
   data () {
     return {
-      status: this.$store.state.config.dialog.auth.status
-    }
-  },
-  computed: {
-    onAuthDialogStateChanged () {
-      return this.$store.state.config.dialog.auth.status
-    }
-  },
-  watch: {
-    onAuthDialogStateChanged (status) {
-      this.status = status
+      status: this.isLoggedIn
     }
   },
   methods: {
+    ...mapGetters(['isLoggedIn']),
     authenticate: function () {
       this.$store.dispatch('setState', {
         name: 'auth',

@@ -1,12 +1,12 @@
 <template>
   <div id="application-bar" flat small
-    :white="$store.state.config.dialog.auth.status">
+    :white="isLoggedIn">
     <v-layout align-center row
       fill-height :class="`${platform === 'darwin' ? 'space-left' : null}`">
-      <p v-if="$store.state.config.dialog.auth.status" class="app-title">
+      <p v-if="isLoggedIn" class="app-title">
         DBFS-Explorer : Authentication
       </p>
-      <v-btn v-if="!$store.state.config.dialog.auth.status"
+      <v-btn v-if="!isLoggedIn"
         v-for="item in buttons.left" small
         :key="item.id" @click="item.callback"
         icon light class="drag-safe btn">
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'application-bar',
@@ -50,6 +50,7 @@ export default {
     platform: state => state.config.platform
   }),
   methods: {
+    ...mapGetters(['getPlatform', 'isLoggedIn']),
     connect: function () {
       console.log('on Click Connect')
     },

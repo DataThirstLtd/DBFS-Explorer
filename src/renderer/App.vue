@@ -7,14 +7,15 @@
 </template>
 
 <script>
-  const platform = require('os').platform
+  import {mapActions} from 'vuex'
 
   export default {
     name: 'dbfs_explorer',
+    methods: {
+      ...mapActions(['init'])
+    },
     created () {
-      this.$store.dispatch('setConfig', [
-        { name: 'platform', data: platform() }
-      ])
+      this.init()
     }
   }
 </script>

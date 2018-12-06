@@ -5,20 +5,37 @@ const isUrl = require('is-url')
 
 export default {
   login: function (context, callback) {
-    const url = context.getters.getUrl
+    const domainOriginal = context.getters.getDomain
     const token = context.getters.getToken
-
-    if (isUrl(url) && token) {
-      console.log(appConfig.ENDPOINTS.get_status)
+    let domain = null
+    if (domainOriginal && isUrl(domainOriginal) && domainOriginal.includes('.azuredatabricks.net')) {
+      domain = domainOriginal.split('https://').length > 1
+        ? domainOriginal.split('https://')[1].split('.azuredatabricks.net')[0]
+        : domainOriginal.split('azuredatabricks.net')[0]
+    } else {
+      domain = domainOriginal.split('https://').length > 1
+        ? domainOriginal.split('https://')[1]
+        : domainOriginal
+    }
+    if (domain && token) {
       axios.get(
-        `${url}/${appConfig.ENDPOINTS.get_status}?path=/`,
+        `https://${domain}.azuredatabricks.net/${appConfig.ENDPOINTS.get_status}?path=/`,
         {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         }
-      ).then((res) => {
-        console.log(res)
+      ).then(() => {
+        context.dispatch('writeSql', {
+          table: 'user',
+          keys: 'key, value',
+          values: `"domain", "${domain}"`
+        })
+        context.dispatch('writeSql', {
+          table: 'user',
+          keys: 'key, value',
+          values: `"token", "${token}"`
+        })
         callback(null)
       }).catch((err) => {
         console.log(err)

@@ -1,11 +1,11 @@
 export default {
-  getUrl: function (state) {
-    return state.url
+  getDomain: function (state) {
+    return state.domain
   },
   getToken: function (state) {
     return state.token
   },
-  isLoggedIn: function (state, getters) {
-    return Boolean(getters.getToken && getters.getUrl)
+  doesAuthDataExists: function (state, getters) {
+    return Boolean(getters.getToken && getters.getDomain)
   }
 }

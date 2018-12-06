@@ -1,4 +1,5 @@
 export default {
   token: '',
-  url: ''
+  domain: '',
+  tryLogin: null
 }

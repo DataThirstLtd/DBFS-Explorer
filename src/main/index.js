@@ -1,9 +1,20 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
+import Sqlite3 from './database'
 
-const releaseInfo = require('os').release()
-console.log(releaseInfo)
+const os = require('os')
+const path = require('path')
+
+const db = new Sqlite3({
+  path: path.join(
+    os.homedir(),
+    'DBFS-Explorer'
+  ),
+  name: 'app'
+})
+
+db.init()
 
 /**
  * Set `__static` path to static files in production
@@ -60,6 +71,49 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+ipcMain.on('sql', function (event, config) {
+  if (config && config.constructor === {}.constructor &&
+      'name' in config && 'data' in config &&
+      'commit' in config) {
+    switch (config.name) {
+      case 'readFullTable':
+        db.readFullTable(config.data, function (error, data) {
+          replaySender(event.sender, config.commit, error, data)
+        })
+        break
+      case 'readTableEntryID':
+        db.readTableEntryID(config.data, function (error, data) {
+          replaySender(event.sender, config.commit, error, data)
+        })
+        break
+      case 'writeTable':
+        db.writeTable(config.data, function (error, data) {
+          replaySender(event.sender, config.commit, error, data)
+        })
+        break
+      case 'UpdateTableByID':
+        db.updateTableByID(config.data, function (error, data) {
+          replaySender(event.sender, config.commit, error, data)
+        })
+        break
+      case 'DeleteTableById':
+        db.deleteTableById(config.data, function (error, data) {
+          replaySender(event.sender, config.commit, error, data)
+        })
+        break
+      default: break
+    }
+  }
+})
+
+function replaySender (sender, commit, error, data) {
+  sender.send('sql_ready', {
+    commit: commit,
+    error: error,
+    data: data
+  })
+}
 
 /**
  * Auto Updater

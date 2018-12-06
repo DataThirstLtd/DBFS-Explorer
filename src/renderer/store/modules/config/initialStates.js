@@ -1,3 +1,9 @@
 export default {
-  platform: ''
+  platform: '',
+  info: {
+    snackbar: {
+      status: false,
+      message: ''
+    }
+  }
 }

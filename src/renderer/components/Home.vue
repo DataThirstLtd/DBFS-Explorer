@@ -4,6 +4,7 @@
     <sidebar />
     <main-content />
     <auth />
+    <info-snackbar />
   </div>
 </template>
 
@@ -15,6 +16,7 @@
   import Sidebar from './Home/Sidebar'
   import MainContent from './Home/MainContent'
   import Auth from './Home/Auth'
+  import InfoSnackbar from './Home/InfoSnackbar'
 
   export default {
     name: 'home',
@@ -22,7 +24,8 @@
       ApplicationBar,
       Sidebar,
       MainContent,
-      Auth
+      Auth,
+      InfoSnackbar
     }
   }
 </script>

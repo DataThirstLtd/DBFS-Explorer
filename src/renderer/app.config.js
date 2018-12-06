@@ -1,3 +1,5 @@
 export default {
-  API_BASE: 'https://westeurope.azuredatabricks.net'
+  ENDPOINTS: {
+    get_status: 'api/2.0/dbfs/get-status'
+  }
 }

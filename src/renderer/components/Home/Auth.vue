@@ -15,17 +15,23 @@
             <v-text-field
               prepend-icon="fa-link"
               flat solo
-              placeholder="Enter URL">
+              v-model="url"
+              placeholder="Enter URL"
+              :disabled="loading">
             </v-text-field>
             <v-text-field
               prepend-icon="fa-key"
               flat solo
-              placeholder="Enter Bearer token">
+              v-model="token"
+              placeholder="Enter Bearer token"
+              :disabled="loading">
             </v-text-field>
             <v-btn
               color="primary"
+              :loading="loading"
+              :disabled="loading"
               depressed block
-              @click="authenticate">
+              @click="onClickContinue">
               Continue
             </v-btn>
           </v-card>
@@ -36,21 +42,51 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapMutations, mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'auth',
   data () {
     return {
-      status: this.isLoggedIn
+      status: !this.isLoggedIn(),
+      loading: false
+    }
+  },
+  computed: {
+    url: {
+      set: function (url) {
+        this.setUrl(url)
+      },
+      get: function () {
+        return this.getUrl()
+      }
+    },
+    token: {
+      set: function (token) {
+        this.setToken(token)
+      },
+      get: function () {
+        return this.getToken()
+      }
     }
   },
   methods: {
-    ...mapGetters(['isLoggedIn']),
-    authenticate: function () {
-      this.$store.dispatch('setState', {
-        name: 'auth',
-        data: false
+    ...mapGetters(['isLoggedIn', 'getUrl', 'getToken']),
+    ...mapActions(['login', 'showInfoSnackbar']),
+    ...mapMutations(['setUrl', 'setToken']),
+    onClickContinue: function () {
+      const context = this
+      this.loading = true
+      this.login(function (err) {
+        context.loading = false
+        if (err) {
+          context.showInfoSnackbar({
+            message: err.message,
+            status: true
+          })
+        } else {
+          context.status = false
+        }
       })
     }
   }

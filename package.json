@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "is-url": "^1.2.4",
     "roboto-fontface": "^0.10.0",
     "titlebar": "^1.4.0",
     "vue": "^2.5.16",

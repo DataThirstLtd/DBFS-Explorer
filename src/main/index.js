@@ -31,7 +31,10 @@ function createWindow () {
     transparent: false,
     titleBarStyle: 'hiddenInset',
     frame: false,
-    show: false
+    show: false,
+    webPreferences: {
+      webSecurity: false
+    }
   })
 
   mainWindow.loadURL(winURL)

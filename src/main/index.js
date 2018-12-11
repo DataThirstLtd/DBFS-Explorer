@@ -39,6 +39,7 @@ function createWindow () {
     minHeight: 600,
     minWidth: 800,
     useContentSize: true,
+    backgroundColor: '#FFFFFF',
     transparent: false,
     titleBarStyle: 'hiddenInset',
     frame: false,
@@ -88,9 +89,7 @@ ipcMain.on('sql', function (event, config) {
         })
         break
       case 'writeTable':
-        db.writeTable(config.data, function (error, data) {
-          replaySender(event.sender, config.commit, error, data)
-        })
+        db.writeTable(config.data, function () {})
         break
       case 'UpdateTableByID':
         db.updateTableByID(config.data, function (error, data) {

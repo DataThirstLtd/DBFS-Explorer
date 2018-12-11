@@ -20,7 +20,7 @@ export default {
     context.commit('setPlatform', platform())
     registerForSqlReady(context)
     ipcRenderer.send('sql', {
-      commit: 'loadUser',
+      commit: 'setUser',
       name: 'readFullTable',
       data: {
         table: 'user'
@@ -36,5 +36,8 @@ export default {
   },
   showInfoSnackbar: function (context, data) {
     context.commit('setInfoSnackbar', data)
+  },
+  authState: function (context, status) {
+    context.commit('setAuthState', status)
   }
 }

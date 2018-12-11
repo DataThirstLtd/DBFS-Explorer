@@ -31,17 +31,38 @@ export default {
   },
   writeTable: function (data, callback) {
     console.log(data)
+    const values = data.values.replace(/ /g, '').split(',')
     const context = this
     context.db.serialize(function () {
-      context.db.run(
-        `INSERT INTO ${data.table} (${data.keys}) VALUES(${data.values})`,
-        function (error) {
+      context.db.all(
+        `SELECT * FROM ${data.table} WHERE key=${values[0]}`,
+        function (error, rows) {
           if (error) {
-            console.log(error)
             callback(error)
           } else {
-            console.log('success')
-            callback(null)
+            if (rows.length > 0) {
+              context.db.run(
+                `UPDATE ${data.table} SET value=${values[1]} WHERE key=${values[0]}`,
+                function (err) {
+                  if (err) {
+                    console.log(err)
+                  } else {
+                    console.log('updated')
+                  }
+                }
+              )
+            } else {
+              context.db.run(
+                `INSERT INTO ${data.table}(${data.keys}) VALUES(${data.values})`,
+                function (err) {
+                  if (err) {
+                    console.log(err)
+                  } else {
+                    console.log('updated')
+                  }
+                }
+              )
+            }
           }
         }
       )

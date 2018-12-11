@@ -1,10 +1,7 @@
 <template>
   <div id="wrapper">
-    <application-bar />
     <sidebar />
     <main-content />
-    <auth />
-    <info-snackbar />
   </div>
 </template>
 
@@ -12,20 +9,14 @@
   /**
    * Import Home component dependencies from './Home'
    */
-  import ApplicationBar from './Home/ApplicationBar'
-  import Sidebar from './Home/Sidebar'
-  import MainContent from './Home/MainContent'
-  import Auth from './Home/Auth'
-  import InfoSnackbar from './Home/InfoSnackbar'
+  import Sidebar from './Layouts/Sidebar'
+  import MainContent from './Layouts/MainContent'
 
   export default {
     name: 'home',
     components: {
-      ApplicationBar,
       Sidebar,
-      MainContent,
-      Auth,
-      InfoSnackbar
+      MainContent
     }
   }
 </script>

@@ -1,18 +1,29 @@
 <template>
   <div id="app">
     <v-app>
+      <application-bar
+        :getPlatform="getPlatform"
+        :isLoggedIn="isLoggedIn"/>
       <router-view></router-view>
+      <info-snackbar />
     </v-app>
   </div>
 </template>
 
 <script>
-  import {mapActions} from 'vuex'
+  import { mapActions, mapGetters } from 'vuex'
+  import ApplicationBar from '@/components/Layouts/ApplicationBar'
+  import InfoSnackbar from '@/components/Misc/InfoSnackbar'
 
   export default {
     name: 'dbfs_explorer',
+    components: {
+      ApplicationBar,
+      InfoSnackbar
+    },
     methods: {
-      ...mapActions(['init'])
+      ...mapActions(['init']),
+      ...mapGetters(['isLoggedIn', 'getPlatform'])
     },
     created () {
       this.init()

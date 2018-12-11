@@ -1,5 +1,5 @@
 export default {
   token: '',
   domain: '',
-  tryLogin: null
+  onAuthReady: false
 }

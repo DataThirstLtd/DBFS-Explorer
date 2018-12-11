@@ -4,9 +4,9 @@ import appConfig from '@/app.config.js'
 const isUrl = require('is-url')
 
 export default {
-  login: function (context, callback) {
-    const domainOriginal = context.getters.getDomain
-    const token = context.getters.getToken
+  login: function (context, data) {
+    const domainOriginal = data.domain
+    const token = data.token
     let domain = null
     if (domainOriginal && isUrl(domainOriginal) && domainOriginal.includes('.azuredatabricks.net')) {
       domain = domainOriginal.split('https://').length > 1
@@ -36,13 +36,15 @@ export default {
           keys: 'key, value',
           values: `"token", "${token}"`
         })
-        callback(null)
+        context.dispatch('authState', true)
+        data.callback(null)
       }).catch((err) => {
         console.log(err)
-        callback(err)
+        context.dispatch('authState', false)
+        data.callback(err)
       })
     } else {
-      callback(new Error('Invalid Credentials'))
+      data.callback(new Error('Invalid Credentials'))
     }
   }
 }

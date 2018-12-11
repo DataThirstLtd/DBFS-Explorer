@@ -7,5 +7,8 @@ export default {
   },
   getInfoSnackbarStatus: function (state) {
     return state.info.snackbar.status
+  },
+  isLoggedIn: function (state) {
+    return state.loggedIn
   }
 }

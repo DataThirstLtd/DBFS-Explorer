@@ -5,10 +5,22 @@ export default {
   setToken: function (state, token) {
     state.token = token
   },
-  loadUser: function (state, settings) {
-    settings.forEach((setting) => {
-      state[`${setting.key}`] = `${setting.value}`
-    })
-    state.tryLogin = this.getters.doesAuthDataExists
+  setUser: function (state, data) {
+    if (data &&
+      data.constructor === [].constructor &&
+      data.length > 0
+    ) {
+      data.forEach((item) => {
+        if (
+          item && item.constructor === {}.constructor &&
+          'key' in item && 'value' in item && item.key
+        ) {
+          if (item.key in state) {
+            state[item.key] = item.value
+          }
+        }
+      })
+    }
+    state.onAuthReady = true
   }
 }

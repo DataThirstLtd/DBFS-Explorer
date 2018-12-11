@@ -1,12 +1,11 @@
 <template>
-  <div id="application-bar" flat small
-    :white="isLoggedIn">
+  <div id="application-bar" flat small>
     <v-layout align-center row
-      fill-height :class="`${platform === 'darwin' ? 'space-left' : null}`">
+      fill-height :class="`${getPlatform() === 'darwin' ? 'space-left' : null}`">
       <p v-if="isLoggedIn" class="app-title">
-        DBFS-Explorer : Authentication
+        DBFS-Explorer
       </p>
-      <v-btn v-if="!isLoggedIn"
+      <v-btn v-if="isLoggedIn()"
         v-for="item in buttons.left" small
         :key="item.id" @click="item.callback"
         icon light class="drag-safe btn">
@@ -16,7 +15,7 @@
       <v-btn
         v-for="item in buttons.right" small
         :key="item.id" @click="item.callback"
-        v-if="(item.platforms.findIndex(x => x === platform) > -1)"
+        v-if="(item.platforms.findIndex(x => x === getPlatform()) > -1)"
         icon light class="drag-safe btn">
         <v-icon small>{{ item.icon }}</v-icon>
       </v-btn>
@@ -25,10 +24,18 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
-
 export default {
   name: 'application-bar',
+  props: {
+    getPlatform: {
+      type: Function,
+      required: true
+    },
+    isLoggedIn: {
+      type: Function,
+      required: true
+    }
+  },
   data () {
     return {
       buttons: {
@@ -39,6 +46,7 @@ export default {
         ],
         right: [
           { id: 'id-app-about', text: 'About', icon: 'fa-star', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] },
+          { id: 'id-app-logout', text: 'Logout', icon: 'fa-power-off', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] },
           { id: 'id-app-maximize', text: 'Maximize', icon: 'fa-window-maximize', callback: this.maximizeApp, platforms: ['win32', 'linux'] },
           { id: 'id-app-minimize', text: 'Minimize', icon: 'fa-minus', callback: this.minimizeApp, platforms: ['win32', 'linux'] },
           { id: 'id-app-close', text: 'Close', icon: 'fa-times', callback: this.closeApp, platforms: ['win32', 'linux'] }
@@ -46,11 +54,7 @@ export default {
       }
     }
   },
-  computed: mapState({
-    platform: state => state.config.platform
-  }),
   methods: {
-    ...mapGetters(['getPlatform', 'isLoggedIn']),
     connect: function () {
       console.log('on Click Connect')
     },

@@ -5,5 +5,6 @@ export default {
       status: false,
       message: ''
     }
-  }
+  },
+  loggedIn: false
 }

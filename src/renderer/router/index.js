@@ -4,6 +4,8 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@fortawesome/fontawesome-free/css/all.css'
+import Auth from '@/components/Auth'
+import Home from '@/components/Home'
 
 Vue.use(Router)
 Vue.use(Vuetify, {
@@ -20,8 +22,13 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'auth',
+      component: Auth
+    },
+    {
+      path: '/home',
       name: 'home',
-      component: require('@/components/Home').default
+      component: Home
     },
     {
       path: '*',

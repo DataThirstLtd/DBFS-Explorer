@@ -1,6 +1,8 @@
 <template>
   <div id="main-content" small>
-    Main Content
+    <div class="wrapper">
+      Main
+    </div>
   </div>
 </template>
 

@@ -27,7 +27,7 @@ export default {
         }
       ).then((res) => {
         if (res.data && 'files' in res.data &&
-          res.data.files.constructor === {}.constructor) {
+          res.data.files.constructor === [].constructor) {
           context.dispatch('updateRootFs', res.data.files)
         }
         context.dispatch('writeSql', {

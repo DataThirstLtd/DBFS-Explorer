@@ -104,10 +104,35 @@
   #main-content[small] {
     top: 39px;
   }
+  #command-bar {
+    position: fixed;
+    top: 60px;
+    right: 0;
+    bottom: 0;
+    width: 40px;
+    background: #FFFFFF;
+    border-left-style: solid;
+    border-left-color: rgba(229, 229, 229, 0.596);
+    border-left-width: 1px;
+  }
+  #command-bar[small] {
+    top: 39px;
+  }
+  #command-bar > .wrapper {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  #command-bar > .wrapper .command {
+    margin: 5px 0;
+  }
   .hero {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+  .wrapper {
+    padding: 10px;
   }
 </style>

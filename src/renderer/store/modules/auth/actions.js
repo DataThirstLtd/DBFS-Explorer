@@ -19,13 +19,17 @@ export default {
     }
     if (domain && token) {
       axios.get(
-        `https://${domain}.azuredatabricks.net/${appConfig.ENDPOINTS.get_status}?path=/`,
+        `https://${domain}.azuredatabricks.net/${appConfig.ENDPOINTS.list}?path=/`,
         {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         }
-      ).then(() => {
+      ).then((res) => {
+        if (res.data && 'files' in res.data &&
+          res.data.files.constructor === {}.constructor) {
+          context.dispatch('updateRootFs', res.data.files)
+        }
         context.dispatch('writeSql', {
           table: 'user',
           keys: 'key, value',

@@ -17,7 +17,7 @@
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "postinstall": "npm run lint:fix && npm run rebuild"
+    "postinstall": "npm run lint:fix && install-app-deps"
   },
   "build": {
     "productName": "dbfs_explorer",

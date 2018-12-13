@@ -41,12 +41,12 @@ export default {
       buttons: {
         left: [
           { id: 'id-app-connect', text: 'Connect', icon: 'fa-cloud', callback: this.connect, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-download', text: 'Download', icon: 'fa-download', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] },
+          // { id: 'id-app-download', text: 'Download', icon: 'fa-download', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] },
           { id: 'id-app-delete', text: 'Delete', icon: 'fa-trash', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] }
         ],
         right: [
           { id: 'id-app-about', text: 'About', icon: 'fa-star', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-logout', text: 'Logout', icon: 'fa-power-off', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] },
+          { id: 'id-app-logout', text: 'Logout', icon: 'fa-power-off', callback: () => { console.log(this.isLoggedIn()) }, platforms: ['darwin', 'win32', 'linux'] },
           { id: 'id-app-maximize', text: 'Maximize', icon: 'fa-window-maximize', callback: this.maximizeApp, platforms: ['win32', 'linux'] },
           { id: 'id-app-minimize', text: 'Minimize', icon: 'fa-minus', callback: this.minimizeApp, platforms: ['win32', 'linux'] },
           { id: 'id-app-close', text: 'Close', icon: 'fa-times', callback: this.closeApp, platforms: ['win32', 'linux'] }

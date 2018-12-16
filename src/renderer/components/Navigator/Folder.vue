@@ -3,8 +3,10 @@
     <div v-if="selection && selection.length < 1 && !fetchWait">
       Please select a target folder to view files
     </div>
-    <populate v-for="(item, index) in selection"
+    <v-layout row wrap>
+      <populate v-for="(item, index) in selection"
       :key="index" :item="item" />
+    </v-layout>
   </div>
 </template>
 

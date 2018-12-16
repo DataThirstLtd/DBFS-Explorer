@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-layout row wrap>
+    <div>
       <div v-if="item.is_dir"
         class="item-wrapper"
         @click="onClickItem">
@@ -11,7 +11,7 @@
           {{ item.path.split('/').pop() || item.path }}
         </p>
       </div>
-    </v-layout>
+    </div>
   </div>
 </template>
 

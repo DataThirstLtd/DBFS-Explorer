@@ -3,7 +3,8 @@
     <v-app>
       <application-bar
         :getPlatform="getPlatform"
-        :isLoggedIn="isLoggedIn"/>
+        :isLoggedIn="isLoggedIn"
+        :routeName="routeName"/>
       <router-view></router-view>
       <info-snackbar />
     </v-app>
@@ -17,6 +18,11 @@
 
   export default {
     name: 'dbfs_explorer',
+    data () {
+      return {
+        routeName: this.$router.currentRoute.name
+      }
+    },
     components: {
       ApplicationBar,
       InfoSnackbar
@@ -24,6 +30,11 @@
     methods: {
       ...mapActions(['init']),
       ...mapGetters(['isLoggedIn', 'getPlatform'])
+    },
+    watch: {
+      $route (to, from) {
+        this.routeName = to.name
+      }
     },
     created () {
       this.init()

@@ -6,15 +6,15 @@ export default {
   login: function (context, data) {
     const domain = helper.filterDomainFromUrl(data.domain)
     const token = data.token
-    if (domain && token) {
-      axios.get(
-        `https://${domain}.azuredatabricks.net/${appConfig.ENDPOINTS.getStatus}?path=/`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+    return axios.get(
+      `https://${domain}.azuredatabricks.net/${appConfig.ENDPOINTS.getStatus}?path=/`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-      ).then((res) => {
+      }
+    ).then((res) => {
+      if (res.status === 200) {
         context.dispatch('writeSql', {
           table: 'user',
           keys: 'key, value',
@@ -26,14 +26,7 @@ export default {
           values: `"token", "${token}"`
         })
         context.dispatch('authState', true)
-        if (data.callback) data.callback(null)
-      }).catch((err) => {
-        console.log(err)
-        context.dispatch('authState', false)
-        if (data.callback) data.callback(err)
-      })
-    } else {
-      if (data.callback) data.callback(new Error('Invalid Credentials'))
-    }
+      }
+    })
   }
 }

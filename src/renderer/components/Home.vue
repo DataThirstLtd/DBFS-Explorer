@@ -33,30 +33,14 @@
     watch: {
       onInit (state) {
         if (state) {
-          const context = this
-          this.fetchRootFs({
-            domain: this.domain,
-            token: this.token
-          }).then(() => {
-            if (!context.rootFs) {
-              console.log('Empty')
-            }
-          })
+          this.initHome()
         }
       }
     },
     created () {
       if (this.rootFs.length < 1) {
         if (this.domain && this.token) {
-          const context = this
-          this.fetchRootFs({
-            domain: this.domain,
-            token: this.token
-          }).then(() => {
-            if (!context.rootFs) {
-              console.log('Empty')
-            }
-          })
+          this.initHome()
         } else {
           this.init()
         }
@@ -65,7 +49,22 @@
     methods: {
       ...mapGetters(['doesAuthDataExists']),
       ...mapActions(['init', 'login', 'fetchRootFs']),
-      init: function () {
+      initHome: function () {
+        const context = this
+        this.fetchRootFs({
+          domain: this.domain,
+          token: this.token
+        }).then(() => {
+          if (!context.rootFs) {
+            console.log('Empty')
+          }
+        }).catch((error) => {
+          if (error.message === 'Network Error') {
+            context.$router.replace({
+              path: '/'
+            })
+          }
+        })
       }
     }
   }

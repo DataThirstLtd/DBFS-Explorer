@@ -2,10 +2,13 @@
   <div id="application-bar" flat small>
     <v-layout align-center row
       fill-height :class="`${getPlatform() === 'darwin' ? 'space-left' : null}`">
-      <p v-if="isLoggedIn" class="app-title">
+      <p class="app-title">
         DBFS-Explorer
       </p>
-      <v-btn v-if="$router.currentRoute.name !== 'auth'"
+      <span style="padding: 0 10px">
+        {{ routeName }}
+      </span>
+      <v-btn v-if="routeName !== 'auth'"
         v-for="item in buttons.left" small
         :key="item.id" @click="item.callback"
         icon light class="drag-safe btn">
@@ -33,6 +36,10 @@ export default {
     },
     isLoggedIn: {
       type: Function,
+      required: true
+    },
+    routeName: {
+      type: String,
       required: true
     }
   },

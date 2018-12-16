@@ -132,6 +132,11 @@
     left: 50%;
     transform: translate(-50%, -50%);
   }
+  .hero-x {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
   .wrapper {
     padding: 10px;
   }

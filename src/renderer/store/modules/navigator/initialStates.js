@@ -1,3 +1,7 @@
 export default {
-  rootFs: []
+  rootFs: [],
+  buffer: [
+    { data: { path: 'test' }, ready: true }
+  ],
+  selection: { path: 'test' }
 }

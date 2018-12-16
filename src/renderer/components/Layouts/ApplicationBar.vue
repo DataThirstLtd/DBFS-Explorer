@@ -5,7 +5,7 @@
       <p v-if="isLoggedIn" class="app-title">
         DBFS-Explorer
       </p>
-      <v-btn v-if="isLoggedIn()"
+      <v-btn v-if="$router.currentRoute.name !== 'auth'"
         v-for="item in buttons.left" small
         :key="item.id" @click="item.callback"
         icon light class="drag-safe btn">

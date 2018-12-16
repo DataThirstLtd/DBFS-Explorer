@@ -1,8 +1,6 @@
 export default {
   rootFs: [],
-  buffer: [
-    { data: { path: 'test' }, ready: true }
-  ],
+  fetchWait: false,
   selection: [],
   populateSelection: {}
 }

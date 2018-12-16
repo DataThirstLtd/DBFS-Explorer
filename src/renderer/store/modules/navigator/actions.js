@@ -33,6 +33,7 @@ export default {
     const url = helper.getUrlFromDomain(context.getters.getDomain)
     const token = context.getters.getToken
     if (selection && selection.is_dir && selection.path) {
+      context.commit('setFetchWait')
       return axios.get(
         `${url}/${appConfig.ENDPOINTS.list}?path=${selection.path}`,
         {
@@ -42,9 +43,11 @@ export default {
         }
       ).then((res) => {
         if (res.data && res.data.files) {
-          console.log(res.data.files)
           context.commit('setSelection', res.data.files)
+          context.commit('clearFetchWait')
         }
+      }).catch(() => {
+        context.commit('clearFetchWait')
       })
     }
   }

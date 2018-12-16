@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="selection && selection.length < 1">
+    <div v-if="selection && selection.length < 1 && !fetchWait">
       Please select a target folder to view files
     </div>
     <populate v-for="(item, index) in selection"
@@ -18,6 +18,10 @@ export default {
   props: {
     selection: {
       type: Array,
+      required: true
+    },
+    fetchWait: {
+      type: Boolean,
       required: true
     }
   },

@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'populate',
   props: {
@@ -25,8 +27,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['clearSelection', 'fetchSelection']),
     onClickItem: function () {
-      console.log(this.item)
+      this.clearSelection()
+      this.fetchSelection(this.item)
     }
   }
 }

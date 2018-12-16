@@ -17,7 +17,6 @@
       <v-treeview
         v-else
         :items="rootFs"
-        activatable
         item-key="path"
         open-on-click>
         <template slot="prepend" slot-scope="{ item, open, leaf }">

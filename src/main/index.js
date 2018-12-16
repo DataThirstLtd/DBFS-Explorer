@@ -40,9 +40,7 @@ function createWindow () {
     minWidth: 800,
     useContentSize: true,
     backgroundColor: '#FFFFFF',
-    transparent: false,
     titleBarStyle: 'hiddenInset',
-    frame: false,
     show: false,
     webPreferences: {
       webSecurity: false

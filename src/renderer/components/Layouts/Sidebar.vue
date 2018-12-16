@@ -1,6 +1,5 @@
 <template>
-  <div id="sidebar"
-    :small="platform === 'darwin'">
+  <div id="sidebar" small>
     <div class="wrapper">
       File Tree view
     </div>

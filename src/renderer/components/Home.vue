@@ -2,7 +2,6 @@
   <div id="wrapper">
     <sidebar />
     <main-content />
-    <command-bar />
   </div>
 </template>
 

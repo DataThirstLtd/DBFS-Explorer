@@ -1,30 +1,23 @@
 <template>
   <div>
-    <v-layout row>
-      <div v-if="'ready' in list && !list.ready">
-        <v-progress-circular
-          indeterminate
-          :width="2"
-          :size="20"
-          color="primary">
-        </v-progress-circular>
-        <span style="padding: 0 10px;">
-          Loading ...
-        </span>
-      </div>
-    </v-layout>
-    <div class="hero-x">
-      Empty
+    <div v-if="selection && selection.length < 1">
+      Please select a target folder to view files
     </div>
+    <populate v-for="(item, index) in selection"
+      :key="index" :item="item" />
   </div>
 </template>
 
 <script>
+import Populate from '@/components/Navigator/Populate'
 export default {
   name: 'folder',
+  components: {
+    Populate
+  },
   props: {
-    list: {
-      type: Object,
+    selection: {
+      type: Array,
       required: true
     }
   },

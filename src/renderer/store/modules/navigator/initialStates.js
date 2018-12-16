@@ -3,5 +3,6 @@ export default {
   buffer: [
     { data: { path: 'test' }, ready: true }
   ],
-  selection: { path: 'test' }
+  selection: [],
+  populateSelection: {}
 }

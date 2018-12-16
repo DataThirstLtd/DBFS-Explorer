@@ -25,5 +25,27 @@ export default {
         context.dispatch('updateRootFs', res.data.files)
       }
     })
+  },
+  clearSelection: function (context) {
+    context.commit('setSelectionEmpty')
+  },
+  fetchSelection: function (context, selection) {
+    const url = helper.getUrlFromDomain(context.getters.getDomain)
+    const token = context.getters.getToken
+    if (selection && selection.is_dir && selection.path) {
+      return axios.get(
+        `${url}/${appConfig.ENDPOINTS.list}?path=${selection.path}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      ).then((res) => {
+        if (res.data && res.data.files) {
+          console.log(res.data.files)
+          context.commit('setSelection', res.data.files)
+        }
+      })
+    }
   }
 }

@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   props: {
@@ -55,8 +55,10 @@ export default {
     platform: state => state.config.platform
   }),
   methods: {
-    onClickTreeItem: function (path) {
-      console.log(path)
+    ...mapActions(['fetchSelection', 'clearSelection']),
+    onClickTreeItem: function (selection) {
+      this.clearSelection()
+      this.fetchSelection(selection)
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div id="main-content" small>
     <div class="wrapper">
-      <folder :list="list"/>
+      <folder :selection="selection"/>
     </div>
   </div>
 </template>
@@ -11,11 +11,6 @@ import { mapState } from 'vuex'
 import Folder from '@/components/Navigator/Folder'
 
 export default {
-  data () {
-    return {
-      list: {}
-    }
-  },
   components: {
     Folder
   },

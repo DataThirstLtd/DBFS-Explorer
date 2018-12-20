@@ -83,10 +83,6 @@ export default {
       this.createNewFolder({
         path,
         folderName
-      }).then((res) => {
-        console.log(res)
-      }).catch((error) => {
-        console.error(error.code)
       })
     }
   }

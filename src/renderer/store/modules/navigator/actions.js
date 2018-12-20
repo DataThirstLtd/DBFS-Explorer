@@ -73,6 +73,14 @@ export default {
           'Authorization': `Bearer ${token}`
         }
       }
-    )
+    ).then(({status}) => {
+      if (status === 200) {
+        context.dispatch('clearSelection')
+        context.dispatch('fetchSelection', {
+          path: path,
+          is_dir: true
+        })
+      }
+    })
   }
 }

@@ -44,7 +44,7 @@
 
 <style>
   /* CSS */
-  #app { font-family: 'Roboto'; background: transparent; }
+  #app { font-family: 'Roboto'; background: transparent; user-select: none; }
   .drag-safe {
     -webkit-app-region: no-drag;
   }

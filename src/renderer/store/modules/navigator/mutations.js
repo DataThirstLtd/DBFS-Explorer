@@ -8,6 +8,14 @@ export default {
   setSelection: function (state, selection) {
     state.selection = selection
   },
+  setFolderEmpty: function (state, { valid, path }) {
+    state.folderEmpty.valid = valid
+    state.folderEmpty.path = path
+  },
+  clearFolderEmpty: function (state, { valid, path }) {
+    state.folderEmpty = valid || false
+    state.folderEmpty.path = path || ''
+  },
   setFetchWait: function (state) {
     state.fetchWait = true
   },

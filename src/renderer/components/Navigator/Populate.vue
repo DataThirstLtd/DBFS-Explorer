@@ -3,7 +3,7 @@
     <div>
       <div v-if="item.is_dir"
         class="item-wrapper"
-        @click="onClickItem">
+        @dblclick="onClickItem">
         <v-icon class="icon" large>
           fa-folder
         </v-icon>

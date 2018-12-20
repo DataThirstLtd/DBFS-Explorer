@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div v-if="selection && selection.length < 1 && !fetchWait">
-      Please select a target folder to view files
-    </div>
     <v-layout row wrap>
       <populate v-for="(item, index) in selection"
       :key="index" :item="item" />

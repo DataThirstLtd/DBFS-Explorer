@@ -69,10 +69,9 @@ export default {
       const context = this
       context.loading = true
       this.login({
-        domain: this.domain,
-        token: this.token
+        domain: this.inputDomain,
+        token: this.inputToken
       }).then(() => {
-        console.log('done')
         context.loading = false
         context.$router.push('home')
       }).catch((error) => {

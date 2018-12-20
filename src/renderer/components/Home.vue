@@ -1,7 +1,11 @@
 <template>
   <div id="wrapper">
+    <!-- layouts -->
     <sidebar :rootFs="rootFs"/>
     <main-content />
+    <!-- Dialogs -->
+    <new-folder />
+    <delete-selected />
   </div>
 </template>
 
@@ -10,17 +14,22 @@
    * Import Home component dependencies from './Home'
    */
   import { mapState, mapGetters, mapActions } from 'vuex'
-  // import appConfig from '@/app.config.js'
+  // Import appConfig from '@/app.config.js'
   import Sidebar from './Layouts/Sidebar'
   import CommandBar from './Layouts/CommandBar'
   import MainContent from './Layouts/MainContent'
+  // Import dialogs
+  import NewFolder from './Dialogs/NewFolder'
+  import DeleteSelected from './Dialogs/DeleteSelected'
 
   export default {
     name: 'home',
     components: {
       Sidebar,
       CommandBar,
-      MainContent
+      MainContent,
+      NewFolder,
+      DeleteSelected
     },
     computed: mapState({
       token: state => state.auth.token,
@@ -48,7 +57,7 @@
     },
     methods: {
       ...mapGetters(['doesAuthDataExists']),
-      ...mapActions(['init', 'login', 'fetchRootFs']),
+      ...mapActions(['init', 'login', 'fetchRootFs', 'clearSelection', 'fetchSelection']),
       initHome: function () {
         const context = this
         this.fetchRootFs({
@@ -57,6 +66,12 @@
         }).then(() => {
           if (!context.rootFs) {
             console.log('Empty')
+          } else {
+            context.clearSelection()
+            context.fetchSelection({
+              path: '/',
+              is_dir: true
+            })
           }
         }).catch((error) => {
           if (error.message === 'Network Error') {

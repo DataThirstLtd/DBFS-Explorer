@@ -32,6 +32,7 @@ export default {
   fetchSelection: function (context, selection) {
     const url = helper.getUrlFromDomain(context.getters.getDomain)
     const token = context.getters.getToken
+    console.log(selection)
     if (selection && selection.is_dir && selection.path) {
       context.commit('setFetchWait')
       return axios.get(
@@ -45,10 +46,33 @@ export default {
         if (res.data && res.data.files) {
           context.commit('setSelection', res.data.files)
           context.commit('clearFetchWait')
+          context.commit('clearFolderEmpty')
+        } else if (selection.path !== '/') {
+          context.commit('setSelection', [])
+          context.commit('setFolderEmpty', {
+            valid: true,
+            path: selection.path
+          })
+          context.commit('clearFetchWait')
         }
       }).catch(() => {
         context.commit('clearFetchWait')
       })
     }
+  },
+  createNewFolder: function (context, { path, folderName }) {
+    const url = helper.getUrlFromDomain(context.getters.getDomain)
+    const token = context.getters.getToken
+    return axios.post(
+      `${url}/${appConfig.ENDPOINTS.mkdirs}`,
+      {
+        path: `${path === '/' ? path : `${path}/`}${folderName}/`
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    )
   }
 }

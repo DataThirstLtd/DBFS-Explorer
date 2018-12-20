@@ -73,7 +73,7 @@ export default {
       appbarButtons: {
         right: [
           { id: 'id-app-delete', text: 'Delete', color: 'red', icon: 'fa-trash', callback: this.deleteItem, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-new-folder', text: 'Delete', color: null, icon: 'fa-folder-plus', callback: () => { this.$root.$emit('openDialogNewFolder') }, platforms: ['darwin', 'win32', 'linux'] }
+          { id: 'id-app-new-folder', text: 'Delete', color: null, icon: 'fa-folder-plus', callback: () => { this.openDialog({ name: 'newFolder' }) }, platforms: ['darwin', 'win32', 'linux'] }
         ]
       }
     }
@@ -87,7 +87,7 @@ export default {
     fetchWait: state => state.navigator.fetchWait
   }),
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection', 'deleteSelected']),
+    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog']),
     getParentPath: function (data) {
       if (data && 'path' in data && data.path) {
         return data.path.split(nodePath.basename(data.path))[0] || data.path
@@ -114,12 +114,15 @@ export default {
       this.fetchSelection(targetObject)
     },
     deleteItem: function () {
-      const parentPath = this.getParentPath(
-        this.selection[0]
-      )
-      if (parentPath) {
-        this.deleteSelected({
-          path: parentPath
+      const prevPath = this.getParentPath({ path: this.selectedItem })
+      const path = this.selectedItem
+      if (path && path !== '/') {
+        this.openDialog({
+          name: 'delete',
+          options: {
+            path: path,
+            prevPath: prevPath
+          }
         })
       }
     }

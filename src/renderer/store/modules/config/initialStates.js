@@ -6,5 +6,15 @@ export default {
       message: ''
     }
   },
-  loggedIn: false
+  loggedIn: false,
+  dialogs: {
+    delete: {
+      active: false,
+      options: null
+    },
+    newFolder: {
+      active: false,
+      options: null
+    }
+  }
 }

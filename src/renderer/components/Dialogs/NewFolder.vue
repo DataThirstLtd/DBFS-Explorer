@@ -1,6 +1,7 @@
 <template>
    <v-dialog
     v-model="dialog"
+    persistent
     width="500">
       <v-card>
         <v-card-title
@@ -22,9 +23,8 @@
         <v-card-actions>
           <v-spacer />
           <v-btn
-            color="primary"
             flat
-            @click="dialog = false">
+            @click="hide">
             Close
           </v-btn>
           <v-btn
@@ -54,23 +54,36 @@ export default {
   },
   computed: mapState({
     selection: state => state.navigator.selection,
-    folderEmpty: state => state.navigator.folderEmpty
+    folderEmpty: state => state.navigator.folderEmpty,
+    active: state => state.config.dialogs.newFolder.active,
+    onChangeActive: function () {
+      return this.active
+    }
   }),
-  mounted () {
-    const context = this
-    this.$root.$on('openDialogNewFolder', () => {
-      if (context.selection[0]) {
-        let path = context.selection[0].path
-        context.path = path ? path.split(nodePath.basename(path))[0] : '/'
-        context.dialog = true
-      } else if (context.folderEmpty.valid) {
-        context.path = context.folderEmpty.path
-        context.dialog = true
+  watch: {
+    onChangeActive: function (state) {
+      if (state) {
+        this.show()
+      } else {
+        this.dialog = false
       }
-    })
+    }
   },
   methods: {
-    ...mapActions(['createNewFolder', 'showInfoSnackbar']),
+    ...mapActions(['createNewFolder', 'showInfoSnackbar', 'closeDialog']),
+    show: function () {
+      if (this.selection[0]) {
+        let path = this.selection[0].path
+        this.path = path ? path.split(nodePath.basename(path))[0] : '/'
+        this.dialog = true
+      } else if (this.folderEmpty.valid) {
+        this.path = this.folderEmpty.path
+        this.dialog = true
+      }
+    },
+    hide: function () {
+      this.closeDialog({ name: 'newFolder' })
+    },
     onClickNewFolder: function () {
       const { path, folderName } = this
       if (!(path && folderName)) {

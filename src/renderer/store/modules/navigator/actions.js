@@ -54,6 +54,7 @@ export default {
           })
           context.commit('clearFetchWait')
         }
+        context.dispatch('clearItem')
       }).catch(() => {
         context.commit('clearFetchWait')
       })
@@ -79,6 +80,8 @@ export default {
           path: path,
           is_dir: true
         })
+        context.dispatch('fetchRootFs')
+        context.dispatch('closeDialog', { name: 'newFolder' })
       }
     })
   },
@@ -90,14 +93,13 @@ export default {
   clearItem: function (context) {
     context.commit('clearSelectedItem')
   },
-  deleteSelected: function (context, {path}) {
+  deleteSelected: function (context, { path, prevPath }) {
     const url = helper.getUrlFromDomain(context.getters.getDomain)
     const token = context.getters.getToken
-    const selectedItem = context.getters.getSelectedItem
     return axios.post(
       `${url}/${appConfig.ENDPOINTS.delete}`,
       {
-        path: selectedItem,
+        path: path,
         recursive: true
       },
       {
@@ -109,10 +111,12 @@ export default {
       if (status === 200) {
         context.dispatch('clearSelection')
         context.dispatch('fetchSelection', {
-          path: path,
+          path: prevPath,
           is_dir: true
         })
         context.dispatch('clearItem')
+        context.dispatch('fetchRootFs')
+        context.dispatch('closeDialog', { name: 'delete' })
       }
     })
   }

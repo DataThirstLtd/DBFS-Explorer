@@ -39,5 +39,11 @@ export default {
   },
   authState: function (context, status) {
     context.commit('setAuthState', status)
+  },
+  openDialog: function (context, { name, options }) {
+    context.commit('setActiveDialog', { name, options })
+  },
+  closeDialog: function (context, { name }) {
+    context.commit('setInertDialog', { name })
   }
 }

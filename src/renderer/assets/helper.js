@@ -26,5 +26,11 @@ export default {
         return `https://${data}.azuredatabricks.net`
       }
     }
+  },
+  hasSomeParentTheClass: function (element, classname) {
+    if (element.className && element.className.split(' ').indexOf(classname) >= 0) {
+      return true
+    }
+    return element.parentNode && this.hasSomeParentTheClass(element.parentNode, classname)
   }
 }

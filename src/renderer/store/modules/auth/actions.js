@@ -4,7 +4,6 @@ import helper from '@/assets/helper.js'
 
 export default {
   login: function (context, data) {
-    console.log(data)
     const domain = helper.filterDomainFromUrl(data.domain)
     const token = data.token
     return axios.get(

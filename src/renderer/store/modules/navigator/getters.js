@@ -4,5 +4,8 @@ export default {
   },
   getSelection: function (state) {
     return state.selection
+  },
+  getSelectedItem: function (state) {
+    return state.selectedItem
   }
 }

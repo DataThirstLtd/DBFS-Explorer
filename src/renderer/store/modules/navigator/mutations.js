@@ -21,5 +21,11 @@ export default {
   },
   clearFetchWait: function (state) {
     state.fetchWait = false
+  },
+  setSelectedItem: function (state, path) {
+    state.selectedItem = path
+  },
+  clearSelectedItem: function (state) {
+    state.selectedItem = ''
   }
 }

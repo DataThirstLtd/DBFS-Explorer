@@ -1,5 +1,6 @@
 <template>
-  <div id="main-content" small>
+  <div id="main-content"
+    small>
     <v-toolbar
       v-if="selection"
       class="content-nav"
@@ -14,10 +15,16 @@
       </div>
       <v-spacer />
       <v-btn
+        v-if="item.id === 'id-app-delete' ? selectedItem ? true : false : true"
+        class="ig-folder-actions-button"
         v-for="item in appbarButtons.right" small
         :key="item.id" @click="item.callback"
         icon light>
-        <v-icon small>{{ item.icon }}</v-icon>
+        <v-icon
+          :color="item.color || null"
+          small>
+          {{ item.icon }}
+        </v-icon>
       </v-btn>
     </v-toolbar>
     <div v-if="selection && selection.length < 1 && !fetchWait && !folderEmpty.state"
@@ -45,6 +52,7 @@
       </v-layout>
       <folder
         :selection="selection"
+        :selectedItem="selectedItem"
         :fetchWait="fetchWait" />
     </div>
   </div>
@@ -64,7 +72,8 @@ export default {
     return {
       appbarButtons: {
         right: [
-          { id: 'id-app-new-folder', text: 'Delete', icon: 'fa-folder-plus', callback: () => { this.$root.$emit('openDialogNewFolder') }, platforms: ['darwin', 'win32', 'linux'] }
+          { id: 'id-app-delete', text: 'Delete', color: 'red', icon: 'fa-trash', callback: this.deleteItem, platforms: ['darwin', 'win32', 'linux'] },
+          { id: 'id-app-new-folder', text: 'Delete', color: null, icon: 'fa-folder-plus', callback: () => { this.$root.$emit('openDialogNewFolder') }, platforms: ['darwin', 'win32', 'linux'] }
         ]
       }
     }
@@ -73,11 +82,12 @@ export default {
     platform: state => state.config.platform,
     buffer: state => state.navigator.buffer,
     selection: state => state.navigator.selection,
+    selectedItem: state => state.navigator.selectedItem,
     folderEmpty: state => state.navigator.folderEmpty,
     fetchWait: state => state.navigator.fetchWait
   }),
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection']),
+    ...mapActions(['clearSelection', 'fetchSelection', 'deleteSelected']),
     getParentPath: function (data) {
       if (data && 'path' in data && data.path) {
         return data.path.split(nodePath.basename(data.path))[0] || data.path
@@ -102,6 +112,16 @@ export default {
       }
       this.clearSelection()
       this.fetchSelection(targetObject)
+    },
+    deleteItem: function () {
+      const parentPath = this.getParentPath(
+        this.selection[0]
+      )
+      if (parentPath) {
+        this.deleteSelected({
+          path: parentPath
+        })
+      }
     }
   }
 }

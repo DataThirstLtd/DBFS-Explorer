@@ -1,5 +1,6 @@
 <template>
-  <div id="wrapper">
+  <div id="wrapper"
+    @click="onClickHome">
     <!-- layouts -->
     <sidebar :rootFs="rootFs"/>
     <main-content />
@@ -14,6 +15,7 @@
    * Import Home component dependencies from './Home'
    */
   import { mapState, mapGetters, mapActions } from 'vuex'
+  import helper from '@/assets/helper.js'
   // Import appConfig from '@/app.config.js'
   import Sidebar from './Layouts/Sidebar'
   import CommandBar from './Layouts/CommandBar'
@@ -35,6 +37,7 @@
       token: state => state.auth.token,
       domain: state => state.auth.domain,
       rootFs: state => state.navigator.rootFs,
+      selectedItem: state => state.navigator.selectedItem,
       onInit () {
         return Boolean(this.token && this.domain)
       }
@@ -57,7 +60,7 @@
     },
     methods: {
       ...mapGetters(['doesAuthDataExists']),
-      ...mapActions(['init', 'login', 'fetchRootFs', 'clearSelection', 'fetchSelection']),
+      ...mapActions(['init', 'login', 'fetchRootFs', 'clearSelection', 'fetchSelection', 'clearItem']),
       initHome: function () {
         const context = this
         this.fetchRootFs({
@@ -80,6 +83,17 @@
             })
           }
         })
+      },
+      onClickHome: function (ev) {
+        if (
+          !(ev.target &&
+          (helper.hasSomeParentTheClass(ev.target, 'ig-selected-item-wrapper') ||
+          helper.hasSomeParentTheClass(ev.target, 'ig-folder-actions-button')))
+        ) {
+          if (this.selectedItem) {
+            this.clearItem()
+          }
+        }
       }
     }
   }

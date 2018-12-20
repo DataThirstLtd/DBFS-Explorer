@@ -2,7 +2,9 @@
   <div>
     <v-layout row wrap>
       <populate v-for="(item, index) in selection"
-      :key="index" :item="item" />
+      :key="index"
+      :item="item"
+      :selectedItem="selectedItem" />
     </v-layout>
   </div>
 </template>
@@ -21,6 +23,10 @@ export default {
     },
     fetchWait: {
       type: Boolean,
+      required: true
+    },
+    selectedItem: {
+      type: String,
       required: true
     }
   },

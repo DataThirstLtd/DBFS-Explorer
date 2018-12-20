@@ -48,8 +48,7 @@ export default {
       buttons: {
         left: [
           { id: 'id-app-connect', text: 'Connect', icon: 'fa-cloud', callback: this.connect, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-download', text: 'Download', icon: 'fa-download', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-delete', text: 'Delete', icon: 'fa-trash', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] }
+          { id: 'id-app-download', text: 'Download', icon: 'fa-download', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] }
         ],
         right: [
           { id: 'id-app-about', text: 'About', icon: 'fa-star', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] },

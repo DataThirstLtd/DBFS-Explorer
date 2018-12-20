@@ -1,10 +1,15 @@
 <template>
   <div>
-    <div>
+    <div class="ig-selected-item-wrapper">
       <div v-if="item.is_dir"
         class="item-wrapper"
-        @dblclick="onClickItem">
-        <v-icon class="icon" large>
+        :active="selectedItem === item.path"
+        @dblclick="onOpenItem"
+        @click="onSelectItem">
+        <v-icon
+          class="icon"
+          :active="selectedItem === item.path"
+          large>
           fa-folder
         </v-icon>
         <p class="name">
@@ -24,13 +29,20 @@ export default {
     item: {
       type: Object,
       required: true
+    },
+    selectedItem: {
+      type: String,
+      required: true
     }
   },
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection']),
-    onClickItem: function () {
+    ...mapActions(['clearSelection', 'fetchSelection', 'selectItem']),
+    onOpenItem: function () {
       this.clearSelection()
       this.fetchSelection(this.item)
+    },
+    onSelectItem: function () {
+      this.selectItem(this.item)
     }
   }
 }
@@ -51,5 +63,8 @@ export default {
   }
   .item-wrapper > .name {
     text-align: center;
+  }
+  .item-wrapper[active] {
+    background: rgba(22, 82, 179, 0.452);
   }
 </style>

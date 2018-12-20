@@ -32,7 +32,6 @@ export default {
   fetchSelection: function (context, selection) {
     const url = helper.getUrlFromDomain(context.getters.getDomain)
     const token = context.getters.getToken
-    console.log(selection)
     if (selection && selection.is_dir && selection.path) {
       context.commit('setFetchWait')
       return axios.get(
@@ -80,6 +79,40 @@ export default {
           path: path,
           is_dir: true
         })
+      }
+    })
+  },
+  selectItem: function (context, { path }) {
+    if (path) {
+      context.commit('setSelectedItem', path)
+    }
+  },
+  clearItem: function (context) {
+    context.commit('clearSelectedItem')
+  },
+  deleteSelected: function (context, {path}) {
+    const url = helper.getUrlFromDomain(context.getters.getDomain)
+    const token = context.getters.getToken
+    const selectedItem = context.getters.getSelectedItem
+    return axios.post(
+      `${url}/${appConfig.ENDPOINTS.delete}`,
+      {
+        path: selectedItem,
+        recursive: true
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    ).then(({status}) => {
+      if (status === 200) {
+        context.dispatch('clearSelection')
+        context.dispatch('fetchSelection', {
+          path: path,
+          is_dir: true
+        })
+        context.dispatch('clearItem')
       }
     })
   }

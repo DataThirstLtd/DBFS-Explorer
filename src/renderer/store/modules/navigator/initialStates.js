@@ -6,5 +6,6 @@ export default {
     valid: false,
     path: ''
   },
+  selectedItem: '',
   populateSelection: {}
 }

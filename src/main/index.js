@@ -1,6 +1,20 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
+import Sqlite3 from './database'
+
+const os = require('os')
+const path = require('path')
+
+const db = new Sqlite3({
+  path: path.join(
+    os.homedir(),
+    'DBFS-Explorer'
+  ),
+  name: 'app'
+})
+
+db.init()
 
 /**
  * Set `__static` path to static files in production
@@ -20,15 +34,27 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
+    height: 750,
+    width: 1200,
+    minHeight: 600,
+    minWidth: 800,
     useContentSize: true,
-    width: 1000
+    backgroundColor: '#FFFFFF',
+    titleBarStyle: 'hiddenInset',
+    show: false,
+    webPreferences: {
+      webSecurity: false
+    }
   })
 
   mainWindow.loadURL(winURL)
+  mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', () => {
     mainWindow = null
+  })
+  mainWindow.on('ready-to-show', () => {
+    mainWindow.show()
   })
 }
 
@@ -45,6 +71,47 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+ipcMain.on('sql', function (event, config) {
+  if (config && config.constructor === {}.constructor &&
+      'name' in config && 'data' in config &&
+      'commit' in config) {
+    switch (config.name) {
+      case 'readFullTable':
+        db.readFullTable(config.data, function (error, data) {
+          replaySender(event.sender, config.commit, error, data)
+        })
+        break
+      case 'readTableEntryID':
+        db.readTableEntryID(config.data, function (error, data) {
+          replaySender(event.sender, config.commit, error, data)
+        })
+        break
+      case 'writeTable':
+        db.writeTable(config.data, function () {})
+        break
+      case 'UpdateTableByID':
+        db.updateTableByID(config.data, function (error, data) {
+          replaySender(event.sender, config.commit, error, data)
+        })
+        break
+      case 'DeleteTableById':
+        db.deleteTableById(config.data, function (error, data) {
+          replaySender(event.sender, config.commit, error, data)
+        })
+        break
+      default: break
+    }
+  }
+})
+
+function replaySender (sender, commit, error, data) {
+  sender.send('sql_ready', {
+    commit: commit,
+    error: error,
+    data: data
+  })
+}
 
 /**
  * Auto Updater

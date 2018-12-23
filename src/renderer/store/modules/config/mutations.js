@@ -21,5 +21,15 @@ export default {
       state.dialogs[`${name}`].active = false
       state.dialogs[`${name}`].options = null
     }
+  },
+  setDragActive: function (state) {
+    if (!state.drag) {
+      state.drag = true
+    }
+  },
+  setDragInert: function (state) {
+    if (state.drag) {
+      state.drag = false
+    }
   }
 }

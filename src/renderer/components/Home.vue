@@ -1,12 +1,18 @@
 <template>
   <div id="wrapper"
-    @click="onClickHome">
+    @click="onClickHome"
+    @dragover="showDrag"
+    @dragleave="hideDrag"
+    @drop="dropFile">
     <!-- layouts -->
     <sidebar :rootFs="rootFs"/>
     <main-content />
     <!-- Dialogs -->
     <new-folder />
     <delete-selected />
+    <!-- Misc -->
+    <drag />
+    <overlay />
   </div>
 </template>
 
@@ -23,6 +29,9 @@
   // Import dialogs
   import NewFolder from './Dialogs/NewFolder'
   import DeleteSelected from './Dialogs/DeleteSelected'
+  // Import Other Components
+  import Drag from './Misc/Drag'
+  import Overlay from './Misc/Overlay'
 
   export default {
     name: 'home',
@@ -31,7 +40,9 @@
       CommandBar,
       MainContent,
       NewFolder,
-      DeleteSelected
+      DeleteSelected,
+      Drag,
+      Overlay
     },
     computed: mapState({
       token: state => state.auth.token,
@@ -60,7 +71,17 @@
     },
     methods: {
       ...mapGetters(['doesAuthDataExists']),
-      ...mapActions(['init', 'login', 'fetchRootFs', 'clearSelection', 'fetchSelection', 'clearItem']),
+      ...mapActions([
+        'init',
+        'login',
+        'fetchRootFs',
+        'clearSelection',
+        'fetchSelection',
+        'clearItem',
+        'showDrag',
+        'hideDrag',
+        'dropFile'
+      ]),
       initHome: function () {
         const context = this
         this.fetchRootFs({

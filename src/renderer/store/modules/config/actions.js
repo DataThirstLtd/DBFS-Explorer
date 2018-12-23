@@ -45,5 +45,18 @@ export default {
   },
   closeDialog: function (context, { name }) {
     context.commit('setInertDialog', { name })
+  },
+  showDrag: function (context, ev) {
+    context.commit('setDragActive')
+  },
+  hideDrag: function (context) {
+    context.commit('setDragInert')
+  },
+  dropFile: function (context, event) {
+    const files = Object.assign([], event.dataTransfer.files)
+    context.dispatch('hideDrag')
+    if (files.length > 0) {
+      console.log(files)
+    }
   }
 }

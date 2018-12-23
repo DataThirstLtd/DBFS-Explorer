@@ -16,5 +16,6 @@ export default {
       active: false,
       options: null
     }
-  }
+  },
+  drag: false
 }

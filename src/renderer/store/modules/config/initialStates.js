@@ -15,6 +15,9 @@ export default {
     newFolder: {
       active: false,
       options: null
+    },
+    about: {
+      active: false
     }
   },
   drag: false

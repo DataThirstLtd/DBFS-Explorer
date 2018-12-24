@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'application-bar',
   props: {
@@ -51,13 +53,14 @@ export default {
           { id: 'id-app-download', text: 'Download', icon: 'fa-download', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] }
         ],
         right: [
-          { id: 'id-app-about', text: 'About', icon: 'fa-star', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] },
+          { id: 'id-app-about', text: 'About', icon: 'fa-star', callback: () => { this.openDialog({ name: 'about' }) }, platforms: ['darwin', 'win32', 'linux'] },
           { id: 'id-app-logout', text: 'Logout', icon: 'fa-power-off', callback: () => { console.log(this.isLoggedIn()) }, platforms: ['darwin', 'win32', 'linux'] }
         ]
       }
     }
   },
   methods: {
+    ...mapActions(['openDialog']),
     connect: function () {
       console.log('on Click Connect')
     },

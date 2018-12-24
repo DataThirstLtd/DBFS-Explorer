@@ -8,6 +8,7 @@
     <sidebar :rootFs="rootFs"/>
     <main-content />
     <!-- Dialogs -->
+    <about />
     <new-folder />
     <delete-selected />
     <!-- Misc -->
@@ -27,6 +28,7 @@
   import CommandBar from './Layouts/CommandBar'
   import MainContent from './Layouts/MainContent'
   // Import dialogs
+  import About from './Dialogs/About'
   import NewFolder from './Dialogs/NewFolder'
   import DeleteSelected from './Dialogs/DeleteSelected'
   // Import Other Components
@@ -39,6 +41,7 @@
       Sidebar,
       CommandBar,
       MainContent,
+      About,
       NewFolder,
       DeleteSelected,
       Drag,

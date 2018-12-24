@@ -11,6 +11,7 @@
     <about />
     <new-folder />
     <delete-selected />
+    <list-data-transfer />
     <!-- Misc -->
     <drag />
     <overlay />
@@ -31,6 +32,7 @@
   import About from './Dialogs/About'
   import NewFolder from './Dialogs/NewFolder'
   import DeleteSelected from './Dialogs/DeleteSelected'
+  import ListDataTransfer from './Dialogs/ListDataTransfer'
   // Import Other Components
   import Drag from './Misc/Drag'
   import Overlay from './Misc/Overlay'
@@ -44,6 +46,7 @@
       About,
       NewFolder,
       DeleteSelected,
+      ListDataTransfer,
       Drag,
       Overlay
     },

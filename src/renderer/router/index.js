@@ -11,7 +11,7 @@ Vue.use(Router)
 Vue.use(Vuetify, {
   iconfont: 'fa',
   theme: {
-    primary: '#3f51b5',
+    primary: '#000000',
     secondary: '#b0bec5',
     accent: '#8c9eff',
     error: '#b71c1c'

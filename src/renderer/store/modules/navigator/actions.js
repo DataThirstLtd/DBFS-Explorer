@@ -119,5 +119,19 @@ export default {
         context.dispatch('closeDialog', { name: 'delete' })
       }
     })
+  },
+  putList: function (context, { options }) {
+    if (options.list.length > 0) {
+      const url = helper.getUrlFromDomain(context.getters.getDomain)
+      const token = context.getters.getToken
+      options.list.forEach(({ file, selected }) => {
+        if (selected) {
+          console.log('+++++++++++++++++++++')
+          console.log(file.path)
+          console.log(file.name)
+          console.log('---------------------')
+        }
+      })
+    }
   }
 }

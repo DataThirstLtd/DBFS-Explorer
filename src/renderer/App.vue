@@ -7,6 +7,7 @@
         :routeName="routeName"/>
       <router-view></router-view>
       <info-snackbar />
+      <about />
     </v-app>
   </div>
 </template>
@@ -15,6 +16,7 @@
   import { mapActions, mapGetters } from 'vuex'
   import ApplicationBar from '@/components/Layouts/ApplicationBar'
   import InfoSnackbar from '@/components/Misc/InfoSnackbar'
+  import About from '@/components/Dialogs/About'
 
   export default {
     name: 'dbfs_explorer',
@@ -25,7 +27,8 @@
     },
     components: {
       ApplicationBar,
-      InfoSnackbar
+      InfoSnackbar,
+      About
     },
     methods: {
       ...mapActions(['init']),

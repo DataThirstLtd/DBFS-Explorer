@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "filesize": "^3.6.1",
     "fs-extra": "^7.0.1",
     "is-url": "^1.2.4",
     "roboto-fontface": "^0.10.0",

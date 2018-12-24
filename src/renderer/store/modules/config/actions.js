@@ -1,7 +1,8 @@
 import { ipcRenderer } from 'electron'
 import { platform } from 'os'
 
-// const uid = require('uniqid')
+const uniqid = require('uniqid')
+
 function registerForSqlReady (context) {
   ipcRenderer.on('sql_ready', function (event, data) {
     if (data.error) {
@@ -56,7 +57,30 @@ export default {
     const files = Object.assign([], event.dataTransfer.files)
     context.dispatch('hideDrag')
     if (files.length > 0) {
-      console.log(files)
+      const listObject = []
+      files.forEach((file) => {
+        listObject.push(Object.assign({ file: file, id: uniqid(), selected: true }))
+      })
+      context.dispatch('openDialog', {
+        name: 'dataTransfer',
+        options: {
+          list: listObject,
+          type: 0
+        }
+      })
+    }
+  },
+  toggleListDataTransfer: function (context, { id }) {
+    if (id) {
+      const list = context.getters.getListDataTransfer
+      const targetIndex = list.findIndex(x => x.id === id)
+      if (targetIndex > -1) {
+        if (list[targetIndex].selected) {
+          context.commit('setInertDataTransferItem', { index: targetIndex })
+        } else {
+          context.commit('setActiveDataTransferItem', { index: targetIndex })
+        }
+      }
     }
   }
 }

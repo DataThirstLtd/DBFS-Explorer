@@ -8,6 +8,9 @@ export default {
   },
   loggedIn: false,
   dialogs: {
+    about: {
+      active: false
+    },
     delete: {
       active: false,
       options: null
@@ -16,8 +19,12 @@ export default {
       active: false,
       options: null
     },
-    about: {
-      active: false
+    dataTransfer: {
+      active: false,
+      options: {
+        list: [],
+        type: -1
+      }
     }
   },
   drag: false

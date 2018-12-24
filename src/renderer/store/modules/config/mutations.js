@@ -31,5 +31,21 @@ export default {
     if (state.drag) {
       state.drag = false
     }
+  },
+  setInertDataTransferItem: function (state, { index }) {
+    if (
+      state.dialogs.dataTransfer.options.list.length > 0 &&
+      state.dialogs.dataTransfer.options.list[index].selected
+    ) {
+      state.dialogs.dataTransfer.options.list[index].selected = false
+    }
+  },
+  setActiveDataTransferItem: function (state, { index }) {
+    if (
+      state.dialogs.dataTransfer.options.list.length > 0 &&
+      !state.dialogs.dataTransfer.options.list[index].selected
+    ) {
+      state.dialogs.dataTransfer.options.list[index].selected = true
+    }
   }
 }

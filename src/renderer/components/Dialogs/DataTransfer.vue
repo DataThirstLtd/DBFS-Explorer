@@ -48,7 +48,8 @@
         </v-btn>
         <v-btn
           depressed
-          color="primary">
+          color="primary"
+          @click="onContinue">
           Continue
         </v-btn>
       </v-card-actions>
@@ -89,6 +90,8 @@ export default {
     },
     onToggleSelection: function ({ id }) {
       this.toggleListDataTransfer({ id })
+    },
+    onContinue: function () {
     }
   }
 }

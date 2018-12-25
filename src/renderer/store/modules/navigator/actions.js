@@ -2,6 +2,8 @@ import axios from 'axios'
 import appConfig from '@/app.config.js'
 import helper from '@/assets/helper.js'
 
+const base64 = require('file-base64')
+
 export default {
   updateRootFs: function (context, data) {
     if (
@@ -120,7 +122,8 @@ export default {
       }
     })
   },
-  putList: function (context, { options }) {
+  putList: function (context, { options, path }) {
+    const targetPath = path[path.length - 1] === '/' ? path.slice(0, -1) : path
     if (options.list.length > 0) {
       const url = helper.getUrlFromDomain(context.getters.getDomain)
       const token = context.getters.getToken
@@ -130,6 +133,39 @@ export default {
           console.log(file.path)
           console.log(file.name)
           console.log('---------------------')
+          base64.encode(file.path, function (err, base64String) {
+            if (err) {
+              return
+            }
+            axios.post(
+              `${url}/${appConfig.ENDPOINTS.put}`,
+              {
+                path: `${targetPath}/${file.name}`,
+                contents: `${base64String}`,
+                overwrite: true
+              },
+              {
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+              }
+            ).then(({ status }) => {
+              if (status !== 200) {
+                // Report message
+                return
+              }
+              context.dispatch('clearSelection')
+              context.dispatch('fetchSelection', {
+                path: targetPath,
+                is_dir: true
+              })
+              context.dispatch('fetchRootFs')
+              context.dispatch('closeDialog', { name: 'dataTransfer' })
+            }).catch((error) => {
+              console.log(error)
+              // Report error
+            })
+          })
         }
       })
     }

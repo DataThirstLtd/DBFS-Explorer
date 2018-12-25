@@ -1,16 +1,23 @@
 <template>
   <div>
     <div class="ig-selected-item-wrapper">
-      <div v-if="item.is_dir"
-        class="item-wrapper"
+      <div class="item-wrapper"
         :active="selectedItem === item.path"
         @dblclick="onOpenItem"
         @click="onSelectItem">
         <v-icon
+          v-if="item.is_dir"
           class="icon"
           :active="selectedItem === item.path"
           large>
           fa-folder
+        </v-icon>
+        <v-icon
+          v-else
+          class="icon"
+          :active="selectedItem === item.path"
+          large>
+          fa-file
         </v-icon>
         <p class="name">
           {{ item.path.split('/').pop() || item.path }}

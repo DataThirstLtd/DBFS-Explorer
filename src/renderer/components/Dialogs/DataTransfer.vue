@@ -6,7 +6,7 @@
     <v-card>
       <v-card-title
         class="headline grey lighten-3">
-        Confirm {{ options.type > -1 ? options.type
+        Confirm {{ (options && options.type > -1) ? options.type
           ? 'Uploading' : 'Downloading'
           : 'Downloading (or) Uploading' 
         }} Files/Folders
@@ -14,12 +14,13 @@
       <v-card-text>
         <div class="scrollable-content">
           <v-list
+            v-if="options"
             subheader
             three-line>
             <v-list-tile
-              @click="onToggleSelection(item)"
               v-for="item in options.list"
-              :key="item.id">
+              :key="item.id"
+              @click="onToggleSelection(item)">
               <v-list-tile-action>
                 <v-checkbox
                   readonly
@@ -38,6 +39,13 @@
           </v-list>
         </div>
       </v-card-text>
+      <v-card-text>
+        <v-text-field
+          v-model="path"
+          value="/"
+          label="Path of the new file">
+        </v-text-field>
+      </v-card-text> 
       <v-card-actions>
         <v-spacer />
         <v-btn
@@ -65,7 +73,8 @@ export default {
   name: 'data-transfer',
   data () {
     return {
-      dialog: false
+      dialog: false,
+      path: '/'
     }
   },
   computed: mapState({
@@ -73,14 +82,21 @@ export default {
     options: state => state.config.dialogs.dataTransfer.options,
     onActiveChange: function () {
       return this.active
+    },
+    onDialogChange: function () {
+      return this.dialog
     }
   }),
   watch: {
     onActiveChange: function (state) {
-      this.dialog = state
+      if (state) {
+        this.dialog = true
+      }
     },
     onDialogChange: function (state) {
-      this.closeDialog({ name: 'dataTransfer' })
+      if (!state) {
+        this.closeDialog({ name: 'dataTransfer' })
+      }
     }
   },
   methods: {
@@ -93,7 +109,8 @@ export default {
     },
     onContinue: function () {
       this.putList({
-        options: this.options
+        options: this.options,
+        path: this.path
       })
     }
   }
@@ -102,7 +119,8 @@ export default {
 
 <style scoped>
   .scrollable-content {
-    height: 300px;
+    min-height: 100px;
+    max-height: 300px;
     overflow: auto;
   }
   ::-webkit-scrollbar {

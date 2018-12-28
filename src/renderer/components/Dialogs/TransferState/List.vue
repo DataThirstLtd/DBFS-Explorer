@@ -30,11 +30,10 @@
               v-if="!item.done"
               icon
               small
-              class="red darken-2"
               ripple>
               <v-icon
                 small
-                class="white--text">
+                class="grey--text">
                 fa-times
               </v-icon>
             </v-btn>

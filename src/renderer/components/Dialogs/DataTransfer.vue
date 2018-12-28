@@ -98,7 +98,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['closeDialog', 'openDialog', 'toggleListDataTransfer', 'putList']),
+    ...mapActions(['closeDialog', 'openDialog', 'toggleListDataTransfer', 'createList']),
     getSize: function (data) {
       return helper.getReadableFileSize({ size: data })
     },
@@ -106,7 +106,7 @@ export default {
       this.toggleListDataTransfer({ id })
     },
     onContinue: function () {
-      this.putList({
+      this.createList({
         options: this.options,
         path: this.path
       })

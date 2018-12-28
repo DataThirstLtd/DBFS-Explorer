@@ -11,6 +11,7 @@
     <new-folder />
     <delete-selected />
     <data-transfer />
+    <transfer-state />
     <!-- Misc -->
     <drag />
     <overlay />
@@ -31,6 +32,7 @@
   import NewFolder from './Dialogs/NewFolder'
   import DeleteSelected from './Dialogs/DeleteSelected'
   import DataTransfer from './Dialogs/DataTransfer'
+  import TransferState from './Dialogs/TransferState'
   // Import Other Components
   import Drag from './Misc/Drag'
   import Overlay from './Misc/Overlay'
@@ -44,6 +46,7 @@
       NewFolder,
       DeleteSelected,
       DataTransfer,
+      TransferState,
       Drag,
       Overlay
     },

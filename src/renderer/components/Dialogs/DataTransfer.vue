@@ -89,9 +89,7 @@ export default {
   }),
   watch: {
     onActiveChange: function (state) {
-      if (state) {
-        this.dialog = true
-      }
+      this.dialog = state
     },
     onDialogChange: function (state) {
       if (!state) {
@@ -100,7 +98,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['closeDialog', 'toggleListDataTransfer', 'putList']),
+    ...mapActions(['closeDialog', 'openDialog', 'toggleListDataTransfer', 'putList']),
     getSize: function (data) {
       return helper.getReadableFileSize({ size: data })
     },
@@ -111,6 +109,10 @@ export default {
       this.putList({
         options: this.options,
         path: this.path
+      })
+      this.closeDialog({ name: 'dataTransfer' })
+      this.openDialog({
+        name: 'transferState'
       })
     }
   }

@@ -3,6 +3,7 @@ import appConfig from '@/app.config.js'
 import helper from '@/assets/helper.js'
 
 const base64 = require('file-base64')
+const uniqid = require('uniqid')
 
 export default {
   updateRootFs: function (context, data) {
@@ -127,12 +128,19 @@ export default {
     if (options.list.length > 0) {
       const url = helper.getUrlFromDomain(context.getters.getDomain)
       const token = context.getters.getToken
+      context.dispatch('closeDialog', { name: 'dataTransfer' })
       options.list.forEach(({ file, selected }) => {
         if (selected) {
           console.log('+++++++++++++++++++++')
           console.log(file.path)
           console.log(file.name)
           console.log('---------------------')
+          context.dispatch('updateDataTransferList', {
+            id: uniqid(),
+            type: 1,
+            file: file,
+            done: false
+          })
           base64.encode(file.path, function (err, base64String) {
             if (err) {
               return
@@ -160,7 +168,7 @@ export default {
                 is_dir: true
               })
               context.dispatch('fetchRootFs')
-              context.dispatch('closeDialog', { name: 'dataTransfer' })
+              context.dispatch('doneTransfer', { id: id })
             }).catch((error) => {
               console.log(error)
               // Report error

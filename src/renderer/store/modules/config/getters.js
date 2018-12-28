@@ -13,5 +13,8 @@ export default {
   },
   getListDataTransfer: function (state) {
     return state.dialogs.dataTransfer.options.list
+  },
+  getDialogs: function (state) {
+    return state.dialogs
   }
 }

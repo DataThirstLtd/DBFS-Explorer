@@ -44,6 +44,15 @@ export default {
   openDialog: function (context, { name, options }) {
     context.commit('setActiveDialog', { name, options })
   },
+  toggleDialog: function (context, { name, options }) {
+    const dialogs = context.getters.getDialogs
+    const active = dialogs && dialogs[`${name}`] && dialogs[`${name}`].active
+    if (active) {
+      context.commit('setInertDialog', { name })
+    } else {
+      context.commit('setActiveDialog', { name, options })
+    }
+  },
   closeDialog: function (context, { name }) {
     context.commit('setInertDialog', { name })
   },
@@ -82,5 +91,11 @@ export default {
         }
       }
     }
+  },
+  updateDataTransferList: function (context, data) {
+    context.commit('setDataTransferList', data)
+  },
+  doneTransfer: function (context, data) {
+    context.commit('setDoneTransfer', data)
   }
 }

@@ -50,7 +50,7 @@ export default {
       buttons: {
         left: [
           { id: 'id-app-connect', text: 'Connect', icon: 'fa-cloud', callback: this.connect, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-download', text: 'Download', icon: 'fa-download', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] }
+          { id: 'id-app-download', text: 'Download', icon: 'fa-download', callback: () => { this.toggleDialog({ name: 'transferState' }) }, platforms: ['darwin', 'win32', 'linux'] }
         ],
         right: [
           { id: 'id-app-about', text: 'About', icon: 'fa-star', callback: () => { this.openDialog({ name: 'about' }) }, platforms: ['darwin', 'win32', 'linux'] },
@@ -60,7 +60,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['openDialog']),
+    ...mapActions(['openDialog', 'toggleDialog']),
     connect: function () {
       console.log('on Click Connect')
     },

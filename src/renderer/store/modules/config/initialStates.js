@@ -25,6 +25,10 @@ export default {
         list: [],
         type: -1
       }
+    },
+    transferState: {
+      active: false,
+      list: []
     }
   },
   drag: false

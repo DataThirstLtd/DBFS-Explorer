@@ -22,8 +22,15 @@
             </v-progress-circular>
           </v-list-tile-avatar>
           <v-list-tile-content>
-            <v-list-tile-title v-html="item.file.name"></v-list-tile-title>
+            <v-list-tile-title
+              v-html="
+              `<strong style='padding-right: 20px;'>
+                ${item.type ? `Upload ${item.progress}%` : `Download ${item.progress}%`}
+                </strong>
+                ${item.file.name}`
+              "/>
             <v-list-tile-sub-title v-html="item.file.path"></v-list-tile-sub-title>
+            <v-progress-linear :value="item.progress" :indeterminate="item.progress < 1"></v-progress-linear>
           </v-list-tile-content>
           <v-list-tile-action>
             <v-btn

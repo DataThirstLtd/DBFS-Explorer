@@ -48,19 +48,21 @@ export default {
       state.dialogs.dataTransfer.options.list[index].selected = true
     }
   },
-  setDataTransferList: function (state, { id, type, file, done }) {
+  setDataTransferList: function (state, { id, type, file, progress, done }) {
     state.dialogs.transferState.list.push({
       id: id,
       type: type,
       file: file,
+      progress: progress,
       done: done
     })
   },
   setDoneTransfer: function (state, { id }) {
     const list = Object.assign([], state.dialogs.transferState.list)
+    console.log(list)
     const targetIndex = list.findIndex(x => x.id === id)
-    console.log(targetIndex, id, state.dialogs.transferState.list[targetIndex])
+    console.log(targetIndex, id)
     targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].done = true)
-    console.log(targetIndex, id, state.dialogs.transferState.list[targetIndex])
+    console.log(targetIndex, id)
   }
 }

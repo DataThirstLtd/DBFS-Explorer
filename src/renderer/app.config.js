@@ -10,5 +10,6 @@ export default {
     move: 'api/2.0/dbfs/move',
     put: 'api/2.0/dbfs/put',
     read: 'api/2.0/dbfs/read'
-  }
+  },
+  defaultThreadCount: 4
 }

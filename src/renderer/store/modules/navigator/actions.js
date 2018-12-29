@@ -1,6 +1,7 @@
 import axios from 'axios'
 import appConfig from '@/app.config.js'
 import helper from '@/assets/helper.js'
+import AddBlock from '@/threads/AddBlock'
 
 const base64 = require('file-base64')
 const uniqid = require('uniqid')
@@ -123,55 +124,38 @@ export default {
       }
     })
   },
-  addBlock: async function (context, { handle, base64, transferId, targetPath }) {
-    const url = helper.getUrlFromDomain(context.getters.getDomain)
-    const token = context.getters.getToken
-    const promise = new Promise((resolve, reject) => {
-      axios.post(
-        `${url}/${appConfig.ENDPOINTS.addBlock}`,
-        {
-          handle: handle,
-          data: base64
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      ).then(({ status }) => {
-        if (status !== 200) {
-          // Report message
-          return
-        }
-        resolve()
-        /* context.dispatch('clearSelection')
-        context.dispatch('fetchSelection', {
-          path: targetPath,
-          is_dir: true
-        })
-        context.dispatch('fetchRootFs')
-        context.dispatch('doneTransfer', { id: transferId }) */
-      }).catch((error) => {
-        console.error(error)
-        reject(error)
-      })
+  addBlockJob: async function (context, { url, token, handle, chunks, transferId, targetPath }) {
+    const addBlock = new AddBlock()
+    addBlock.addJob({
+      url: url,
+      token: token,
+      chunks: chunks,
+      handle: handle,
+      id: transferId
     })
-    await promise
-    return promise
+    addBlock.on('done', function (data) {
+      context.commit('setDoneTransfer', data)
+    })
+    addBlock.on('progress', function (percentage) {
+      console.log('job progress', percentage)
+    })
   },
   createList: function (context, { options, path }) {
+    // Get target working directory path where file will be created
     const targetPath = path[path.length - 1] === '/' ? path.slice(0, -1) : path
+    // Iterate through files selected
     if (options.list.length > 0) {
+      // Get domain info
       const url = helper.getUrlFromDomain(context.getters.getDomain)
       const token = context.getters.getToken
+      // Close file selection dialog
       context.dispatch('closeDialog', { name: 'dataTransfer' })
+      // Iterate through file selected
       options.list.forEach(({ file, selected }) => {
         if (selected) {
-          console.log('+++++++++++++++++++++')
-          console.log(file.path)
-          console.log(file.name)
-          console.log('---------------------')
+          // Generate Uniqid for data transfer (upload/download)
           const id = uniqid()
+          // Update bottom sheet transfer list
           context.dispatch('updateDataTransferList', {
             id: id,
             type: 1,
@@ -179,11 +163,12 @@ export default {
             progress: 0,
             done: false
           })
+          // Encode data into base64 string
           base64.encode(file.path, function (err, base64String) {
             if (err) {
               return
             }
-            console.log('encoded to base64')
+            // Create data hanlde
             axios.post(
               `${url}/${appConfig.ENDPOINTS.create}`,
               {
@@ -200,21 +185,19 @@ export default {
                 // Report message
                 return
               }
-              console.log(data)
+              // Upload/write base64 string into new file as 1 MB chunks
               const chunks = base64String.match(/.{1,1024}/g)
-              context.dispatch('addBlock', {
+              // Add new thread worker or job into thread pool
+              // NOTE: By default 2 threads will be spawned. User can configure this any time.
+              // Threads will be created based on CPU cores
+              context.dispatch('addBlockJob', {
+                url: url,
+                token: token,
                 handle: data.handle,
-                base64: chunks[0],
+                chunks: chunks,
                 transferId: id,
                 targetPath: targetPath
-              }).then(() => {
-                console.log('batman')
-              }).catch((error) => {
-                console.log('joker', error)
               })
-            }).catch((error) => {
-              console.log(error)
-              // Report error
             })
           })
         }

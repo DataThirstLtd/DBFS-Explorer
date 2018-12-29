@@ -19,18 +19,19 @@
               :width="10"
               :size="150"
               color="primary">
+              <span style="font-size: 10px;">{{`${item.progress}%`}}</span>
             </v-progress-circular>
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title
               v-html="
               `<strong style='padding-right: 20px;'>
-                ${item.type ? `Upload ${item.progress}%` : `Download ${item.progress}%`}
+                ${item.type ? `Upload ${item.progress}% of ${getSize(item.file.size)}` : `Download ${item.progress}% of ${getSize(item.file.size)}`}
                 </strong>
                 ${item.file.name}`
               "/>
             <v-list-tile-sub-title v-html="item.file.path"></v-list-tile-sub-title>
-            <v-progress-linear :value="item.progress" :indeterminate="item.progress < 1"></v-progress-linear>
+            <v-progress-linear :value="item.progress" :indeterminate="item.progress === 0"></v-progress-linear>
           </v-list-tile-content>
           <v-list-tile-action>
             <v-btn
@@ -56,12 +57,19 @@
 </template>
 
 <script>
+import helper from '@/assets/helper.js'
+
 export default {
   name: 'list',
   props: {
     transferList: {
       type: Array,
       required: true
+    }
+  },
+  methods: {
+    getSize: function (data) {
+      return helper.getReadableFileSize({ size: data })
     }
   }
 }

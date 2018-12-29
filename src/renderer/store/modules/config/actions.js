@@ -97,5 +97,8 @@ export default {
   },
   doneTransfer: function (context, data) {
     context.commit('setDoneTransfer', data)
+  },
+  updateJobProgress: function (context, data) {
+    context.commit('setJobProgress', data)
   }
 }

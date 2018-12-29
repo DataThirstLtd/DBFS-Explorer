@@ -124,20 +124,21 @@ export default {
       }
     })
   },
-  addBlockJob: async function (context, { url, token, handle, chunks, transferId, targetPath }) {
+  addBlockJob: async function (context, { url, token, handle, chunks, transferId, targetPath, endpoint }) {
     const addBlock = new AddBlock()
     addBlock.addJob({
       url: url,
       token: token,
       chunks: chunks,
       handle: handle,
-      id: transferId
+      id: transferId,
+      endpoint: endpoint
     })
     addBlock.on('done', function (data) {
-      context.commit('setDoneTransfer', data)
+      context.dispatch('doneTransfer', data)
     })
-    addBlock.on('progress', function (percentage) {
-      console.log('job progress', percentage)
+    addBlock.on('progress', function (data) {
+      context.dispatch('updateJobProgress', data)
     })
   },
   createList: function (context, { options, path }) {
@@ -186,7 +187,7 @@ export default {
                 return
               }
               // Upload/write base64 string into new file as 1 MB chunks
-              const chunks = base64String.match(/.{1,1024}/g)
+              const chunks = base64String.match(/.{1,512000}/g)
               // Add new thread worker or job into thread pool
               // NOTE: By default 2 threads will be spawned. User can configure this any time.
               // Threads will be created based on CPU cores
@@ -196,7 +197,8 @@ export default {
                 handle: data.handle,
                 chunks: chunks,
                 transferId: id,
-                targetPath: targetPath
+                targetPath: targetPath,
+                endpoint: appConfig.ENDPOINTS.addBlock
               })
             })
           })

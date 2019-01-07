@@ -14,18 +14,23 @@
         {{ getParentPath(selection[0]) || (folderEmpty.valid ? folderEmpty.path : '') }}
       </div>
       <v-spacer />
-      <v-btn
-        v-if="item.id === 'id-app-delete' ? selectedItem ? true : false : true"
-        class="ig-folder-actions-button"
-        v-for="item in appbarButtons.right" small
-        :key="item.id" @click="item.callback"
-        icon light>
-        <v-icon
-          :color="item.color || null"
-          small>
-          {{ item.icon }}
-        </v-icon>
-      </v-btn>
+      <div
+        v-for="item in appbarButtons.right"
+        :key="item.id">
+        <v-btn
+          v-if="item.id === 'id-app-delete' ? selectedItem ? true : false : true"
+          class="ig-folder-actions-button"
+          small
+          icon
+          light
+          @click="item.callback">
+          <v-icon
+            :color="item.color || null"
+            small>
+            {{ item.icon }}
+          </v-icon>
+        </v-btn>
+      </div>
     </v-toolbar>
     <div v-if="selection && selection.length < 1 && !fetchWait && !folderEmpty.state"
       class="wrapper">
@@ -84,7 +89,8 @@ export default {
     selection: state => state.navigator.selection,
     selectedItem: state => state.navigator.selectedItem,
     folderEmpty: state => state.navigator.folderEmpty,
-    fetchWait: state => state.navigator.fetchWait
+    fetchWait: state => state.navigator.fetchWait,
+    prevPath: state => state.navigator.prevPath
   }),
   methods: {
     ...mapActions(['clearSelection', 'fetchSelection', 'openDialog']),
@@ -95,26 +101,14 @@ export default {
       return ''
     },
     goBack: function () {
-      let targetObject = {}
-      if (this.selection[0]) {
-        const prevPath = this.getParentPath(this.selection[0])
-        targetObject = Object.assign(
-          {},
-          this.selection[0],
-          { path: prevPath.split(nodePath.basename(prevPath))[0] }
-        )
-      } else if (this.folderEmpty.valid) {
-        const prevPath = this.folderEmpty.path
-        targetObject = {
-          path: prevPath.split(nodePath.basename(prevPath))[0],
-          is_dir: true
-        }
-      }
       this.clearSelection()
-      this.fetchSelection(targetObject)
+      this.fetchSelection({
+        path: this.prevPath
+      })
     },
     deleteItem: function () {
       const prevPath = this.getParentPath({ path: this.selectedItem })
+      console.log(prevPath)
       const path = this.selectedItem
       if (path && path !== '/') {
         this.openDialog({

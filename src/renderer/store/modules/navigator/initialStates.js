@@ -7,5 +7,6 @@ export default {
     path: ''
   },
   selectedItem: '',
-  populateSelection: {}
+  populateSelection: {},
+  prevPath: ''
 }

@@ -7,5 +7,8 @@ export default {
   },
   getSelectedItem: function (state) {
     return state.selectedItem
+  },
+  getPrevPath: function (state) {
+    return state.prevPath
   }
 }

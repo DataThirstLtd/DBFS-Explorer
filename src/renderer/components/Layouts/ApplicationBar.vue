@@ -8,20 +8,29 @@
       <span style="padding: 0 10px">
         {{ routeName }}
       </span>
-      <v-btn v-if="routeName !== 'auth'"
-        v-for="item in buttons.left" small
-        :key="item.id" @click="item.callback"
-        icon light class="drag-safe btn">
-        <v-icon small>{{ item.icon }}</v-icon>
-      </v-btn>
+      <div
+        v-if="routeName !== 'auth'">
+        <v-btn
+          v-for="item in buttons.left" small
+          :key="item.id" @click="item.callback"
+          icon light class="drag-safe btn">
+          <v-icon small>{{ item.icon }}</v-icon>
+        </v-btn>
+      </div>
       <v-spacer />
-      <v-btn
-        v-for="item in buttons.right" small
-        :key="item.id" @click="item.callback"
-        v-if="(item.platforms.findIndex(x => x === getPlatform()) > -1)"
-        icon light class="drag-safe btn">
-        <v-icon small>{{ item.icon }}</v-icon>
-      </v-btn>
+      <div
+        v-for="item in buttons.right"
+        :key="item.id">
+        <v-btn
+          v-if="checkPlatform(item)"
+          class="drag-safe btn"
+          small
+          icon
+          light
+          @click="item.callback">
+          <v-icon small>{{ item.icon }}</v-icon>
+        </v-btn>
+      </div>
     </v-layout>
   </div>
 </template>
@@ -72,6 +81,9 @@ export default {
     },
     closeApp: function () {
       this.$electron.remote.getCurrentWindow().close()
+    },
+    checkPlatform: function (item) {
+      return (item.platforms.findIndex(x => x === this.getPlatform()) > -1)
     }
   }
 }

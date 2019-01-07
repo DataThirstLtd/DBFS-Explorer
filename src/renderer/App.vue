@@ -8,6 +8,7 @@
       <router-view></router-view>
       <info-snackbar />
       <about />
+      <alert />
     </v-app>
   </div>
 </template>
@@ -17,6 +18,7 @@
   import ApplicationBar from '@/components/Layouts/ApplicationBar'
   import InfoSnackbar from '@/components/Misc/InfoSnackbar'
   import About from '@/components/Dialogs/About'
+  import Alert from '@/components/Dialogs/Alert'
 
   export default {
     name: 'dbfs_explorer',
@@ -28,7 +30,8 @@
     components: {
       ApplicationBar,
       InfoSnackbar,
-      About
+      About,
+      Alert
     },
     methods: {
       ...mapActions(['init']),

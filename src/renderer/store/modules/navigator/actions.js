@@ -3,6 +3,7 @@ import appConfig from '@/app.config.js'
 import helper from '@/assets/helper.js'
 import AddBlock from '@/threads/AddBlock'
 
+const nodePath = require('path')
 const base64 = require('file-base64')
 const uniqid = require('uniqid')
 
@@ -33,10 +34,43 @@ export default {
   clearSelection: function (context) {
     context.commit('setSelectionEmpty')
   },
-  fetchSelection: function (context, selection) {
+  fetchSelection: function (context, { path }) {
     const url = helper.getUrlFromDomain(context.getters.getDomain)
     const token = context.getters.getToken
-    if (selection && selection.is_dir && selection.path) {
+    context.commit('setFetchWait')
+    return axios.get(
+      `${url}/${appConfig.ENDPOINTS.list}?path=${path}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    ).then(({ data }) => {
+      context.commit('clearFetchWait')
+      if (!data) {
+        context.dispatch('openDialog', {
+          name: 'alert',
+          options: {
+            title: 'Unable to fetch files',
+            message: 'Unable to fetch files from the server. Please try again later!'
+          }
+        })
+        return
+      }
+      if (data.files) {
+        context.commit('setSelection', data.files)
+      }
+    }).catch((err) => {
+      context.dispatch('fetchSelection', { path: path.split(nodePath.basename(path))[0] })
+      context.dispatch('openDialog', {
+        name: 'alert',
+        options: {
+          title: `Failed!`,
+          message: `Unable to fetch ${path}! ${err.message}`
+        }
+      })
+    })
+    /* if (selection && selection.is_dir && selection.path) {
       context.commit('setFetchWait')
       return axios.get(
         `${url}/${appConfig.ENDPOINTS.list}?path=${selection.path}`,
@@ -46,11 +80,14 @@ export default {
           }
         }
       ).then((res) => {
+        console.log('DEBUG:1')
         if (res.data && res.data.files) {
+          console.log('DEBUG:2')
           context.commit('setSelection', res.data.files)
           context.commit('clearFetchWait')
           context.commit('clearFolderEmpty')
         } else if (selection.path !== '/') {
+          console.log('DEBUG:3')
           context.commit('setSelection', [])
           context.commit('setFolderEmpty', {
             valid: true,
@@ -58,11 +95,14 @@ export default {
           })
           context.commit('clearFetchWait')
         }
+        console.log('DEBUG:4')
         context.dispatch('clearItem')
-      }).catch(() => {
+      }).catch((err) => {
+        console.log('DEBUG:5')
+        console.log(err)
         context.commit('clearFetchWait')
       })
-    }
+    } */
   },
   createNewFolder: function (context, { path, folderName }) {
     const url = helper.getUrlFromDomain(context.getters.getDomain)
@@ -205,5 +245,8 @@ export default {
         }
       })
     }
+  },
+  setPrevPath: function (context, { path }) {
+    context.commit('setPrevPath', path)
   }
 }

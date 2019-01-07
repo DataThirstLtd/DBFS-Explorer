@@ -30,6 +30,8 @@
 <script>
 import { mapActions } from 'vuex'
 
+const nodePath = require('path')
+
 export default {
   name: 'populate',
   props: {
@@ -43,8 +45,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection', 'selectItem']),
+    ...mapActions(['clearSelection', 'fetchSelection', 'selectItem', 'setPrevPath']),
     onOpenItem: function () {
+      this.setPrevPath({
+        path: this.item.path.split(nodePath.basename(this.item.path))[0]
+      })
       this.clearSelection()
       this.fetchSelection(this.item)
     },

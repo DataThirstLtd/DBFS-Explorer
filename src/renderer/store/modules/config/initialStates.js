@@ -29,6 +29,13 @@ export default {
     transferState: {
       active: false,
       list: []
+    },
+    alert: {
+      active: false,
+      options: {
+        title: '',
+        message: ''
+      }
     }
   },
   drag: false

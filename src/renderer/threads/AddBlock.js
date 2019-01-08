@@ -2,51 +2,63 @@
 
 const EventEmitter = require('events').EventEmitter
 const util = require('util')
-const Pool = require('threads').Pool
+const spawn = require('threads').spawn
 
 function AddBlock () {
   if (!(this instanceof AddBlock)) {
-    return new AddBlock()
+    return new AddBlock({ threadCount: 2 })
   }
-  this.jobs = []
-  this.pool = new Pool(2)
-  this.pool
-    .on('done', function (job, message) {
-      console.log('Job done:', job)
-    })
-    .on('error', function (job, error) {
-      console.error('Job errored:', job)
-    })
-    .on('finished', function () {
-      console.log('Everything done, shutting down the thread pool.')
-      this.pool.killAll()
-    })
+  this.setMaxListeners(100)
+  this.pool = []
+  this.runner = []
+  this.limitCount = 2
 }
 
 util.inherits(AddBlock, EventEmitter)
 
-AddBlock.prototype.addJob = function ({ url, token, chunks, handle, id, endpoint }) {
+AddBlock.prototype.addJob = function (obj) {
   const self = this
   // Allow only array of base64 chunks
-  if (chunks && chunks.constructor === [].constructor) {
-    // Add job to jobs list
-    const index = this.jobs.push({
-      id: id, // Job id is same as file transfer id
-      handle: handle, // DBFS file handle
-      chunks: chunks, // base64 chunk or string
-      job: this.pool.run(tHandler) // Thread job handler
-    }) - 1 // Get index of current job
+  if (obj && obj.chunks && obj.chunks.constructor === [].constructor) {
+    // Add job to the pool
+    self.pool.push({
+      job: null,
+      data: obj // Thread data object
+    })
     // start thread work
-    this.jobs[index].job.send({ url, token, id, handle, chunks, endpoint })
-      .on('done', function () {
-        // Thread work finished. Emit job 'done' event
-        self.emit('done', { id })
-      }).on('progress', function (progress) {
-        // Update progress from thread. Emit job 'progress' event
-        self.emit('progress', progress)
-        console.log('on progress')
-      })
+    if (self.runner.length < self.limitCount) {
+      self.startJob(self.pool.pop())
+    }
   }
+}
+
+AddBlock.prototype.startJob = function (object) {
+  const self = this
+  const index = self.runner.push(object) - 1
+  console.log('DEBUG:1', `starting ${self.runner[index].data.id}`)
+  self.runner[index].job = spawn(tHandler)
+  self.runner[index].data && self.runner[index].job.send(self.runner[index].data)
+    .on('message', function (id) {
+      const currentIndex = self.runner.findIndex(x => x.data.id === id)
+      currentIndex > -1 && self.runner[currentIndex].job.kill()
+      currentIndex > -1 && self.runner.splice(currentIndex, 1)
+      self.emit('done', { id })
+      if (self.runner.length < self.limitCount) {
+        console.log('DEBUG:2')
+        self.startJob(self.pool.pop())
+      }
+    })
+    .on('error', function (error) {
+      console.log('error at thread', error)
+    })
+    .on('progress', function (progress) {
+      // Update progress from thread. Emit job 'progress' event
+      self.emit('progress', progress)
+      console.log('on progress', progress)
+    })
+    .on('exit', function () {
+      console.log(`Worker has been terminated`)
+    })
 }
 
 function tHandler ({ url, token, id, handle, chunks, endpoint }, done, progress) {
@@ -71,6 +83,7 @@ function tHandler ({ url, token, id, handle, chunks, endpoint }, done, progress)
       console.log(status)
       if (status === 200) {
         const fullProgress = (index / chunksLength) * 100
+        console.log(fullProgress)
         progress({
           progress: parseFloat(fullProgress).toFixed(1),
           id: id
@@ -80,7 +93,7 @@ function tHandler ({ url, token, id, handle, chunks, endpoint }, done, progress)
     })
   }, function () {
     console.log('all done')
-    done()
+    done(id)
   })
 }
 

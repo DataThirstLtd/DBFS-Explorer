@@ -90,6 +90,9 @@ export default {
   watch: {
     onActiveChange: function (state) {
       this.dialog = state
+      if (state) {
+        this.path = this.options.toPath
+      }
     },
     onDialogChange: function (state) {
       if (!state) {

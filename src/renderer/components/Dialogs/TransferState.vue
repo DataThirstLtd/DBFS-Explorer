@@ -23,7 +23,7 @@
         style="height: 80%; overflow: auto;">
         <list
           :transferList="list">
-        </list> 
+        </list>
       </v-card-text>
       <div
         v-else

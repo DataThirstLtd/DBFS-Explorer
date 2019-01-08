@@ -45,10 +45,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection', 'selectItem', 'setPrevPath']),
+    ...mapActions(['clearSelection', 'fetchSelection', 'selectItem', 'setPrevPath', 'setCurrentPath']),
     onOpenItem: function () {
       this.setPrevPath({
         path: this.item.path.split(nodePath.basename(this.item.path))[0]
+      })
+      this.setCurrentPath({
+        path: this.item.path + '/'
       })
       this.clearSelection()
       this.fetchSelection(this.item)

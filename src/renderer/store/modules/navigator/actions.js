@@ -3,6 +3,7 @@ import appConfig from '@/app.config.js'
 import helper from '@/assets/helper.js'
 import AddBlock from '@/threads/AddBlock'
 
+const addBlock = new AddBlock()
 const nodePath = require('path')
 const base64 = require('file-base64')
 const uniqid = require('uniqid')
@@ -164,26 +165,28 @@ export default {
       }
     })
   },
-  addBlockJob: async function (context, { url, token, handle, chunks, transferId, targetPath, endpoint }) {
-    const addBlock = new AddBlock()
-    addBlock.addJob({
-      url: url,
-      token: token,
-      chunks: chunks,
-      handle: handle,
-      id: transferId,
-      endpoint: endpoint
-    })
-    addBlock.on('done', function (data) {
-      context.dispatch('doneTransfer', data)
-    })
-    addBlock.on('progress', function (data) {
-      context.dispatch('updateJobProgress', data)
-    })
+  addBlock: async function (context, { url, token, handle, chunks, transferId, targetPath, endpoint }) {
+    const addTimer = setInterval(function () {
+      addBlock.addJob({
+        url: url,
+        token: token,
+        chunks: chunks,
+        handle: handle,
+        id: transferId,
+        endpoint: endpoint
+      })
+      addBlock.on('done', function (data) {
+        context.dispatch('doneTransfer', data)
+      })
+      addBlock.on('progress', function (data) {
+        context.dispatch('updateJobProgress', data)
+      })
+      clearInterval(addTimer)
+    }, 2000)
   },
   createList: function (context, { options, path }) {
     // Get target working directory path where file will be created
-    const targetPath = path[path.length - 1] === '/' ? path.slice(0, -1) : path
+    const targetPath = context.getters.getCurrentPath
     // Iterate through files selected
     if (options.list.length > 0) {
       // Get domain info
@@ -213,7 +216,7 @@ export default {
             axios.post(
               `${url}/${appConfig.ENDPOINTS.create}`,
               {
-                path: `${targetPath}/${file.name}`,
+                path: `${targetPath}${file.name}`,
                 overwrite: true
               },
               {
@@ -226,12 +229,12 @@ export default {
                 // Report message
                 return
               }
-              // Upload/write base64 string into new file as 1 MB chunks
-              const chunks = base64String.match(/.{1,512000}/g)
+              // Convert base64 string into small chunks
+              const chunks = base64String.match(new RegExp('.{1,' + 256000 + '}', 'g'))
               // Add new thread worker or job into thread pool
               // NOTE: By default 2 threads will be spawned. User can configure this any time.
               // Threads will be created based on CPU cores
-              context.dispatch('addBlockJob', {
+              context.dispatch('addBlock', {
                 url: url,
                 token: token,
                 handle: data.handle,
@@ -240,6 +243,8 @@ export default {
                 targetPath: targetPath,
                 endpoint: appConfig.ENDPOINTS.addBlock
               })
+            }).catch((error) => {
+              console.log(error)
             })
           })
         }
@@ -248,5 +253,8 @@ export default {
   },
   setPrevPath: function (context, { path }) {
     context.commit('setPrevPath', path)
+  },
+  setCurrentPath: function (context, { path }) {
+    context.commit('setCurrentPath', path)
   }
 }

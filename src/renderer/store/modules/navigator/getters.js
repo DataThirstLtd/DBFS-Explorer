@@ -10,5 +10,8 @@ export default {
   },
   getPrevPath: function (state) {
     return state.prevPath
+  },
+  getCurrentPath: function (state) {
+    return state.currentPath
   }
 }

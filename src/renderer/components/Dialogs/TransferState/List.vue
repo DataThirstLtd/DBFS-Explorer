@@ -15,9 +15,10 @@
             </v-icon>
             <v-progress-circular
               v-else
-              indeterminate
+              :indeterminate="item.progress === 0"
               :width="10"
               :size="150"
+              :value="item.progress"
               color="primary">
               <span style="font-size: 10px;">{{`${item.progress}%`}}</span>
             </v-progress-circular>

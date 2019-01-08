@@ -8,5 +8,6 @@ export default {
   },
   selectedItem: '',
   populateSelection: {},
-  prevPath: ''
+  prevPath: '',
+  currentPath: ''
 }

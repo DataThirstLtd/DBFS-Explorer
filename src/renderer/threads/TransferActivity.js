@@ -117,21 +117,20 @@ function uploadHandler ({ url, token, id, handle, chunks, endpoint }, done, prog
 function downloadHandler ({ url, token, id, endpoint, file }, done, progress) {
   console.log('thread entry id', id, file, endpoint, url, token)
   const axios = this.require('axios')
-  axios.get(
-    `${url}/${endpoint}`,
-    {
-      path: file.path
-    },
-    {
+  const download = function ({ offset }) {
+    return axios({
+      method: 'get',
+      url: `${url}/${endpoint}`,
+      data: {
+        path: file.path,
+        offset: offset
+      },
       headers: {
         'Authorization': `Bearer ${token}`
       }
-    }
-  ).then((res) => {
-    console.log(res)
-  }).catch((error) => {
-    console.log(error)
-  })
+    })
+  }
+  console.log(download)
   done()
 }
 

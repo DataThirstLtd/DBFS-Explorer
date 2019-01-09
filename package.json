@@ -60,6 +60,7 @@
     "filesize": "^3.6.1",
     "fs-extra": "^7.0.1",
     "is-url": "^1.2.4",
+    "promise": "^8.0.2",
     "roboto-fontface": "^0.10.0",
     "sqlite3": "^4.0.4",
     "threads": "^0.12.0",

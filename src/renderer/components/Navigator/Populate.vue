@@ -97,7 +97,7 @@ export default {
             icon: 'fa fa-trash',
             color: 'red',
             callback: () => { this.$root.$emit('deleteItem') }
-          }/* ,
+          },
           {
             id: 'id-context-nav-properties',
             title: 'Properties',
@@ -108,7 +108,7 @@ export default {
                 name: 'properties'
               })
             }
-          } */
+          }
         ]
       }
     }

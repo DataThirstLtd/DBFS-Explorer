@@ -1,9 +1,9 @@
 import axios from 'axios'
 import appConfig from '@/app.config.js'
 import helper from '@/assets/helper.js'
-import AddBlock from '@/threads/AddBlock'
+import TransferActivity from '@/threads/TransferActivity'
 
-const addBlock = new AddBlock()
+const transferActivity = new TransferActivity()
 const nodePath = require('path')
 const base64 = require('file-base64')
 
@@ -176,26 +176,47 @@ export default {
       }
     })
   },
-  addBlock: async function (context, { url, token, handle, chunks, transferId, targetPath, endpoint }) {
+  readFile: async function (context, { url, token, transferId, targetPath, endpoint, file }) {
     const addTimer = setInterval(function () {
-      addBlock.addJob({
+      transferActivity.addJob({
         url: url,
         token: token,
-        chunks: chunks,
-        handle: handle,
         id: transferId,
-        endpoint: endpoint
+        endpoint: endpoint,
+        file: file,
+        type: 0,
+        targetPath
       })
-      addBlock.on('done', function (data) {
+      transferActivity.on('done', function (data) {
         context.dispatch('doneTransfer', data)
       })
-      addBlock.on('progress', function (data) {
+      transferActivity.on('progress', function (data) {
         context.dispatch('updateJobProgress', data)
       })
       clearInterval(addTimer)
     }, 2000)
   },
-  createList: function (context, { options, path }) {
+  addBlock: async function (context, { url, token, handle, chunks, transferId, targetPath, endpoint }) {
+    const addTimer = setInterval(function () {
+      transferActivity.addJob({
+        url: url,
+        token: token,
+        chunks: chunks,
+        handle: handle,
+        id: transferId,
+        endpoint: endpoint,
+        type: 1
+      })
+      transferActivity.on('done', function (data) {
+        context.dispatch('doneTransfer', data)
+      })
+      transferActivity.on('progress', function (data) {
+        context.dispatch('updateJobProgress', data)
+      })
+      clearInterval(addTimer)
+    }, 2000)
+  },
+  prepareUpload: function (context, { options, path }) {
     // Get target working directory path where file will be created
     const targetPath = context.getters.getCurrentPath
     // Iterate through files selected
@@ -255,6 +276,33 @@ export default {
             }).catch((error) => {
               console.log(error)
             })
+          })
+        }
+      })
+    }
+  },
+  prepareDownload: function (context, { options }) {
+    console.log(options)
+    if (options.list.length > 0) {
+      const url = helper.getUrlFromDomain(context.getters.getDomain)
+      const token = context.getters.getToken
+      context.dispatch('closeDialog', { name: 'dataTransfer' })
+      options.list.forEach(({ file, selected, id }) => {
+        if (selected) {
+          context.dispatch('updateDataTransferList', {
+            id: id,
+            type: 0,
+            file: file,
+            progress: 0,
+            done: false
+          })
+          context.dispatch('readFile', {
+            url: url,
+            token: token,
+            transferId: id,
+            file: file,
+            targetPath: '',
+            endpoint: appConfig.ENDPOINTS.read
           })
         }
       })

@@ -106,7 +106,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['closeDialog', 'openDialog', 'toggleListDataTransfer', 'createList']),
+    ...mapActions([
+      'closeDialog',
+      'openDialog',
+      'toggleListDataTransfer',
+      'prepareUpload',
+      'prepareDownload'
+    ]),
     getSize: function (data) {
       return helper.getReadableFileSize({ size: data })
     },
@@ -114,10 +120,16 @@ export default {
       this.toggleListDataTransfer({ id })
     },
     onContinue: function () {
-      this.createList({
-        options: this.options,
-        path: this.path
-      })
+      if ((this.options && this.options.type > -1) && this.options.type === 1) {
+        this.prepareUpload({
+          options: this.options,
+          path: this.path
+        })
+      } else {
+        this.prepareDownload({
+          options: this.options
+        })
+      }
       this.closeDialog({ name: 'dataTransfer' })
       this.openDialog({
         name: 'transferState'

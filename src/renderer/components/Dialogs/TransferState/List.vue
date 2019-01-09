@@ -27,7 +27,7 @@
             <v-list-tile-title
               v-html="
               `<strong style='padding-right: 20px;'>
-                ${item.type ? `Upload ${item.progress}% of ${getSize(item.file.size)}` : `Download ${item.progress}% of ${getSize(item.file.size)}`}
+                ${item.type ? `Uploading ${item.progress}% of ${getSize(item.file.size)}` : `Downloading ${item.progress}% ${getSize(item.file.size) || ''}`}
                 </strong>
                 ${item.file.name}`
               "/>

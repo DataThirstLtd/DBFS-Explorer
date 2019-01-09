@@ -18,17 +18,12 @@ util.inherits(AddBlock, EventEmitter)
 
 AddBlock.prototype.addJob = function (obj) {
   const self = this
-  // Allow only array of base64 chunks
-  if (obj && obj.chunks && obj.chunks.constructor === [].constructor) {
-    // Add job to the pool
-    self.pool.push({
-      job: null,
-      data: obj // Thread data object
-    })
-    // start thread work
-    if (self.runner.length < self.limitCount) {
-      self.startJob(self.pool.pop())
-    }
+  self.pool.push({
+    job: null,
+    data: obj // Thread data object
+  })
+  if (self.runner.length < self.limitCount) {
+    self.startJob(self.pool.pop())
   }
 }
 
@@ -36,8 +31,8 @@ AddBlock.prototype.startJob = function (object) {
   const self = this
   const index = self.runner.push(object) - 1
   console.log('DEBUG:1', `starting ${self.runner[index].data.id}`)
-  self.runner[index].job = spawn(tHandler)
-  self.runner[index] && self.runner[index].data && self.runner[index].job.send(self.runner[index].data)
+  self.runner[index].job = spawn(self.runner[index].data.type ? uploadHandler : downloadHandler)
+  self.runner[index].job.send(self.runner[index].data)
     .on('message', function (id) {
       const currentIndex = self.runner.findIndex(x => x.data.id === id)
       currentIndex > -1 && self.runner[currentIndex].job.kill()
@@ -63,8 +58,10 @@ AddBlock.prototype.startJob = function (object) {
     })
 }
 
-function tHandler ({ url, token, id, handle, chunks, endpoint }, done, progress) {
-  console.log(id, handle)
+function uploadHandler ({ url, token, id, handle, chunks, endpoint }, done, progress) {
+  if (!(chunks && chunks.constructor === [].constructor)) {
+    done()
+  }
   const axios = this.require('axios')
   const forEach = this.require('async-foreach').forEach
   const chunksLength = chunks.length - 1
@@ -95,8 +92,47 @@ function tHandler ({ url, token, id, handle, chunks, endpoint }, done, progress)
     })
   }, function () {
     console.log('all done')
-    done(id)
+    // Close handle
+    axios.post(
+      `${url}/api/2.0/dbfs/close`,
+      {
+        handle: handle
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    ).then(({ status }) => {
+      if (status === 200) {
+        // Closed handle
+      } else {
+        console.log('DEBUG: UNABLE TO CLOSE HANDLE')
+      }
+      done(id)
+    })
   })
+}
+
+function downloadHandler ({ url, token, id, endpoint, file }, done, progress) {
+  console.log('thread entry id', id, file, endpoint, url, token)
+  const axios = this.require('axios')
+  axios.get(
+    `${url}/${endpoint}`,
+    {
+      path: file.path
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+  ).then((res) => {
+    console.log(res)
+  }).catch((error) => {
+    console.log(error)
+  })
+  done()
 }
 
 export default AddBlock

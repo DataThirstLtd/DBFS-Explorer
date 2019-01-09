@@ -18,7 +18,7 @@
         v-for="item in appbarButtons.right"
         :key="item.id">
         <v-btn
-          v-if="item.id === 'id-app-delete' ? selectedItem ? true : false : true"
+          v-if="isHiddenAction(item) ? selectedItem ? true : false : true"
           class="ig-folder-actions-button"
           small
           icon
@@ -77,8 +77,37 @@ export default {
     return {
       appbarButtons: {
         right: [
-          { id: 'id-app-delete', text: 'Delete', color: 'red', icon: 'fa-trash', callback: this.deleteItem, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-new-folder', text: 'Delete', color: null, icon: 'fa-folder-plus', callback: () => { this.openDialog({ name: 'newFolder' }) }, platforms: ['darwin', 'win32', 'linux'] }
+          {
+            id: 'id-app-download',
+            text: 'Download',
+            color: '',
+            icon: 'fa-arrow-down',
+            callback: this.deleteItem,
+            platforms: ['darwin', 'win32', 'linux'],
+            hidden: true
+          },
+          {
+            id: 'id-app-delete',
+            text: 'Delete',
+            color: 'red',
+            icon: 'fa-trash',
+            callback: this.deleteItem,
+            platforms: ['darwin', 'win32', 'linux'],
+            hidden: true
+          },
+          {
+            id: 'id-app-new-folder',
+            text: 'Delete',
+            color: null,
+            icon: 'fa-folder-plus',
+            callback: () => {
+              this.openDialog({
+                name: 'newFolder'
+              })
+            },
+            platforms: ['darwin', 'win32', 'linux'],
+            hidden: false
+          }
         ]
       }
     }
@@ -94,6 +123,13 @@ export default {
   }),
   methods: {
     ...mapActions(['clearSelection', 'fetchSelection', 'openDialog']),
+    isHiddenAction: function (item) {
+      const itemIndex = this.appbarButtons.right.findIndex(x => x.id === item.id)
+      if (itemIndex > -1 && this.appbarButtons.right[itemIndex].hidden) {
+        return true
+      }
+      return false
+    },
     getParentPath: function (data) {
       if (data && 'path' in data && data.path) {
         return data.path.split(nodePath.basename(data.path))[0] || data.path

@@ -4,7 +4,8 @@
       <div class="item-wrapper"
         :active="selectedItem === item.path"
         @dblclick="onOpenItem"
-        @click="onSelectItem">
+        @click="onSelectItem"
+        @contextmenu="showContextMenu">
         <v-icon
           v-if="item.is_dir"
           class="icon"
@@ -23,6 +24,28 @@
           {{ item.path.split('/').pop() || item.path }}
         </p>
       </div>
+      <v-menu
+        v-model="contextMenu.showMenu"
+        :position-x="contextMenu.x"
+        :position-y="contextMenu.y"
+        absolute
+        offset-y>
+        <v-list>
+          <v-list-tile
+            v-for="(item, index) in contextMenu.menu"
+            :key="index"
+            @click="item.callback">
+            <v-list-tile-action>
+              <v-icon>
+                {{ item.icon }}
+              </v-icon>
+            </v-list-tile-action>
+            <v-list-tile-title>
+              {{ item.title }}
+            </v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
     </div>
   </div>
 </template>
@@ -44,6 +67,26 @@ export default {
       required: true
     }
   },
+  data () {
+    return {
+      contextMenu: {
+        showMenu: false,
+        x: 0,
+        y: 0,
+        menu: [
+          { title: 'Open', icon: 'fa fa-folder-open', callback: () => { this.onOpenItem() } },
+          { title: 'Download', icon: 'fa fa-arrow-down', callback: () => { } },
+          { title: 'Properties', icon: 'fa fa-info', callback: () => { } }
+        ]
+      }
+    }
+  },
+  mounted () {
+    const self = this
+    self.$root.$on('hideContextMenu', () => {
+      self.contextMenu.showMenu = false
+    })
+  },
   methods: {
     ...mapActions(['clearSelection', 'fetchSelection', 'selectItem', 'setPrevPath', 'setCurrentPath']),
     onOpenItem: function () {
@@ -58,6 +101,17 @@ export default {
     },
     onSelectItem: function () {
       this.selectItem(this.item)
+    },
+    showContextMenu: function (e) {
+      e.preventDefault()
+      const self = this
+      self.onSelectItem()
+      self.$root.$emit('hideContextMenu')
+      self.contextMenu.x = e.clientX
+      self.contextMenu.y = e.clientY
+      self.$nextTick(() => {
+        self.contextMenu.showMenu = true
+      })
     }
   }
 }

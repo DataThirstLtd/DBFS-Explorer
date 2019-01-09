@@ -11,6 +11,9 @@ export default {
     about: {
       active: false
     },
+    properties: {
+      active: false
+    },
     delete: {
       active: false,
       options: null

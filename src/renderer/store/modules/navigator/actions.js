@@ -6,9 +6,20 @@ import AddBlock from '@/threads/AddBlock'
 const addBlock = new AddBlock()
 const nodePath = require('path')
 const base64 = require('file-base64')
-const uniqid = require('uniqid')
 
 export default {
+  getStatus: function (context, data) {
+    const url = helper.getUrlFromDomain(context.getters.getDomain)
+    const token = context.getters.getToken
+    return axios.get(
+      `${url}/${appConfig.ENDPOINTS.getStatus}?path=${data.item}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    )
+  },
   updateRootFs: function (context, data) {
     if (
       data && data.constructor === [].constructor
@@ -195,10 +206,8 @@ export default {
       // Close file selection dialog
       context.dispatch('closeDialog', { name: 'dataTransfer' })
       // Iterate through file selected
-      options.list.forEach(({ file, selected }) => {
+      options.list.forEach(({ file, selected, id }) => {
         if (selected) {
-          // Generate Uniqid for data transfer (upload/download)
-          const id = uniqid()
           // Update bottom sheet transfer list
           context.dispatch('updateDataTransferList', {
             id: id,

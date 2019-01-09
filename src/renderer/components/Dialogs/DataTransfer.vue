@@ -39,7 +39,8 @@
           </v-list>
         </div>
       </v-card-text>
-      <v-card-text>
+      <v-card-text
+        v-if="(options && options.type > -1) && options.type">
         <v-text-field
           v-model="path"
           value="/"
@@ -58,7 +59,11 @@
           depressed
           color="primary"
           @click="onContinue">
-          Continue
+          {{
+            (options && options.type > -1) ? options.type
+              ? 'Upload' : 'Download'
+              : 'Continue'
+          }}
         </v-btn>
       </v-card-actions>
     </v-card>

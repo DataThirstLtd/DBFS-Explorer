@@ -68,6 +68,7 @@ import { mapState, mapActions } from 'vuex'
 import Folder from '@/components/Navigator/Folder'
 
 const nodePath = require('path')
+const uniqid = require('uniqid')
 
 export default {
   components: {
@@ -82,7 +83,7 @@ export default {
             text: 'Download',
             color: '',
             icon: 'fa-arrow-down',
-            callback: this.deleteItem,
+            callback: this.downloadItem,
             platforms: ['darwin', 'win32', 'linux'],
             hidden: true
           },
@@ -121,6 +122,15 @@ export default {
     fetchWait: state => state.navigator.fetchWait,
     prevPath: state => state.navigator.prevPath
   }),
+  mounted () {
+    const self = this
+    this.$root.$on('deleteItem', () => {
+      self.deleteItem()
+    })
+    this.$root.$on('downloadItem', () => {
+      self.downloadItem()
+    })
+  },
   methods: {
     ...mapActions(['clearSelection', 'fetchSelection', 'openDialog']),
     isHiddenAction: function (item) {
@@ -152,6 +162,31 @@ export default {
           options: {
             path: path,
             prevPath: prevPath
+          }
+        })
+      }
+    },
+    downloadItem: function () {
+      const self = this
+      console.log(self.selectedItem)
+      const itemIndex = self.selection.findIndex(x => x.path === self.selectedItem)
+      if (itemIndex > -1) {
+        const item = self.selection[itemIndex]
+        const uid = uniqid()
+        const transferObject = {
+          file: {
+            name: nodePath.basename(item.path),
+            path: item.path,
+            size: item.file_size
+          },
+          id: uid,
+          selected: true
+        }
+        this.openDialog({
+          name: 'dataTransfer',
+          options: {
+            list: [ transferObject ],
+            type: 0
           }
         })
       }

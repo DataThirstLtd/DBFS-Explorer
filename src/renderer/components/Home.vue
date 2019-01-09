@@ -8,6 +8,7 @@
     <sidebar :rootFs="rootFs"/>
     <main-content />
     <!-- Dialogs -->
+    <properties />
     <new-folder />
     <delete-selected />
     <data-transfer />
@@ -29,6 +30,7 @@
   import CommandBar from './Layouts/CommandBar'
   import MainContent from './Layouts/MainContent'
   // Import dialogs
+  import Properties from './Dialogs/Properties'
   import NewFolder from './Dialogs/NewFolder'
   import DeleteSelected from './Dialogs/DeleteSelected'
   import DataTransfer from './Dialogs/DataTransfer'
@@ -43,6 +45,7 @@
       Sidebar,
       CommandBar,
       MainContent,
+      Properties,
       NewFolder,
       DeleteSelected,
       DataTransfer,

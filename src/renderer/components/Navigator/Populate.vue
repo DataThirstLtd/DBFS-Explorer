@@ -32,16 +32,19 @@
         offset-y>
         <v-list>
           <v-list-tile
-            v-for="(item, index) in contextMenu.menu"
+            v-for="(menuItem, index) in contextMenu.menu"
             :key="index"
-            @click="item.callback">
+            @click="menuItem.callback"
+            :disabled="menuItem.id === 'id-context-nav-open' && !item.is_dir">
             <v-list-tile-action>
-              <v-icon>
-                {{ item.icon }}
+              <v-icon
+                :color="menuItem.color || null"
+                small>
+                {{ menuItem.icon }}
               </v-icon>
             </v-list-tile-action>
             <v-list-tile-title>
-              {{ item.title }}
+              {{ menuItem.title }}
             </v-list-tile-title>
           </v-list-tile>
         </v-list>
@@ -74,9 +77,38 @@ export default {
         x: 0,
         y: 0,
         menu: [
-          { title: 'Open', icon: 'fa fa-folder-open', callback: () => { this.onOpenItem() } },
-          { title: 'Download', icon: 'fa fa-arrow-down', callback: () => { } },
-          { title: 'Properties', icon: 'fa fa-info', callback: () => { } }
+          {
+            id: 'id-context-nav-open',
+            title: 'Open',
+            icon: 'fa fa-folder-open',
+            color: '',
+            callback: () => { this.onOpenItem() }
+          },
+          {
+            id: 'id-context-nav-download',
+            title: 'Download',
+            icon: 'fa fa-arrow-down',
+            color: '',
+            callback: () => { this.$root.$emit('downloadItem') }
+          },
+          {
+            id: 'id-context-nav-delete',
+            title: 'Delete',
+            icon: 'fa fa-trash',
+            color: 'red',
+            callback: () => { this.$root.$emit('deleteItem') }
+          }/* ,
+          {
+            id: 'id-context-nav-properties',
+            title: 'Properties',
+            icon: 'fa fa-info-circle',
+            color: '',
+            callback: () => {
+              this.openDialog({
+                name: 'properties'
+              })
+            }
+          } */
         ]
       }
     }
@@ -88,16 +120,31 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection', 'selectItem', 'setPrevPath', 'setCurrentPath']),
+    ...mapActions([
+      'showInfoSnackbar',
+      'clearSelection',
+      'fetchSelection',
+      'selectItem',
+      'setPrevPath',
+      'setCurrentPath',
+      'openDialog'
+    ]),
     onOpenItem: function () {
-      this.setPrevPath({
-        path: this.item.path.split(nodePath.basename(this.item.path))[0]
-      })
-      this.setCurrentPath({
-        path: this.item.path + '/'
-      })
-      this.clearSelection()
-      this.fetchSelection(this.item)
+      if (this.item.is_dir) {
+        this.setPrevPath({
+          path: this.item.path.split(nodePath.basename(this.item.path))[0]
+        })
+        this.setCurrentPath({
+          path: this.item.path + '/'
+        })
+        this.clearSelection()
+        this.fetchSelection(this.item)
+      } else {
+        this.showInfoSnackbar({
+          message: 'Not a directory',
+          status: true
+        })
+      }
     },
     onSelectItem: function () {
       this.selectItem(this.item)

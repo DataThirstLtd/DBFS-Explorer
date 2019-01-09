@@ -37,15 +37,17 @@ AddBlock.prototype.startJob = function (object) {
   const index = self.runner.push(object) - 1
   console.log('DEBUG:1', `starting ${self.runner[index].data.id}`)
   self.runner[index].job = spawn(tHandler)
-  self.runner[index].data && self.runner[index].job.send(self.runner[index].data)
+  self.runner[index] && self.runner[index].data && self.runner[index].job.send(self.runner[index].data)
     .on('message', function (id) {
       const currentIndex = self.runner.findIndex(x => x.data.id === id)
       currentIndex > -1 && self.runner[currentIndex].job.kill()
       currentIndex > -1 && self.runner.splice(currentIndex, 1)
       self.emit('done', { id })
       if (self.runner.length < self.limitCount) {
-        console.log('DEBUG:2')
-        self.startJob(self.pool.pop())
+        let poolItem = self.pool.pop()
+        if (poolItem && poolItem.data) {
+          self.startJob(self.pool.pop())
+        }
       }
     })
     .on('error', function (error) {

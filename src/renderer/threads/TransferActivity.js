@@ -116,9 +116,17 @@ function uploadHandler ({ url, token, id, handle, chunks, endpoint }, done, prog
 
 function downloadHandler ({ url, token, id, endpoint, file }, done, progress) {
   console.log('thread entry id', id, file, endpoint, url, token)
+  const EventEmitter = this.require('events')
   const axios = this.require('axios')
+  const events = new EventEmitter()
+  events.setMaxListeners(100)
+
+  const totalSizeBytes = file.size // Total Size of the file in bytes
+  let finishedSizeBytes = 0 // Size of downloaded the file in bytes
+  let offset = 0 // Offset byte value to start downloading data
+
   const download = function ({ offset }) {
-    return axios({
+    axios({
       method: 'get',
       url: `${url}/${endpoint}`,
       data: {
@@ -128,10 +136,38 @@ function downloadHandler ({ url, token, id, endpoint, file }, done, progress) {
       headers: {
         'Authorization': `Bearer ${token}`
       }
+    }).then((res) => {
+      if (res.status === 200) {
+        events.emit('response', res)
+      } else {
+        events.emit('error', `Server response status: ${res.status}`)
+      }
     })
   }
-  console.log(download)
-  done()
+
+  events.on('error', function (error) {
+    console.error(error)
+  })
+
+  events.on('response', function ({ data }) {
+    finishedSizeBytes = finishedSizeBytes + data.bytes_read
+    offset = finishedSizeBytes + 1
+    console.log('finishedSizeBytes', finishedSizeBytes, 'offset', offset, 'bytes_read', data.bytes_read)
+    const fullProgress = (finishedSizeBytes / totalSizeBytes) * 100
+    progress({
+      progress: parseFloat(fullProgress).toFixed(1),
+      id: id
+    })
+    if (data.bytes_read !== 0) {
+      download({ offset: offset + 1 })
+    } else {
+      console.log('totalSizeBytes', totalSizeBytes)
+      console.log('finishedSizeBytes', finishedSizeBytes)
+      done(id)
+    }
+  })
+
+  download({ offset: 0 })
 }
 
 export default AddBlock

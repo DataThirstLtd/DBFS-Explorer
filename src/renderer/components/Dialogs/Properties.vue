@@ -20,6 +20,52 @@
               color="primary"
               indeterminate />
           </div>
+          <v-list
+            v-else
+            three-line
+            subheader>
+            <v-list-tile>
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  File Name
+                </v-list-tile-title>
+                <v-list-tile-sub-title>
+                  {{ getFileName(info.path) }}
+                </v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile>
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  Storage Path
+                </v-list-tile-title>
+                <v-list-tile-sub-title>
+                  {{ info.path }}
+                </v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile>
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  Type
+                </v-list-tile-title>
+                <v-list-tile-sub-title>
+                  {{ info.is_dir ? 'Directory' : 'File' }}
+                </v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile
+              v-if="!info.is_dir">
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  Size
+                </v-list-tile-title>
+                <v-list-tile-sub-title>
+                  {{ getSize(info.file_size) }}
+                </v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
@@ -36,6 +82,9 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import helper from '@/assets/helper.js'
+
+const nodePath = require('path')
 
 export default {
   name: 'properties',
@@ -74,13 +123,19 @@ export default {
         item: this.selectedItem
       }).then(({data}) => {
         self.loading.state = false
-        console.log(data)
+        this.info = data
       }).catch((error) => {
         console.error(error)
       })
     },
     hide: function () {
       this.closeDialog({ name: 'properties' })
+    },
+    getFileName: function (path) {
+      return nodePath.basename(path)
+    },
+    getSize: function (data) {
+      return helper.getReadableFileSize({ size: data })
     }
   }
 }

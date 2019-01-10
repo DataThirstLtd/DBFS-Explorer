@@ -103,11 +103,7 @@ export default {
             title: 'Properties',
             icon: 'fa fa-info-circle',
             color: '',
-            callback: () => {
-              this.openDialog({
-                name: 'properties'
-              })
-            }
+            callback: () => { this.$root.$emit('openProperties') }
           }
         ]
       }

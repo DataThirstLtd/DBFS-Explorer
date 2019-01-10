@@ -97,6 +97,15 @@ export default {
             hidden: true
           },
           {
+            id: 'id-app-properties',
+            text: 'Properties',
+            color: '',
+            icon: 'fa-info',
+            callback: this.openProperties,
+            platforms: ['darwin', 'win32', 'linux'],
+            hidden: true
+          },
+          {
             id: 'id-app-new-folder',
             text: 'Delete',
             color: null,
@@ -129,6 +138,9 @@ export default {
     })
     this.$root.$on('downloadItem', () => {
       self.downloadItem()
+    })
+    this.$root.$on('openProperties', () => {
+      self.openProperties()
     })
   },
   methods: {
@@ -190,6 +202,11 @@ export default {
           }
         })
       }
+    },
+    openProperties: function () {
+      this.openDialog({
+        name: 'properties'
+      })
     }
   }
 }

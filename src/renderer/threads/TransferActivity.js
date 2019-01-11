@@ -30,11 +30,11 @@ AddBlock.prototype.addJob = function (obj) {
 AddBlock.prototype.startJob = function (object) {
   const self = this
   const index = self.runner.push(object) - 1
-  console.log('DEBUG:1', `starting ${self.runner[index].data.id}`)
+  console.log('DEBUG:1', `starting ${self.runner[index].data.transferId} type: ${self.runner[index].data.type}`)
   self.runner[index].job = spawn(self.runner[index].data.type ? uploadHandler : downloadHandler)
   self.runner[index].job.send(self.runner[index].data)
     .on('message', function (id) {
-      const currentIndex = self.runner.findIndex(x => x.data.id === id)
+      const currentIndex = self.runner.findIndex(x => x.data.transferId === id)
       currentIndex > -1 && self.runner[currentIndex].job.kill()
       currentIndex > -1 && self.runner.splice(currentIndex, 1)
       self.emit('done', { id })
@@ -51,14 +51,38 @@ AddBlock.prototype.startJob = function (object) {
     .on('progress', function (progress) {
       // Update progress from thread. Emit job 'progress' event
       self.emit('progress', progress)
-      console.log('on progress', progress)
     })
     .on('exit', function () {
       console.log(`Worker has been terminated`)
     })
 }
 
-function uploadHandler ({ url, token, id, handle, chunks, endpoint }, done, progress) {
+AddBlock.prototype.cancelJob = function ({ id }) {
+  console.log('on cancel job', id)
+  if (id) {
+    const self = this
+    const jobIndex = self.runner.findIndex(x => x.data.transferId === id)
+    if (jobIndex > -1) {
+      if (self.runner[jobIndex].job) {
+        const result = self.runner[jobIndex].job.kill()
+        self.runner.splice(jobIndex, 1)
+        if (!result.slave.connected) {
+          console.log('not connected')
+        }
+        self.emit('progress', {
+          progress: 0,
+          id: id
+        })
+        self.emit('abort', { id })
+      }
+    } else {
+      console.log('job not running')
+    }
+  }
+}
+
+function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, done, progress) {
+  console.log('on entry uploadHandler')
   if (!(chunks && chunks.constructor === [].constructor)) {
     done()
   }
@@ -85,7 +109,7 @@ function uploadHandler ({ url, token, id, handle, chunks, endpoint }, done, prog
         console.log(fullProgress)
         progress({
           progress: parseFloat(fullProgress).toFixed(1),
-          id: id
+          id: transferId
         })
       }
       asyncDone()
@@ -109,13 +133,14 @@ function uploadHandler ({ url, token, id, handle, chunks, endpoint }, done, prog
       } else {
         console.log('DEBUG: UNABLE TO CLOSE HANDLE')
       }
-      done(id)
+      done(transferId)
     })
   })
 }
 
-function downloadHandler ({ url, token, id, endpoint, file }, done, progress) {
-  console.log('thread entry id', id, file, endpoint, url, token)
+function downloadHandler ({ url, token, transferId, endpoint, file }, done, progress) {
+  console.log('on entry downloadHandler')
+  console.log('thread entry id', transferId, file, endpoint, url, token)
   const EventEmitter = this.require('events')
   const axios = this.require('axios')
   const events = new EventEmitter()
@@ -156,14 +181,14 @@ function downloadHandler ({ url, token, id, endpoint, file }, done, progress) {
     const fullProgress = (finishedSizeBytes / totalSizeBytes) * 100
     progress({
       progress: parseFloat(fullProgress).toFixed(1),
-      id: id
+      id: transferId
     })
     if (data.bytes_read !== 0) {
       download({ offset: offset + 1 })
     } else {
       console.log('totalSizeBytes', totalSizeBytes)
       console.log('finishedSizeBytes', finishedSizeBytes)
-      done(id)
+      done(transferId)
     }
   })
 

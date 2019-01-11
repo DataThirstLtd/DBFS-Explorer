@@ -8,7 +8,13 @@
           @click="">
           <v-list-tile-avatar>
             <v-icon
-              v-if="item.done"
+              v-if="item.abort"
+              class="error"
+              color="white">
+              fa-times
+            </v-icon>
+            <v-icon
+              v-else-if="item.done"
               class="success"
               color="white">
               fa-check
@@ -27,12 +33,22 @@
             <v-list-tile-title
               v-html="
               `<strong style='padding-right: 20px;'>
-                ${item.type ? `Uploading ${item.progress}% of ${getSize(item.file.size)}` : `Downloading ${item.progress}% ${getSize(item.file.size) || ''}`}
+                ${item.abort ?
+                  `Cancelled ${item.type ? 'Upload' : 'Download'}`
+                  : item.done
+                  ? `Completed ${item.type ? 'Upload' : 'Download'} of ${getSize(item.file.size)}`
+                  : item.type ? `Uploading ${item.progress}% of ${getSize(item.file.size)}`
+                  : `Downloading ${item.progress}% ${getSize(item.file.size) || ''}`}
                 </strong>
                 ${item.file.name}`
               "/>
-            <v-list-tile-sub-title v-html="item.file.path"></v-list-tile-sub-title>
-            <v-progress-linear :value="item.progress" :indeterminate="item.progress === 0"></v-progress-linear>
+            <v-list-tile-sub-title
+              v-html="item.file.path" />
+            <v-progress-linear
+              v-if="!item.abort"
+              :value="item.progress"
+              :indeterminate="item.progress === 0">
+            </v-progress-linear>
           </v-list-tile-content>
           <v-list-tile-action>
             <v-btn
@@ -42,7 +58,8 @@
               ripple>
               <v-icon
                 small
-                class="grey--text">
+                class="grey--text"
+                @click="cancelTransfer(item)">
                 fa-times
               </v-icon>
             </v-btn>
@@ -58,6 +75,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import helper from '@/assets/helper.js'
 
 export default {
@@ -69,6 +87,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['cancelTransfer']),
     getSize: function (data) {
       return helper.getReadableFileSize({ size: data })
     }

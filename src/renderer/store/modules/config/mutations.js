@@ -62,6 +62,12 @@ export default {
     const targetIndex = list.findIndex(x => x.id === id)
     targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].done = true)
   },
+  setAbortTransfer: function (state, { id }) {
+    const list = Object.assign([], state.dialogs.transferState.list)
+    const targetIndex = list.findIndex(x => x.id === id)
+    targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].done = false)
+    targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].abort = true)
+  },
   setJobProgress: function (state, { id, progress }) {
     console.log(id, progress)
     const list = Object.assign([], state.dialogs.transferState.list)

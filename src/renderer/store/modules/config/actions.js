@@ -99,6 +99,13 @@ export default {
   },
   doneTransfer: function (context, data) {
     context.commit('setDoneTransfer', data)
+    context.dispatch('fetchSelection', {
+      path: context.getters.getCurrentPath,
+      is_dir: true
+    })
+  },
+  abortTransfer: function (context, data) {
+    context.commit('setAbortTransfer', data)
   },
   updateJobProgress: function (context, data) {
     context.commit('setJobProgress', data)

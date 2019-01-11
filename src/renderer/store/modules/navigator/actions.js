@@ -82,39 +82,6 @@ export default {
         }
       })
     })
-    /* if (selection && selection.is_dir && selection.path) {
-      context.commit('setFetchWait')
-      return axios.get(
-        `${url}/${appConfig.ENDPOINTS.list}?path=${selection.path}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      ).then((res) => {
-        console.log('DEBUG:1')
-        if (res.data && res.data.files) {
-          console.log('DEBUG:2')
-          context.commit('setSelection', res.data.files)
-          context.commit('clearFetchWait')
-          context.commit('clearFolderEmpty')
-        } else if (selection.path !== '/') {
-          console.log('DEBUG:3')
-          context.commit('setSelection', [])
-          context.commit('setFolderEmpty', {
-            valid: true,
-            path: selection.path
-          })
-          context.commit('clearFetchWait')
-        }
-        console.log('DEBUG:4')
-        context.dispatch('clearItem')
-      }).catch((err) => {
-        console.log('DEBUG:5')
-        console.log(err)
-        context.commit('clearFetchWait')
-      })
-    } */
   },
   createNewFolder: function (context, { path, folderName }) {
     const url = helper.getUrlFromDomain(context.getters.getDomain)
@@ -176,42 +143,17 @@ export default {
       }
     })
   },
-  readFile: async function (context, { url, token, transferId, targetPath, endpoint, file }) {
+  addJob: async function (context, data) {
     const addTimer = setInterval(function () {
-      transferActivity.addJob({
-        url: url,
-        token: token,
-        id: transferId,
-        endpoint: endpoint,
-        file: file,
-        type: 0,
-        targetPath
-      })
+      transferActivity.addJob(data)
       transferActivity.on('done', function (data) {
         context.dispatch('doneTransfer', data)
       })
       transferActivity.on('progress', function (data) {
         context.dispatch('updateJobProgress', data)
       })
-      clearInterval(addTimer)
-    }, 2000)
-  },
-  addBlock: async function (context, { url, token, handle, chunks, transferId, targetPath, endpoint }) {
-    const addTimer = setInterval(function () {
-      transferActivity.addJob({
-        url: url,
-        token: token,
-        chunks: chunks,
-        handle: handle,
-        id: transferId,
-        endpoint: endpoint,
-        type: 1
-      })
-      transferActivity.on('done', function (data) {
-        context.dispatch('doneTransfer', data)
-      })
-      transferActivity.on('progress', function (data) {
-        context.dispatch('updateJobProgress', data)
+      transferActivity.on('abort', function (data) {
+        context.dispatch('abortTransfer', data)
       })
       clearInterval(addTimer)
     }, 2000)
@@ -264,14 +206,15 @@ export default {
               // Add new thread worker or job into thread pool
               // NOTE: By default 2 threads will be spawned. User can configure this any time.
               // Threads will be created based on CPU cores
-              context.dispatch('addBlock', {
+              context.dispatch('addJob', {
                 url: url,
                 token: token,
                 handle: data.handle,
                 chunks: chunks,
                 transferId: id,
                 targetPath: targetPath,
-                endpoint: appConfig.ENDPOINTS.addBlock
+                endpoint: appConfig.ENDPOINTS.addBlock,
+                type: 1
               })
             }).catch((error) => {
               console.log(error)
@@ -296,17 +239,21 @@ export default {
             progress: 0,
             done: false
           })
-          context.dispatch('readFile', {
+          context.dispatch('addJob', {
             url: url,
             token: token,
             transferId: id,
             file: file,
             targetPath: '',
-            endpoint: appConfig.ENDPOINTS.read
+            endpoint: appConfig.ENDPOINTS.read,
+            type: 0
           })
         }
       })
     }
+  },
+  cancelTransfer: function (context, data) {
+    transferActivity.cancelJob(data)
   },
   setPrevPath: function (context, { path }) {
     context.commit('setPrevPath', path)

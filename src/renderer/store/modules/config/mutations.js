@@ -48,30 +48,25 @@ export default {
       state.dialogs.dataTransfer.options.list[index].selected = true
     }
   },
-  setDataTransferList: function (state, { id, type, file, progress, done }) {
-    state.dialogs.transferState.list.push({
-      id: id,
-      type: type,
-      file: file,
-      progress: progress,
-      done: done
-    })
+  setDataTransferList: function (state, data) {
+    state.dialogs.transferState.list.push(data)
   },
-  setDoneTransfer: function (state, { id }) {
+  setDoneTransfer: function (state, { transferId }) {
     const list = Object.assign([], state.dialogs.transferState.list)
-    const targetIndex = list.findIndex(x => x.id === id)
+    const targetIndex = list.findIndex(x => x.transferId === transferId)
     targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].done = true)
   },
-  setAbortTransfer: function (state, { id }) {
+  setAbortTransfer: function (state, { transferId }) {
     const list = Object.assign([], state.dialogs.transferState.list)
-    const targetIndex = list.findIndex(x => x.id === id)
-    targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].done = false)
+    const targetIndex = list.findIndex(x => x.transferId === transferId)
+    console.log('setAbortTransfer', targetIndex)
     targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].abort = true)
+    console.log('setAbortTransfer abort::', state.dialogs.transferState.list[targetIndex].abort)
   },
-  setJobProgress: function (state, { id, progress }) {
-    console.log(id, progress)
+  setJobProgress: function (state, { transferId, progress }) {
+    console.log(transferId, progress)
     const list = Object.assign([], state.dialogs.transferState.list)
-    const targetIndex = list.findIndex(x => x.id === id)
+    const targetIndex = list.findIndex(x => x.transferId === transferId)
     targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].progress = progress)
   }
 }

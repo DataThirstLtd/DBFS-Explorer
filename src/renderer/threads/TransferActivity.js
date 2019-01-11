@@ -29,8 +29,8 @@ AddBlock.prototype.addJob = function (obj) {
 
 AddBlock.prototype.startJob = function (object) {
   const self = this
+  self.emit('startJob', object.data)
   const index = self.runner.push(object) - 1
-  console.log('DEBUG:1', `starting ${self.runner[index].data.transferId} type: ${self.runner[index].data.type}`)
   self.runner[index].job = spawn(self.runner[index].data.type ? uploadHandler : downloadHandler)
   self.runner[index].job.send(self.runner[index].data)
     .on('message', function (id) {
@@ -57,28 +57,34 @@ AddBlock.prototype.startJob = function (object) {
     })
 }
 
-AddBlock.prototype.cancelJob = function ({ id }) {
-  console.log('on cancel job', id)
-  if (id) {
-    const self = this
-    const jobIndex = self.runner.findIndex(x => x.data.transferId === id)
+AddBlock.prototype.cancelJob = function ({ transferId }) {
+  const self = this
+  console.log('on cancel job', transferId)
+  if (transferId) {
+    const jobIndex = self.runner.findIndex(x => x.data.transferId === transferId)
+    console.log('job Index', jobIndex)
     if (jobIndex > -1) {
       if (self.runner[jobIndex].job) {
-        const result = self.runner[jobIndex].job.kill()
+        // Kill the job
+        self.runner[jobIndex].job.kill()
+        // Remove from runner
         self.runner.splice(jobIndex, 1)
-        if (!result.slave.connected) {
-          console.log('not connected')
-        }
-        self.emit('progress', {
-          progress: 0,
-          id: id
-        })
-        self.emit('abort', { id })
       }
-    } else {
-      console.log('job not running')
+    }
+    const poolIndex = self.pool.findIndex(x => x.data.transferId === transferId)
+    console.log('pool Index', poolIndex)
+    if (poolIndex > -1) {
+      // Remove from pool
+      self.pool.splice(poolIndex, 1)
+    }
+    if (self.runner.length < self.limitCount) {
+      let poolItem = self.pool.pop()
+      if (poolItem && poolItem.data) {
+        self.startJob(self.pool.pop())
+      }
     }
   }
+  self.emit('abort', { transferId })
 }
 
 function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, done, progress) {
@@ -181,7 +187,7 @@ function downloadHandler ({ url, token, transferId, endpoint, file }, done, prog
     const fullProgress = (finishedSizeBytes / totalSizeBytes) * 100
     progress({
       progress: parseFloat(fullProgress).toFixed(1),
-      id: transferId
+      transferId: transferId
     })
     if (data.bytes_read !== 0) {
       download({ offset: offset + 1 })

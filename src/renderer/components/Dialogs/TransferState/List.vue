@@ -3,7 +3,7 @@
     <v-list three-line>
       <template v-for="(item, index) in transferList">
         <v-list-tile
-          :key="item.id"
+          :key="item.transferId"
           avatar
           @click="">
           <v-list-tile-avatar>

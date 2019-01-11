@@ -27,6 +27,7 @@ export default {
         table: 'user'
       }
     })
+    context.dispatch('initNav')
   },
   writeSql: function (context, data) {
     ipcRenderer.send('sql', {

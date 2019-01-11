@@ -3,11 +3,34 @@ import appConfig from '@/app.config.js'
 import helper from '@/assets/helper.js'
 import TransferActivity from '@/threads/TransferActivity'
 
-const transferActivity = new TransferActivity()
+let transferActivity = null
+
 const nodePath = require('path')
 const base64 = require('file-base64')
 
 export default {
+  initNav: function (context) {
+    transferActivity = new TransferActivity()
+    transferActivity.on('startJob', function ({ transferId, type, file }) {
+      context.dispatch('updateDataTransferList', {
+        transferId: transferId,
+        type: type,
+        file: file,
+        progress: 0,
+        done: false,
+        abort: false
+      })
+    })
+    transferActivity.on('done', function (data) {
+      context.dispatch('doneTransfer', data)
+    })
+    transferActivity.on('progress', function (data) {
+      context.dispatch('updateJobProgress', data)
+    })
+    transferActivity.on('abort', function (data) {
+      context.dispatch('abortTransfer', data)
+    })
+  },
   getStatus: function (context, data) {
     const url = helper.getUrlFromDomain(context.getters.getDomain)
     const token = context.getters.getToken
@@ -144,19 +167,9 @@ export default {
     })
   },
   addJob: async function (context, data) {
-    const addTimer = setInterval(function () {
+    if (transferActivity) {
       transferActivity.addJob(data)
-      transferActivity.on('done', function (data) {
-        context.dispatch('doneTransfer', data)
-      })
-      transferActivity.on('progress', function (data) {
-        context.dispatch('updateJobProgress', data)
-      })
-      transferActivity.on('abort', function (data) {
-        context.dispatch('abortTransfer', data)
-      })
-      clearInterval(addTimer)
-    }, 2000)
+    }
   },
   prepareUpload: function (context, { options, path }) {
     // Get target working directory path where file will be created
@@ -171,14 +184,6 @@ export default {
       // Iterate through file selected
       options.list.forEach(({ file, selected, id }) => {
         if (selected) {
-          // Update bottom sheet transfer list
-          context.dispatch('updateDataTransferList', {
-            id: id,
-            type: 1,
-            file: file,
-            progress: 0,
-            done: false
-          })
           // Encode data into base64 string
           base64.encode(file.path, function (err, base64String) {
             if (err) {
@@ -225,20 +230,12 @@ export default {
     }
   },
   prepareDownload: function (context, { options }) {
-    console.log(options)
     if (options.list.length > 0) {
       const url = helper.getUrlFromDomain(context.getters.getDomain)
       const token = context.getters.getToken
       context.dispatch('closeDialog', { name: 'dataTransfer' })
       options.list.forEach(({ file, selected, id }) => {
         if (selected) {
-          context.dispatch('updateDataTransferList', {
-            id: id,
-            type: 0,
-            file: file,
-            progress: 0,
-            done: false
-          })
           context.dispatch('addJob', {
             url: url,
             token: token,

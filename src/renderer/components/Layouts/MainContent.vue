@@ -137,7 +137,17 @@ export default {
       self.deleteItem()
     })
     this.$root.$on('downloadItem', () => {
-      self.downloadItem()
+      const file = this.$electron.remote.dialog.showSaveDialog(
+        this.$electron.remote.getCurrentWindow(),
+        {
+          defaultPath: nodePath.basename(this.selectedItem)
+        }
+      )
+      if (file) {
+        self.downloadItem({
+          targetPath: file
+        })
+      }
     })
     this.$root.$on('openProperties', () => {
       self.openProperties()
@@ -178,9 +188,8 @@ export default {
         })
       }
     },
-    downloadItem: function () {
+    downloadItem: function ({ targetPath }) {
       const self = this
-      console.log(self.selectedItem)
       const itemIndex = self.selection.findIndex(x => x.path === self.selectedItem)
       if (itemIndex > -1) {
         const item = self.selection[itemIndex]
@@ -192,7 +201,8 @@ export default {
             size: item.file_size
           },
           id: uid,
-          selected: true
+          selected: true,
+          targetPath: targetPath
         }
         this.openDialog({
           name: 'dataTransfer',

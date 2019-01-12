@@ -33,11 +33,11 @@ AddBlock.prototype.startJob = function (object) {
   const index = self.runner.push(object) - 1
   self.runner[index].job = spawn(self.runner[index].data.type ? uploadHandler : downloadHandler)
   self.runner[index].job.send(self.runner[index].data)
-    .on('message', function (id) {
-      const currentIndex = self.runner.findIndex(x => x.data.transferId === id)
+    .on('message', function (transferId) {
+      const currentIndex = self.runner.findIndex(x => x.data.transferId === transferId)
       currentIndex > -1 && self.runner[currentIndex].job.kill()
       currentIndex > -1 && self.runner.splice(currentIndex, 1)
-      self.emit('done', { id })
+      self.emit('done', { transferId })
       if (self.runner.length < self.limitCount) {
         let poolItem = self.pool.pop()
         if (poolItem && poolItem.data) {
@@ -144,13 +144,15 @@ function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, do
   })
 }
 
-function downloadHandler ({ url, token, transferId, endpoint, file }, done, progress) {
+function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }, done, progress) {
   console.log('on entry downloadHandler')
-  console.log('thread entry id', transferId, file, endpoint, url, token)
+  console.log('thread entry id', transferId, file, endpoint, url, token, targetPath)
+  const fs = this.require('fs')
   const EventEmitter = this.require('events')
   const axios = this.require('axios')
   const events = new EventEmitter()
   events.setMaxListeners(100)
+  let fileHandle = null
 
   const totalSizeBytes = file.size // Total Size of the file in bytes
   let finishedSizeBytes = 0 // Size of downloaded the file in bytes
@@ -189,16 +191,31 @@ function downloadHandler ({ url, token, transferId, endpoint, file }, done, prog
       progress: parseFloat(fullProgress).toFixed(1),
       transferId: transferId
     })
+    fileHandle.write(data.data)
     if (data.bytes_read !== 0) {
       download({ offset: offset + 1 })
     } else {
       console.log('totalSizeBytes', totalSizeBytes)
       console.log('finishedSizeBytes', finishedSizeBytes)
+      fileHandle.end()
+      // Convert base64 file into original file
       done(transferId)
     }
   })
 
-  download({ offset: 0 })
+  // Create file at target path
+  fileHandle = fs.createWriteStream(
+    targetPath,
+    {
+      flags: 'w',
+      encoding: 'utf8'
+    }
+  )
+  if (fileHandle) {
+    download({ offset: 0 })
+  } else {
+    console.log('TransferActivity -> Unable to open file stream.')
+  }
 }
 
 export default AddBlock

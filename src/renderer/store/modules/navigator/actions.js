@@ -22,6 +22,7 @@ export default {
       })
     })
     transferActivity.on('done', function (data) {
+      console.log('doneTransfer', data)
       context.dispatch('doneTransfer', data)
     })
     transferActivity.on('progress', function (data) {
@@ -234,14 +235,14 @@ export default {
       const url = helper.getUrlFromDomain(context.getters.getDomain)
       const token = context.getters.getToken
       context.dispatch('closeDialog', { name: 'dataTransfer' })
-      options.list.forEach(({ file, selected, id }) => {
+      options.list.forEach(({ file, selected, id, targetPath }) => {
         if (selected) {
           context.dispatch('addJob', {
             url: url,
             token: token,
             transferId: id,
             file: file,
-            targetPath: '',
+            targetPath: targetPath,
             endpoint: appConfig.ENDPOINTS.read,
             type: 0
           })

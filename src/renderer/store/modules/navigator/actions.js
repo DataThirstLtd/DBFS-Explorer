@@ -9,27 +9,38 @@ const nodePath = require('path')
 const base64 = require('file-base64')
 
 export default {
-  initNav: function (context) {
-    transferActivity = new TransferActivity()
-    transferActivity.on('startJob', function ({ transferId, type, file }) {
-      context.dispatch('updateDataTransferList', {
-        transferId: transferId,
-        type: type,
-        file: file,
-        progress: 0,
-        done: false,
-        abort: false
+  initTransferActivity: function (context) {
+    context.dispatch('getSetting', {
+      key: 'thread-count'
+    }).then(({ value }) => {
+      transferActivity = new TransferActivity({
+        threadCount: value
       })
-    })
-    transferActivity.on('done', function (data) {
-      console.log('doneTransfer', data)
-      context.dispatch('doneTransfer', data)
-    })
-    transferActivity.on('progress', function (data) {
-      context.dispatch('updateJobProgress', data)
-    })
-    transferActivity.on('abort', function (data) {
-      context.dispatch('abortTransfer', data)
+      transferActivity.on('startJob', function ({ transferId }) {
+        context.dispatch('startListJob', {
+          transferId: transferId
+        })
+      })
+      transferActivity.on('waitListJob', function ({ transferId, type, file }) {
+        context.dispatch('waitListJob', {
+          transferId: transferId,
+          type: type,
+          file: file,
+          started: false,
+          progress: 0,
+          done: false,
+          abort: false
+        })
+      })
+      transferActivity.on('done', function (data) {
+        context.dispatch('doneTransfer', data)
+      })
+      transferActivity.on('progress', function (data) {
+        context.dispatch('updateJobProgress', data)
+      })
+      transferActivity.on('abort', function (data) {
+        context.dispatch('abortTransfer', data)
+      })
     })
   },
   getStatus: function (context, data) {
@@ -169,10 +180,11 @@ export default {
   },
   addJob: async function (context, data) {
     if (transferActivity) {
+      console.log(data.transferId)
       transferActivity.addJob(data)
     }
   },
-  prepareUpload: function (context, { options, path }) {
+  prepareUpload: function (context, { options }) {
     // Get target working directory path where file will be created
     const targetPath = context.getters.getCurrentPath
     // Iterate through files selected
@@ -183,7 +195,8 @@ export default {
       // Close file selection dialog
       context.dispatch('closeDialog', { name: 'dataTransfer' })
       // Iterate through file selected
-      options.list.forEach(({ file, selected, id }) => {
+      options.list.forEach(({ file, selected, transferId }, index) => {
+        console.log('prepareUpload id', transferId, index)
         if (selected) {
           // Encode data into base64 string
           base64.encode(file.path, function (err, base64String) {
@@ -217,7 +230,8 @@ export default {
                 token: token,
                 handle: data.handle,
                 chunks: chunks,
-                transferId: id,
+                transferId: transferId,
+                file: file,
                 targetPath: targetPath,
                 endpoint: appConfig.ENDPOINTS.addBlock,
                 type: 1
@@ -231,16 +245,18 @@ export default {
     }
   },
   prepareDownload: function (context, { options }) {
+    console.log(options)
     if (options.list.length > 0) {
       const url = helper.getUrlFromDomain(context.getters.getDomain)
       const token = context.getters.getToken
       context.dispatch('closeDialog', { name: 'dataTransfer' })
-      options.list.forEach(({ file, selected, id, targetPath }) => {
+      options.list.forEach(({ file, selected, transferId, targetPath }) => {
+        console.log('prepareDownload', { file, selected, transferId, targetPath })
         if (selected) {
           context.dispatch('addJob', {
             url: url,
             token: token,
-            transferId: id,
+            transferId: transferId,
             file: file,
             targetPath: targetPath,
             endpoint: appConfig.ENDPOINTS.read,

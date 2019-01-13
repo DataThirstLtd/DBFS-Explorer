@@ -39,7 +39,12 @@ export default {
         title: '',
         message: ''
       }
+    },
+    settings: {
+      active: false,
+      options: {}
     }
   },
-  drag: false
+  drag: false,
+  settings: []
 }

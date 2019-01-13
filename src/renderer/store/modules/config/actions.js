@@ -10,6 +10,7 @@ function registerForSqlReady (context) {
     } else {
       if (data.commit) {
         context.commit(data.commit, data.data)
+        data.commit === 'setSettings' && context.dispatch('initTransferActivity')
       }
     }
   })
@@ -17,6 +18,7 @@ function registerForSqlReady (context) {
 
 export default {
   init: function (context) {
+    console.log('init')
     // Set current running platform
     context.commit('setPlatform', platform())
     registerForSqlReady(context)
@@ -27,13 +29,47 @@ export default {
         table: 'user'
       }
     })
-    context.dispatch('initNav')
+  },
+  fetchSettings: function () {
+    ipcRenderer.send('sql', {
+      commit: 'setSettings',
+      name: 'readFullTable',
+      data: {
+        table: 'settings'
+      }
+    })
   },
   writeSql: function (context, data) {
     ipcRenderer.send('sql', {
       commit: null,
       name: 'writeTable',
       data: data
+    })
+  },
+  updateSettings: function (context, { key, value }) {
+    if (key) {
+      context.dispatch('writeSql', {
+        table: 'settings',
+        keys: 'key, value',
+        values: `"${key}", "${value || 'EMPTY'}"`
+      })
+      context.commit('setSettingsEntry', { key, value })
+    }
+  },
+  getSetting: function (context, { key }) {
+    return new Promise((resolve, reject) => {
+      const settings = context.getters.getSettings
+      if (settings && settings.constructor === [].constructor) {
+        const index = settings.findIndex(
+          x => x.key === key
+        )
+        if (index > -1) {
+          console.log('setting value', settings[index].value)
+          resolve({
+            value: parseInt(settings[index].value)
+          })
+        }
+      }
     })
   },
   showInfoSnackbar: function (context, data) {
@@ -70,7 +106,7 @@ export default {
     if (files.length > 0) {
       const listObject = []
       files.forEach((file) => {
-        listObject.push(Object.assign({ file: file, id: uniqid(), selected: true }))
+        listObject.push(Object.assign({ file: file, transferId: uniqid(), selected: true }))
       })
       context.dispatch('openDialog', {
         name: 'dataTransfer',
@@ -95,8 +131,11 @@ export default {
       }
     }
   },
-  updateDataTransferList: function (context, data) {
-    context.commit('setDataTransferList', data)
+  waitListJob: function (context, data) {
+    context.commit('setWaitListJob', data)
+  },
+  startListJob: function (context, data) {
+    context.commit('setStartWaitListJob', data)
   },
   doneTransfer: function (context, data) {
     context.commit('setDoneTransfer', data)

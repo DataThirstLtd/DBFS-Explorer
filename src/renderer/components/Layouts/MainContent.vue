@@ -206,7 +206,7 @@ export default {
               path: item.path,
               size: item.file_size
             },
-            id: uid,
+            transferId: uid,
             selected: true,
             targetPath: file
           }

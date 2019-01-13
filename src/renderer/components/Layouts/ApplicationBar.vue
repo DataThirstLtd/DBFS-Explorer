@@ -85,6 +85,14 @@ export default {
         ],
         right: [
           {
+            id: 'id-app-settings',
+            text: 'Settings',
+            icon: 'fa-cog',
+            callback: () => { this.openDialog({ name: 'settings' }) },
+            platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'Settings'
+          },
+          {
             id: 'id-app-about',
             text: 'About',
             icon: 'fa-star',

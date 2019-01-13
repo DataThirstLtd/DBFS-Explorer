@@ -62,9 +62,12 @@ export default {
       }
     }
   },
+  created () {
+    this.init()
+  },
   methods: {
     ...mapGetters(['getToken', 'getDomain', 'doesAuthDataExists']),
-    ...mapActions(['login', 'showInfoSnackbar']),
+    ...mapActions(['login', 'showInfoSnackbar', 'init']),
     onContinue: function () {
       const context = this
       context.loading = true

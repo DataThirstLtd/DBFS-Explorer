@@ -16,5 +16,8 @@ export default {
   },
   getDialogs: function (state) {
     return state.dialogs
+  },
+  getSettings: function (state) {
+    return state.settings
   }
 }

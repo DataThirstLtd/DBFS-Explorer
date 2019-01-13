@@ -4,14 +4,15 @@ const EventEmitter = require('events').EventEmitter
 const util = require('util')
 const spawn = require('threads').spawn
 
-function AddBlock () {
+function AddBlock ({ threadCount }) {
   if (!(this instanceof AddBlock)) {
     return new AddBlock({ threadCount: 2 })
   }
+  console.log('onTransferActivity', threadCount)
   this.setMaxListeners(100)
   this.pool = []
   this.runner = []
-  this.limitCount = 2
+  this.limitCount = threadCount
 }
 
 util.inherits(AddBlock, EventEmitter)
@@ -22,39 +23,49 @@ AddBlock.prototype.addJob = function (obj) {
     job: null,
     data: obj // Thread data object
   })
-  if (self.runner.length < self.limitCount) {
-    self.startJob(self.pool.pop())
-  }
+  self.emit('waitListJob', obj)
+  console.log('pool length', self.pool.length, 'runner length', self.runner.length)
+  const waitTimer = setInterval(() => {
+    if (self.runner.length < self.limitCount) {
+      self.startJob(self.pool.pop())
+    }
+    clearInterval(waitTimer)
+  }, 5000)
 }
 
 AddBlock.prototype.startJob = function (object) {
-  const self = this
-  self.emit('startJob', object.data)
-  const index = self.runner.push(object) - 1
-  self.runner[index].job = spawn(self.runner[index].data.type ? uploadHandler : downloadHandler)
-  self.runner[index].job.send(self.runner[index].data)
-    .on('message', function (transferId) {
-      const currentIndex = self.runner.findIndex(x => x.data.transferId === transferId)
-      currentIndex > -1 && self.runner[currentIndex].job.kill()
-      currentIndex > -1 && self.runner.splice(currentIndex, 1)
-      self.emit('done', { transferId })
-      if (self.runner.length < self.limitCount) {
-        let poolItem = self.pool.pop()
-        if (poolItem && poolItem.data) {
-          self.startJob(self.pool.pop())
+  if (object && object.data) {
+    const self = this
+    self.emit('startJob', object.data)
+    console.log('pool length', self.pool.length, 'runner length', self.runner.length)
+    const index = self.runner.push(object) - 1
+    self.runner[index].job = spawn(self.runner[index].data.type ? uploadHandler : downloadHandler)
+    self.runner[index].job.send(self.runner[index].data)
+      .on('message', function (transferId) {
+        const currentIndex = self.runner.findIndex(x => x.data.transferId === transferId)
+        currentIndex > -1 && self.runner[currentIndex].job.kill()
+        currentIndex > -1 && self.runner.splice(currentIndex, 1)
+        self.emit('done', { transferId })
+        if (self.runner.length < self.limitCount) {
+          let poolItem = self.pool.pop()
+          console.log('starting new job: pre-condition', poolItem)
+          if (poolItem && poolItem.data) {
+            console.log('starting new job: post-condition')
+            self.startJob(poolItem)
+          }
         }
-      }
-    })
-    .on('error', function (error) {
-      console.log('error at thread', error)
-    })
-    .on('progress', function (progress) {
-      // Update progress from thread. Emit job 'progress' event
-      self.emit('progress', progress)
-    })
-    .on('exit', function () {
-      console.log(`Worker has been terminated`)
-    })
+      })
+      .on('error', function (error) {
+        console.log('error at thread', error)
+      })
+      .on('progress', function (progress) {
+        // Update progress from thread. Emit job 'progress' event
+        self.emit('progress', progress)
+      })
+      .on('exit', function () {
+        console.log(`Worker has been terminated`)
+      })
+  }
 }
 
 AddBlock.prototype.cancelJob = function ({ transferId }) {
@@ -88,10 +99,7 @@ AddBlock.prototype.cancelJob = function ({ transferId }) {
 }
 
 function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, done, progress) {
-  console.log('on entry uploadHandler')
-  if (!(chunks && chunks.constructor === [].constructor)) {
-    done()
-  }
+  console.log('on entry uploadHandler', transferId)
   const axios = this.require('axios')
   const forEach = this.require('async-foreach').forEach
   const chunksLength = chunks.length - 1
@@ -115,7 +123,7 @@ function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, do
         console.log(fullProgress)
         progress({
           progress: parseFloat(fullProgress).toFixed(1),
-          id: transferId
+          transferId: transferId
         })
       }
       asyncDone()

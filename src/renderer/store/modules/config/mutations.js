@@ -2,6 +2,19 @@ export default {
   setPlatform: function (state, platform) {
     state.platform = platform
   },
+  setSettings: function (state, data) {
+    if (data && data.constructor === [].constructor) {
+      state.settings = Object.assign([], data)
+    }
+  },
+  setSettingsEntry: function (state, { key, value }) {
+    const index = state.settings.findIndex(
+      x => x.key === key
+    )
+    if (index > -1) {
+      state.settings[index].value = value
+    }
+  },
   setInfoSnackbar: function (state, data) {
     state.info.snackbar.title = data.title || ''
     state.info.snackbar.message = data.message || ''
@@ -48,7 +61,13 @@ export default {
       state.dialogs.dataTransfer.options.list[index].selected = true
     }
   },
-  setDataTransferList: function (state, data) {
+  setStartWaitListJob: function (state, { transferId }) {
+    const targetIndex = state.dialogs.transferState.list.findIndex(x => x.transferId === transferId)
+    if (targetIndex > -1) {
+      state.dialogs.transferState.list[targetIndex].started = true
+    }
+  },
+  setWaitListJob: function (state, data) {
     state.dialogs.transferState.list.push(data)
   },
   setDoneTransfer: function (state, { transferId }) {

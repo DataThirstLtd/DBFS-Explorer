@@ -13,6 +13,7 @@
     <delete-selected />
     <data-transfer />
     <transfer-state />
+    <app-settings />
     <!-- Misc -->
     <drag />
     <overlay />
@@ -34,6 +35,7 @@
   import DeleteSelected from './Dialogs/DeleteSelected'
   import DataTransfer from './Dialogs/DataTransfer'
   import TransferState from './Dialogs/TransferState'
+  import AppSettings from './Dialogs/AppSettings'
   // Import Other Components
   import Drag from './Misc/Drag'
   import Overlay from './Misc/Overlay'
@@ -48,6 +50,7 @@
       DeleteSelected,
       DataTransfer,
       TransferState,
+      AppSettings,
       Drag,
       Overlay
     },
@@ -75,6 +78,7 @@
           this.init()
         }
       }
+      this.fetchSettings()
     },
     methods: {
       ...mapGetters(['doesAuthDataExists']),
@@ -82,6 +86,7 @@
         'init',
         'login',
         'fetchRootFs',
+        'fetchSettings',
         'clearSelection',
         'fetchSelection',
         'clearItem',

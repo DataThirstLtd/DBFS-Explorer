@@ -21,7 +21,7 @@
             </v-icon>
             <v-progress-circular
               v-else
-              :indeterminate="item.progress === 0"
+              :indeterminate="item.progress === 0 && item.started"
               :width="10"
               :size="150"
               :value="item.progress"
@@ -45,10 +45,14 @@
             <v-list-tile-sub-title
               v-html="item.file.path" />
             <v-progress-linear
-              v-if="!item.abort"
+              v-if="!item.abort && item.started"
               :value="item.progress"
               :indeterminate="item.progress === 0">
             </v-progress-linear>
+            <v-list-tile-sub-title
+              v-else>
+              Waiting ...
+            </v-list-tile-sub-title> 
           </v-list-tile-content>
           <v-list-tile-action>
             <v-btn

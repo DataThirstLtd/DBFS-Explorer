@@ -17,8 +17,15 @@ NodeSqlite3.prototype.init = function (callback) {
     } else {
       context.db = db
       context.db.serialize(() => {
+        // Create required SQL tables before app renders.
         context.db.run(
           `CREATE TABLE if not exists user(
+            key TEXT,
+            value TEXT
+          )`
+        )
+        context.db.run(
+          `CREATE TABLE if not exists settings(
             key TEXT,
             value TEXT
           )`

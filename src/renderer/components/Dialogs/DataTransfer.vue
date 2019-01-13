@@ -122,8 +122,7 @@ export default {
     onContinue: function () {
       if ((this.options && this.options.type > -1) && this.options.type === 1) {
         this.prepareUpload({
-          options: this.options,
-          path: this.path
+          options: this.options
         })
       } else {
         this.prepareDownload({

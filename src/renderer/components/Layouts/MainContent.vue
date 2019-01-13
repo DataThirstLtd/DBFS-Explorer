@@ -24,11 +24,16 @@
           icon
           light
           @click="item.callback">
-          <v-icon
-            :color="item.color || null"
-            small>
-            {{ item.icon }}
-          </v-icon>
+          <v-tooltip
+            bottom>
+            <v-icon
+              :color="item.color || null"
+              slot="activator"
+              small>
+              {{ item.icon }}
+            </v-icon>
+            <span>{{ item.tooltip }}</span>
+          </v-tooltip>
         </v-btn>
       </div>
     </v-toolbar>
@@ -85,6 +90,7 @@ export default {
             icon: 'fa-arrow-down',
             callback: this.downloadItem,
             platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'Download Selected File',
             hidden: true
           },
           {
@@ -94,6 +100,7 @@ export default {
             icon: 'fa-trash',
             callback: this.deleteItem,
             platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'Delete Selected File',
             hidden: true
           },
           {
@@ -103,6 +110,7 @@ export default {
             icon: 'fa-info',
             callback: this.openProperties,
             platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'View Properties of Selected File',
             hidden: true
           },
           {
@@ -116,6 +124,7 @@ export default {
               })
             },
             platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'Create a new folder',
             hidden: false
           }
         ]

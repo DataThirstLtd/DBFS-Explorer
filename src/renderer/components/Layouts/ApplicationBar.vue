@@ -10,12 +10,20 @@
       </span>
       <div
         v-if="routeName !== 'auth'">
-        <v-btn
-          v-for="item in buttons.left" small
-          :key="item.id" @click="item.callback"
-          icon light class="drag-safe btn">
-          <v-icon small>{{ item.icon }}</v-icon>
-        </v-btn>
+          <v-btn
+            v-for="item in buttons.left" small
+            :key="item.id" @click="item.callback"
+            icon light class="drag-safe btn">
+            <v-tooltip
+              bottom>
+              <v-icon
+                slot="activator"
+                small>
+                  {{ item.icon }}
+                </v-icon>
+              <span>{{ item.tooltip }}</span>
+            </v-tooltip>
+          </v-btn>
       </div>
       <v-spacer />
       <div
@@ -28,7 +36,15 @@
           icon
           light
           @click="item.callback">
-          <v-icon small>{{ item.icon }}</v-icon>
+          <v-tooltip
+            bottom>
+            <v-icon
+              slot="activator"
+              small>
+                {{ item.icon }}
+              </v-icon>
+            <span>{{ item.tooltip }}</span>
+          </v-tooltip>
         </v-btn>
       </div>
     </v-layout>
@@ -58,21 +74,38 @@ export default {
     return {
       buttons: {
         left: [
-          { id: 'id-app-connect', text: 'Connect', icon: 'fa-cloud', callback: this.connect, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-download', text: 'Download', icon: 'fa-download', callback: () => { this.toggleDialog({ name: 'transferState' }) }, platforms: ['darwin', 'win32', 'linux'] }
+          {
+            id: 'id-app-download',
+            text: 'Download',
+            icon: 'fa-download',
+            callback: () => { this.toggleDialog({ name: 'transferState' }) },
+            platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'Download/Upload Activity'
+          }
         ],
         right: [
-          { id: 'id-app-about', text: 'About', icon: 'fa-star', callback: () => { this.openDialog({ name: 'about' }) }, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-logout', text: 'Logout', icon: 'fa-power-off', callback: () => { console.log(this.isLoggedIn()) }, platforms: ['darwin', 'win32', 'linux'] }
+          {
+            id: 'id-app-about',
+            text: 'About',
+            icon: 'fa-star',
+            callback: () => { this.openDialog({ name: 'about' }) },
+            platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'About'
+          },
+          {
+            id: 'id-app-logout',
+            text: 'Logout',
+            icon: 'fa-power-off',
+            callback: () => { console.log(this.isLoggedIn()) },
+            platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'Logout'
+          }
         ]
       }
     }
   },
   methods: {
     ...mapActions(['openDialog', 'toggleDialog']),
-    connect: function () {
-      console.log('on Click Connect')
-    },
     maximizeApp: function () {
       this.$electron.remote.getCurrentWindow().maximize()
     },

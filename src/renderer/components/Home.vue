@@ -27,7 +27,6 @@
   import helper from '@/assets/helper.js'
   // Import appConfig from '@/app.config.js'
   import Sidebar from './Layouts/Sidebar'
-  import CommandBar from './Layouts/CommandBar'
   import MainContent from './Layouts/MainContent'
   // Import dialogs
   import Properties from './Dialogs/Properties'
@@ -43,7 +42,6 @@
     name: 'home',
     components: {
       Sidebar,
-      CommandBar,
       MainContent,
       Properties,
       NewFolder,

@@ -10,9 +10,11 @@ const base64 = require('file-base64')
 
 export default {
   initTransferActivity: function (context) {
+    console.log('initTransferActivity')
     context.dispatch('getSetting', {
       key: 'thread-count'
     }).then(({ value }) => {
+      console.log(value)
       transferActivity = new TransferActivity({
         threadCount: value
       })

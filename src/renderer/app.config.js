@@ -1,3 +1,6 @@
+
+const DEFAULT_THREAD_COUNT = 2
+
 export default {
   ENDPOINTS: {
     addBlock: 'api/2.0/dbfs/add-block',
@@ -11,5 +14,8 @@ export default {
     put: 'api/2.0/dbfs/put',
     read: 'api/2.0/dbfs/read'
   },
-  defaultThreadCount: 4
+  defaultThreadCount: DEFAULT_THREAD_COUNT,
+  defaultSettings: [
+    { key: 'thread-count', value: DEFAULT_THREAD_COUNT }
+  ]
 }

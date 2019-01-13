@@ -30,7 +30,7 @@
         v-for="item in buttons.right"
         :key="item.id">
         <v-btn
-          v-if="checkPlatform(item)"
+          v-if="checkPlatform(item) && hiddenOnPage(item)"
           class="drag-safe btn"
           small
           icon
@@ -80,7 +80,8 @@ export default {
             icon: 'fa-download',
             callback: () => { this.toggleDialog({ name: 'transferState' }) },
             platforms: ['darwin', 'win32', 'linux'],
-            tooltip: 'Download/Upload Activity'
+            tooltip: 'Download/Upload Activity',
+            hiddenOnPages: []
           }
         ],
         right: [
@@ -90,7 +91,8 @@ export default {
             icon: 'fa-cog',
             callback: () => { this.openDialog({ name: 'settings' }) },
             platforms: ['darwin', 'win32', 'linux'],
-            tooltip: 'Settings'
+            tooltip: 'Settings',
+            hiddenOnPages: ['auth']
           },
           {
             id: 'id-app-about',
@@ -98,8 +100,9 @@ export default {
             icon: 'fa-star',
             callback: () => { this.openDialog({ name: 'about' }) },
             platforms: ['darwin', 'win32', 'linux'],
-            tooltip: 'About'
-          },
+            tooltip: 'About',
+            hiddenOnPages: []
+          }/* ,
           {
             id: 'id-app-logout',
             text: 'Logout',
@@ -107,7 +110,7 @@ export default {
             callback: () => { console.log(this.isLoggedIn()) },
             platforms: ['darwin', 'win32', 'linux'],
             tooltip: 'Logout'
-          }
+          } */
         ]
       }
     }
@@ -125,6 +128,17 @@ export default {
     },
     checkPlatform: function (item) {
       return (item.platforms.findIndex(x => x === this.getPlatform()) > -1)
+    },
+    hiddenOnPage: function (item) {
+      if (item && item.hiddenOnPages &&
+      item.hiddenOnPages.constructor === [].constructor &&
+      item.hiddenOnPages.length > 0) {
+        console.log(item)
+        if (item.hiddenOnPages.indexOf(this.routeName) > -1) {
+          return false
+        }
+      }
+      return true
     }
   }
 }

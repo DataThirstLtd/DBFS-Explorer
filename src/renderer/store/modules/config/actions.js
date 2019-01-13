@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron'
 import { platform } from 'os'
+import appConfig from '@/app.config.js'
 
 const uniqid = require('uniqid')
 
@@ -60,13 +61,29 @@ export default {
     return new Promise((resolve, reject) => {
       const settings = context.getters.getSettings
       if (settings && settings.constructor === [].constructor) {
-        const index = settings.findIndex(
-          x => x.key === key
-        )
-        if (index > -1) {
-          console.log('setting value', settings[index].value)
-          resolve({
-            value: parseInt(settings[index].value)
+        if (settings.length > 0) {
+          const index = settings.findIndex(
+            x => x.key === key
+          )
+          if (index > -1) {
+            resolve({
+              value: parseInt(settings[index].value)
+            })
+          } else {
+            // Resolve default value
+            resolve({
+              value: appConfig.defaultThreadCount
+            })
+          }
+        } else {
+          // Settings not found in the database
+          // Create new settings from app.config.js
+          console.log('DEBUG:111')
+          const settings = Object.assign([], appConfig.defaultSettings)
+          settings.forEach((item) => {
+            if (item && item.constructor === {}.constructor) {
+              item.key && context.dispatch('updateSettings', item)
+            }
           })
         }
       }

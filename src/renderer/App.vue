@@ -7,6 +7,8 @@
         :routeName="routeName"/>
       <router-view></router-view>
       <info-snackbar />
+      <about />
+      <alert />
     </v-app>
   </div>
 </template>
@@ -15,6 +17,8 @@
   import { mapActions, mapGetters } from 'vuex'
   import ApplicationBar from '@/components/Layouts/ApplicationBar'
   import InfoSnackbar from '@/components/Misc/InfoSnackbar'
+  import About from '@/components/Dialogs/About'
+  import Alert from '@/components/Dialogs/Alert'
 
   export default {
     name: 'dbfs_explorer',
@@ -25,7 +29,9 @@
     },
     components: {
       ApplicationBar,
-      InfoSnackbar
+      InfoSnackbar,
+      About,
+      Alert
     },
     methods: {
       ...mapActions(['init']),
@@ -35,9 +41,6 @@
       $route (to, from) {
         this.routeName = to.name
       }
-    },
-    created () {
-      this.init()
     },
     mounted () {
       document.addEventListener('dragover', event => event.preventDefault())

@@ -2,6 +2,12 @@ export default {
   setRootFs: function (state, data) {
     state.rootFs = data
   },
+  setPrevPath: function (state, path) {
+    state.prevPath = path
+  },
+  setCurrentPath: function (state, path) {
+    state.currentPath = path
+  },
   setSelectionEmpty: function (state) {
     state.selection = []
   },

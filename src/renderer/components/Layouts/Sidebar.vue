@@ -14,24 +14,32 @@
           Loading ...
         </span>
       </div>
-      <v-treeview
-        v-else
-        :items="rootFs"
-        item-key="path"
-        open-on-click>
-        <template slot="prepend" slot-scope="{ item, open, leaf }">
-          <div @click="onClickTreeItem(item)" class="tree-item">
-            <div class="icon">
-              <v-icon small>
-                {{ item.is_dir ? 'fa-folder' : 'fa-file' }}
-              </v-icon>
+      <div
+        v-else>
+        <v-btn
+          icon
+          color="#F2F2F2"
+          @click="onClickTreeItem({ path: '/', is_dir: true })">
+          /
+        </v-btn>
+        <v-treeview
+          :items="rootFs"
+          item-key="path"
+          open-on-click>
+          <template slot="prepend" slot-scope="{ item, open, leaf }">
+            <div @click="onClickTreeItem(item)" class="tree-item">
+              <div class="icon">
+                <v-icon small>
+                  {{ item.is_dir ? 'fa-folder' : 'fa-file' }}
+                </v-icon>
+              </div>
+              <div class="path">
+                {{ item.path }}
+              </div>
             </div>
-            <div class="path">
-              {{ item.path }}
-            </div>
-          </div>
-        </template>
-      </v-treeview>
+          </template>
+        </v-treeview>
+      </div>
     </div>
   </div>
 </template>

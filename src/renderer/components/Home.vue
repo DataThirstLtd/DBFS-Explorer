@@ -8,8 +8,12 @@
     <sidebar :rootFs="rootFs"/>
     <main-content />
     <!-- Dialogs -->
+    <properties />
     <new-folder />
     <delete-selected />
+    <data-transfer />
+    <transfer-state />
+    <app-settings />
     <!-- Misc -->
     <drag />
     <overlay />
@@ -24,11 +28,14 @@
   import helper from '@/assets/helper.js'
   // Import appConfig from '@/app.config.js'
   import Sidebar from './Layouts/Sidebar'
-  import CommandBar from './Layouts/CommandBar'
   import MainContent from './Layouts/MainContent'
   // Import dialogs
+  import Properties from './Dialogs/Properties'
   import NewFolder from './Dialogs/NewFolder'
   import DeleteSelected from './Dialogs/DeleteSelected'
+  import DataTransfer from './Dialogs/DataTransfer'
+  import TransferState from './Dialogs/TransferState'
+  import AppSettings from './Dialogs/AppSettings'
   // Import Other Components
   import Drag from './Misc/Drag'
   import Overlay from './Misc/Overlay'
@@ -37,10 +44,13 @@
     name: 'home',
     components: {
       Sidebar,
-      CommandBar,
       MainContent,
+      Properties,
       NewFolder,
       DeleteSelected,
+      DataTransfer,
+      TransferState,
+      AppSettings,
       Drag,
       Overlay
     },
@@ -68,6 +78,7 @@
           this.init()
         }
       }
+      this.fetchSettings()
     },
     methods: {
       ...mapGetters(['doesAuthDataExists']),
@@ -75,6 +86,7 @@
         'init',
         'login',
         'fetchRootFs',
+        'fetchSettings',
         'clearSelection',
         'fetchSelection',
         'clearItem',

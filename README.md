@@ -2,6 +2,8 @@
 
 > DBFS EXPLORER
 
+![Image of Yaktocat](screenshots/DBFS_explorer_context_menu.png)
+
 #### Build Setup
 
 ``` bash

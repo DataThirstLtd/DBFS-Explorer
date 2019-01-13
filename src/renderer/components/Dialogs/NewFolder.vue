@@ -16,6 +16,7 @@
           </v-text-field>
           <v-text-field
             v-model="folderName"
+            autofocus
             label="Name of the folder">
           </v-text-field>
         </v-card-text>

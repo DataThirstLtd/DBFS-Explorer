@@ -8,6 +8,12 @@ export default {
   },
   loggedIn: false,
   dialogs: {
+    about: {
+      active: false
+    },
+    properties: {
+      active: false
+    },
     delete: {
       active: false,
       options: null
@@ -15,7 +21,30 @@ export default {
     newFolder: {
       active: false,
       options: null
+    },
+    dataTransfer: {
+      active: false,
+      options: {
+        list: [],
+        type: -1
+      }
+    },
+    transferState: {
+      active: false,
+      list: []
+    },
+    alert: {
+      active: false,
+      options: {
+        title: '',
+        message: ''
+      }
+    },
+    settings: {
+      active: false,
+      options: {}
     }
   },
-  drag: false
+  drag: false,
+  settings: []
 }

@@ -2,6 +2,19 @@ export default {
   setPlatform: function (state, platform) {
     state.platform = platform
   },
+  setSettings: function (state, data) {
+    if (data && data.constructor === [].constructor) {
+      state.settings = Object.assign([], data)
+    }
+  },
+  setSettingsEntry: function (state, { key, value }) {
+    const index = state.settings.findIndex(
+      x => x.key === key
+    )
+    if (index > -1) {
+      state.settings[index].value = value
+    }
+  },
   setInfoSnackbar: function (state, data) {
     state.info.snackbar.title = data.title || ''
     state.info.snackbar.message = data.message || ''
@@ -31,5 +44,48 @@ export default {
     if (state.drag) {
       state.drag = false
     }
+  },
+  setInertDataTransferItem: function (state, { index }) {
+    if (
+      state.dialogs.dataTransfer.options.list.length > 0 &&
+      state.dialogs.dataTransfer.options.list[index].selected
+    ) {
+      state.dialogs.dataTransfer.options.list[index].selected = false
+    }
+  },
+  setActiveDataTransferItem: function (state, { index }) {
+    if (
+      state.dialogs.dataTransfer.options.list.length > 0 &&
+      !state.dialogs.dataTransfer.options.list[index].selected
+    ) {
+      state.dialogs.dataTransfer.options.list[index].selected = true
+    }
+  },
+  setStartWaitListJob: function (state, { transferId }) {
+    const targetIndex = state.dialogs.transferState.list.findIndex(x => x.transferId === transferId)
+    if (targetIndex > -1) {
+      state.dialogs.transferState.list[targetIndex].started = true
+    }
+  },
+  setWaitListJob: function (state, data) {
+    state.dialogs.transferState.list.push(data)
+  },
+  setDoneTransfer: function (state, { transferId }) {
+    const list = Object.assign([], state.dialogs.transferState.list)
+    const targetIndex = list.findIndex(x => x.transferId === transferId)
+    targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].done = true)
+  },
+  setAbortTransfer: function (state, { transferId }) {
+    const list = Object.assign([], state.dialogs.transferState.list)
+    const targetIndex = list.findIndex(x => x.transferId === transferId)
+    console.log('setAbortTransfer', targetIndex)
+    targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].abort = true)
+    console.log('setAbortTransfer abort::', state.dialogs.transferState.list[targetIndex].abort)
+  },
+  setJobProgress: function (state, { transferId, progress }) {
+    console.log(transferId, progress)
+    const list = Object.assign([], state.dialogs.transferState.list)
+    const targetIndex = list.findIndex(x => x.transferId === transferId)
+    targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].progress = progress)
   }
 }

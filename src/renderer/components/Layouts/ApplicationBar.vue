@@ -8,25 +8,52 @@
       <span style="padding: 0 10px">
         {{ routeName }}
       </span>
-      <v-btn v-if="routeName !== 'auth'"
-        v-for="item in buttons.left" small
-        :key="item.id" @click="item.callback"
-        icon light class="drag-safe btn">
-        <v-icon small>{{ item.icon }}</v-icon>
-      </v-btn>
+      <div
+        v-if="routeName !== 'auth'">
+          <v-btn
+            v-for="item in buttons.left" small
+            :key="item.id" @click="item.callback"
+            icon light class="drag-safe btn">
+            <v-tooltip
+              bottom>
+              <v-icon
+                slot="activator"
+                small>
+                  {{ item.icon }}
+                </v-icon>
+              <span>{{ item.tooltip }}</span>
+            </v-tooltip>
+          </v-btn>
+      </div>
       <v-spacer />
-      <v-btn
-        v-for="item in buttons.right" small
-        :key="item.id" @click="item.callback"
-        v-if="(item.platforms.findIndex(x => x === getPlatform()) > -1)"
-        icon light class="drag-safe btn">
-        <v-icon small>{{ item.icon }}</v-icon>
-      </v-btn>
+      <div
+        v-for="item in buttons.right"
+        :key="item.id">
+        <v-btn
+          v-if="checkPlatform(item) && hiddenOnPage(item)"
+          class="drag-safe btn"
+          small
+          icon
+          light
+          @click="item.callback">
+          <v-tooltip
+            bottom>
+            <v-icon
+              slot="activator"
+              small>
+                {{ item.icon }}
+              </v-icon>
+            <span>{{ item.tooltip }}</span>
+          </v-tooltip>
+        </v-btn>
+      </div>
     </v-layout>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'application-bar',
   props: {
@@ -47,20 +74,49 @@ export default {
     return {
       buttons: {
         left: [
-          { id: 'id-app-connect', text: 'Connect', icon: 'fa-cloud', callback: this.connect, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-download', text: 'Download', icon: 'fa-download', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] }
+          {
+            id: 'id-app-download',
+            text: 'Download',
+            icon: 'fa-download',
+            callback: () => { this.toggleDialog({ name: 'transferState' }) },
+            platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'Download/Upload Activity',
+            hiddenOnPages: []
+          }
         ],
         right: [
-          { id: 'id-app-about', text: 'About', icon: 'fa-star', callback: () => {}, platforms: ['darwin', 'win32', 'linux'] },
-          { id: 'id-app-logout', text: 'Logout', icon: 'fa-power-off', callback: () => { console.log(this.isLoggedIn()) }, platforms: ['darwin', 'win32', 'linux'] }
+          {
+            id: 'id-app-settings',
+            text: 'Settings',
+            icon: 'fa-cog',
+            callback: () => { this.openDialog({ name: 'settings' }) },
+            platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'Settings',
+            hiddenOnPages: ['auth']
+          },
+          {
+            id: 'id-app-about',
+            text: 'About',
+            icon: 'fa-star',
+            callback: () => { this.openDialog({ name: 'about' }) },
+            platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'About',
+            hiddenOnPages: []
+          }/* ,
+          {
+            id: 'id-app-logout',
+            text: 'Logout',
+            icon: 'fa-power-off',
+            callback: () => { console.log(this.isLoggedIn()) },
+            platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'Logout'
+          } */
         ]
       }
     }
   },
   methods: {
-    connect: function () {
-      console.log('on Click Connect')
-    },
+    ...mapActions(['openDialog', 'toggleDialog']),
     maximizeApp: function () {
       this.$electron.remote.getCurrentWindow().maximize()
     },
@@ -69,6 +125,20 @@ export default {
     },
     closeApp: function () {
       this.$electron.remote.getCurrentWindow().close()
+    },
+    checkPlatform: function (item) {
+      return (item.platforms.findIndex(x => x === this.getPlatform()) > -1)
+    },
+    hiddenOnPage: function (item) {
+      if (item && item.hiddenOnPages &&
+      item.hiddenOnPages.constructor === [].constructor &&
+      item.hiddenOnPages.length > 0) {
+        console.log(item)
+        if (item.hiddenOnPages.indexOf(this.routeName) > -1) {
+          return false
+        }
+      }
+      return true
     }
   }
 }

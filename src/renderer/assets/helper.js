@@ -1,4 +1,8 @@
+'use strict'
+
+const nodePath = require('path')
 const isUrl = require('is-url')
+const filesize = require('filesize')
 
 export default {
   filterDomainFromUrl: function (data) {
@@ -32,5 +36,16 @@ export default {
       return true
     }
     return element.parentNode && this.hasSomeParentTheClass(element.parentNode, classname)
+  },
+  getReadableFileSize: function ({ size }) {
+    if (size) {
+      return filesize(size, {base: 10})
+    }
+  },
+  getParentPath: function (data) {
+    if (data && 'path' in data && data.path) {
+      return data.path.split(nodePath.basename(data.path))[0] || data.path
+    }
+    return ''
   }
 }

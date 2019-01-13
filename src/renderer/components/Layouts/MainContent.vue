@@ -146,17 +146,7 @@ export default {
       self.deleteItem()
     })
     this.$root.$on('downloadItem', () => {
-      const file = this.$electron.remote.dialog.showSaveDialog(
-        this.$electron.remote.getCurrentWindow(),
-        {
-          defaultPath: nodePath.basename(this.selectedItem)
-        }
-      )
-      if (file) {
-        self.downloadItem({
-          targetPath: file
-        })
-      }
+      self.downloadItem()
     })
     this.$root.$on('openProperties', () => {
       self.openProperties()
@@ -197,29 +187,37 @@ export default {
         })
       }
     },
-    downloadItem: function ({ targetPath }) {
+    downloadItem: function () {
       const self = this
       const itemIndex = self.selection.findIndex(x => x.path === self.selectedItem)
-      if (itemIndex > -1) {
-        const item = self.selection[itemIndex]
-        const uid = uniqid()
-        const transferObject = {
-          file: {
-            name: nodePath.basename(item.path),
-            path: item.path,
-            size: item.file_size
-          },
-          id: uid,
-          selected: true,
-          targetPath: targetPath
-        }
-        this.openDialog({
-          name: 'dataTransfer',
-          options: {
-            list: [ transferObject ],
-            type: 0
+      if (itemIndex > -1 && !self.selection[itemIndex].is_dir) {
+        const file = this.$electron.remote.dialog.showSaveDialog(
+          this.$electron.remote.getCurrentWindow(),
+          {
+            defaultPath: nodePath.basename(this.selectedItem)
           }
-        })
+        )
+        if (file) {
+          const item = self.selection[itemIndex]
+          const uid = uniqid()
+          const transferObject = {
+            file: {
+              name: nodePath.basename(item.path),
+              path: item.path,
+              size: item.file_size
+            },
+            id: uid,
+            selected: true,
+            targetPath: file
+          }
+          this.openDialog({
+            name: 'dataTransfer',
+            options: {
+              list: [ transferObject ],
+              type: 0
+            }
+          })
+        }
       }
     },
     openProperties: function () {

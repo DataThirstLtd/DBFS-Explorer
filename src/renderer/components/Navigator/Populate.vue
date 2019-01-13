@@ -35,7 +35,7 @@
             v-for="(menuItem, index) in contextMenu.menu"
             :key="index"
             @click="menuItem.callback"
-            :disabled="menuItem.id === 'id-context-nav-open' && !item.is_dir">
+            :disabled="isMenuDisabled(menuItem)">
             <v-list-tile-action>
               <v-icon
                 :color="menuItem.color || null"
@@ -125,6 +125,14 @@ export default {
       'setCurrentPath',
       'openDialog'
     ]),
+    isMenuDisabled: function (menuItem) {
+      return Boolean(
+        (!this.item.is_dir &&
+        menuItem.id === 'id-context-nav-open') ||
+        (this.item.is_dir &&
+        menuItem.id === 'id-context-nav-download')
+      )
+    },
     onOpenItem: function () {
       if (this.item.is_dir) {
         this.setPrevPath({

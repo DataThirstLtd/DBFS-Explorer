@@ -26,7 +26,8 @@
    */
   import { mapState, mapGetters, mapActions } from 'vuex'
   import helper from '@/assets/helper.js'
-  // Import appConfig from '@/app.config.js'
+  import appConfig from '@/app.config.js'
+
   import Sidebar from './Layouts/Sidebar'
   import MainContent from './Layouts/MainContent'
   // Import dialogs
@@ -59,18 +60,39 @@
       domain: state => state.auth.domain,
       rootFs: state => state.navigator.rootFs,
       selectedItem: state => state.navigator.selectedItem,
+      settings: state => state.config.settings,
       onInit () {
         return Boolean(this.token && this.domain)
+      },
+      onSettingsChange () {
+        return this.settings
       }
     }),
     watch: {
-      onInit (state) {
+      onInit: function (state) {
+        console.log('onInit', state)
         if (state) {
           this.initHome()
         }
+      },
+      onSettingsChange: function (settings) {
+        console.log('onSettingsChange', settings)
+        if (settings && settings.constructor === [].constructor) {
+          // If thread-count in settings
+          const targetIndex = settings.findIndex(x => x.key === 'thread-count')
+          if (targetIndex > -1) {
+            this.initTransferActivity({
+              threadCount: settings[targetIndex].value || appConfig.defaultThreadCount
+            })
+          } else {
+            this.initTransferActivity({
+              threadCount: appConfig.defaultThreadCount
+            })
+          }
+        }
       }
     },
-    created () {
+    mounted () {
       if (this.rootFs.length < 1) {
         if (this.domain && this.token) {
           this.initHome()
@@ -92,7 +114,8 @@
         'clearItem',
         'showDrag',
         'hideDrag',
-        'dropFile'
+        'dropFile',
+        'initTransferActivity'
       ]),
       initHome: function () {
         const context = this

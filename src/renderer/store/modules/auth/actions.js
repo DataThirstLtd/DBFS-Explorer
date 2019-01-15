@@ -25,8 +25,12 @@ export default {
           keys: 'key, value',
           values: `"token", "${token}"`
         })
+        context.dispatch('updateCredentials', { domain, token })
         context.dispatch('authState', true)
       }
     })
+  },
+  updateCredentials: function (context, data) {
+    context.commit('setCredentials', data)
   }
 }

@@ -13,6 +13,8 @@ export default {
     )
     if (index > -1) {
       state.settings[index].value = value
+    } else {
+      state.settings.push({ key, value })
     }
   },
   setInfoSnackbar: function (state, data) {

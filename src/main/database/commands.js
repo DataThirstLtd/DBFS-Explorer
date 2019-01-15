@@ -8,6 +8,7 @@ export default {
           if (error) {
             callback(error)
           } else {
+            console.log('readFullTable', rows)
             callback(null, rows)
           }
         }

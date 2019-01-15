@@ -9,14 +9,11 @@ const nodePath = require('path')
 const base64 = require('file-base64')
 
 export default {
-  initTransferActivity: function (context) {
-    console.log('initTransferActivity')
-    context.dispatch('getSetting', {
-      key: 'thread-count'
-    }).then(({ value }) => {
-      console.log(value)
+  initTransferActivity: function (context, { threadCount }) {
+    if (transferActivity === null) {
+      console.log('initTransferActivity', threadCount)
       transferActivity = new TransferActivity({
-        threadCount: value
+        threadCount: threadCount
       })
       transferActivity.on('startJob', function ({ transferId }) {
         context.dispatch('startListJob', {
@@ -43,7 +40,7 @@ export default {
       transferActivity.on('abort', function (data) {
         context.dispatch('abortTransfer', data)
       })
-    })
+    }
   },
   getStatus: function (context, data) {
     const url = helper.getUrlFromDomain(context.getters.getDomain)

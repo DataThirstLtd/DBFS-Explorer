@@ -11,7 +11,7 @@ function registerForSqlReady (context) {
     } else {
       if (data.commit) {
         context.commit(data.commit, data.data)
-        data.commit === 'setSettings' && context.dispatch('initTransferActivity')
+        data.commit === 'setSettings' && context.dispatch('applySettings', data.data)
       }
     }
   })
@@ -31,7 +31,7 @@ export default {
       }
     })
   },
-  fetchSettings: function () {
+  fetchSettings: function (context) {
     ipcRenderer.send('sql', {
       commit: 'setSettings',
       name: 'readFullTable',
@@ -39,6 +39,23 @@ export default {
         table: 'settings'
       }
     })
+  },
+  applySettings: function (context, data) {
+    console.log('applySettings', data)
+    if (data && data.constructor === [].constructor) {
+      if (data.length > 0) {
+        // Apply settings from data
+        data.forEach((dataSetting) => {
+          context.dispatch('updateSettings', dataSetting)
+        })
+      } else {
+        console.log('apply default settings')
+        // Apply default settings
+        appConfig.defaultSettings.forEach((defaultSetting) => {
+          context.dispatch('updateSettings', defaultSetting)
+        })
+      }
+    }
   },
   writeSql: function (context, data) {
     ipcRenderer.send('sql', {
@@ -70,15 +87,11 @@ export default {
               value: parseInt(settings[index].value)
             })
           } else {
-            // Resolve default value
-            resolve({
-              value: appConfig.defaultThreadCount
-            })
+            reject(new Error(`Setting with key: ${key} not found.`))
           }
         } else {
           // Settings not found in the database
           // Create new settings from app.config.js
-          console.log('DEBUG:111')
           const settings = Object.assign([], appConfig.defaultSettings)
           settings.forEach((item) => {
             if (item && item.constructor === {}.constructor) {

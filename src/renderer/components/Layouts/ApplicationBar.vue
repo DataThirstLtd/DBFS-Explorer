@@ -133,7 +133,6 @@ export default {
       if (item && item.hiddenOnPages &&
       item.hiddenOnPages.constructor === [].constructor &&
       item.hiddenOnPages.length > 0) {
-        console.log(item)
         if (item.hiddenOnPages.indexOf(this.routeName) > -1) {
           return false
         }

@@ -6,11 +6,13 @@ export default {
     state.token = token
   },
   setUser: function (state, data) {
+    console.log(data)
     if (data &&
       data.constructor === [].constructor &&
       data.length > 0
     ) {
       data.forEach((item) => {
+        console.log('setUser -> iterate -> item:', item)
         if (
           item && item.constructor === {}.constructor &&
           'key' in item && 'value' in item && item.key
@@ -22,5 +24,9 @@ export default {
       })
     }
     state.onAuthReady = true
+  },
+  setCredentials: function (state, { domain, token }) {
+    state.domain = domain
+    state.token = token
   }
 }

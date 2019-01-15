@@ -1,8 +1,8 @@
 <template>
   <div id="wrapper"
     @click="onClickHome"
-    @dragover="showDrag"
-    @dragleave="hideDrag"
+    @dragover="platform !== 'win32' && showDrag"
+    @dragleave="platform !== 'win32' && hideDrag"
     @drop="dropFile">
     <!-- layouts -->
     <sidebar :rootFs="rootFs"/>
@@ -61,6 +61,7 @@
       rootFs: state => state.navigator.rootFs,
       selectedItem: state => state.navigator.selectedItem,
       settings: state => state.config.settings,
+      platform: state => state.config.platform,
       onInit () {
         return Boolean(this.token && this.domain)
       },

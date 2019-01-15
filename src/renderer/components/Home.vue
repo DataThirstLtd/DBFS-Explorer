@@ -1,8 +1,8 @@
 <template>
   <div id="wrapper"
     @click="onClickHome"
-    @dragover="platform !== 'win32' && showDrag"
-    @dragleave="platform !== 'win32' && hideDrag"
+    @dragover="$platform !== 'win32' && showDrag()"
+    @dragleave="$platform !== 'win32' && hideDrag()"
     @drop="dropFile">
     <!-- layouts -->
     <sidebar :rootFs="rootFs"/>

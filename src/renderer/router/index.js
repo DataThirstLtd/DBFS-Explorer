@@ -7,6 +7,8 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import Auth from '@/components/Auth'
 import Home from '@/components/Home'
 
+const { platform } = require('os')
+
 Vue.use(Router)
 Vue.use(Vuetify, {
   iconfont: 'fa',
@@ -17,6 +19,8 @@ Vue.use(Vuetify, {
     error: '#b71c1c'
   }
 })
+
+Vue.prototype.$platform = platform()
 
 export default new Router({
   routes: [

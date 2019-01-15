@@ -3,7 +3,7 @@
     <v-layout align-center row
       fill-height :class="`${getPlatform() === 'darwin' ? 'space-left' : null}`">
       <p class="app-title">
-        DBFS-Explorer
+        DBFS-Explorer | {{ $platform }}
       </p>
       <span style="padding: 0 10px">
         {{ routeName }}

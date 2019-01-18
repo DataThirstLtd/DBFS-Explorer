@@ -100,15 +100,18 @@ AddBlock.prototype.cancelJob = function ({ transferId }) {
 
 function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, done, progress) {
   console.log('on entry uploadHandler', transferId)
+  const fs = this.require('fs')
   const axios = this.require('axios')
   const forEach = this.require('async-foreach').forEach
   const chunksLength = chunks.length - 1
+  const uploadStream = []
   forEach(chunks, function (chunk, index) {
     const asyncDone = this.async()
+    uploadStream.push(chunk.toString())
     axios.post(
       `${url}/${endpoint}`,
       {
-        data: chunk,
+        data: chunk.toString(),
         handle: handle
       },
       {
@@ -130,6 +133,7 @@ function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, do
     })
   }, function () {
     console.log('all done')
+    fs.writeFileSync('/Users/kksai/Test/base64_decode/stream', uploadStream.toString())
     // Close handle
     axios.post(
       `${url}/api/2.0/dbfs/close`,
@@ -156,15 +160,16 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
   console.log('on entry downloadHandler')
   console.log('thread entry id', transferId, file, endpoint, url, token, targetPath)
   const fs = this.require('fs')
+  const base64 = this.require('file-base64')
   const EventEmitter = this.require('events')
   const axios = this.require('axios')
   const events = new EventEmitter()
   events.setMaxListeners(100)
-  let fileHandle = null
 
   const totalSizeBytes = file.size // Total Size of the file in bytes
   let finishedSizeBytes = 0 // Size of downloaded the file in bytes
   let offset = 0 // Offset byte value to start downloading data
+  const base64String = []
 
   const download = function ({ offset }) {
     axios({
@@ -172,7 +177,8 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
       url: `${url}/${endpoint}`,
       data: {
         path: file.path,
-        offset: offset
+        offset: offset,
+        length: 500000
       },
       headers: {
         'Authorization': `Bearer ${token}`
@@ -192,38 +198,36 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
 
   events.on('response', function ({ data }) {
     finishedSizeBytes = finishedSizeBytes + data.bytes_read
-    offset = finishedSizeBytes + 1
-    console.log('finishedSizeBytes', finishedSizeBytes, 'offset', offset, 'bytes_read', data.bytes_read)
+    offset = finishedSizeBytes
+    console.log('finishedSizeBytes', finishedSizeBytes,
+      'offset', offset,
+      'bytes_read', data.bytes_read,
+      'totalSizeBytes', totalSizeBytes
+    )
     const fullProgress = (finishedSizeBytes / totalSizeBytes) * 100
     progress({
       progress: parseFloat(fullProgress).toFixed(1),
       transferId: transferId
     })
-    fileHandle.write(data.data)
+    base64String.push(data.data)
     if (data.bytes_read !== 0) {
       download({ offset: offset + 1 })
     } else {
       console.log('totalSizeBytes', totalSizeBytes)
       console.log('finishedSizeBytes', finishedSizeBytes)
-      fileHandle.end()
-      // Convert base64 file into original file
-      done(transferId)
+      fs.writeFileSync('/Users/kksai/Test/base64_decode/download', base64String.toString())
+      // Decode base64 file
+      base64.decode(`${base64String.toString()}`, targetPath, function (err) {
+        if (!err) {
+          done(transferId)
+        } else {
+          // Cancel the download and notify error to the user
+        }
+      })
     }
   })
 
-  // Create file at target path
-  fileHandle = fs.createWriteStream(
-    targetPath,
-    {
-      flags: 'w',
-      encoding: 'utf8'
-    }
-  )
-  if (fileHandle) {
-    download({ offset: 0 })
-  } else {
-    console.log('TransferActivity -> Unable to open file stream.')
-  }
+  download({ offset: 0 })
 }
 
 export default AddBlock

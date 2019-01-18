@@ -118,11 +118,7 @@ export default {
             text: 'Delete',
             color: null,
             icon: 'fa-folder-plus',
-            callback: () => {
-              this.openDialog({
-                name: 'newFolder'
-              })
-            },
+            callback: this.newFolder,
             platforms: ['darwin', 'win32', 'linux'],
             tooltip: 'Create a new folder',
             hidden: false
@@ -153,7 +149,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog']),
+    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog', 'setPrevPath']),
     isHiddenAction: function (item) {
       const itemIndex = this.appbarButtons.right.findIndex(x => x.id === item.id)
       if (itemIndex > -1 && this.appbarButtons.right[itemIndex].hidden) {
@@ -168,14 +164,19 @@ export default {
       return ''
     },
     goBack: function () {
-      this.clearSelection()
-      this.fetchSelection({
-        path: this.prevPath
-      })
+      const prevPath = this.prevPath
+      if (prevPath) {
+        this.setPrevPath({
+          path: prevPath.split(nodePath.basename(prevPath))[0]
+        })
+        this.clearSelection()
+        this.fetchSelection({
+          path: prevPath
+        })
+      }
     },
     deleteItem: function () {
       const prevPath = this.getParentPath({ path: this.selectedItem })
-      console.log(prevPath)
       const path = this.selectedItem
       if (path && path !== '/') {
         this.openDialog({
@@ -223,6 +224,11 @@ export default {
     openProperties: function () {
       this.openDialog({
         name: 'properties'
+      })
+    },
+    newFolder: function () {
+      this.openDialog({
+        name: 'newFolder'
       })
     }
   }

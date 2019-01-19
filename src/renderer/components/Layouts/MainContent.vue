@@ -10,8 +10,11 @@
         @click="goBack">
         <v-icon small>fa-arrow-left</v-icon>
       </v-btn>
-      <div>
+      <!-- <div>
         {{ getParentPath(selection[0]) || (folderEmpty.valid ? folderEmpty.path : '') }}
+      </div> -->
+      <div>
+        {{ `/${navStack.join('/')}` }}
       </div>
       <v-spacer />
       <div
@@ -134,7 +137,8 @@ export default {
     selectedItem: state => state.navigator.selectedItem,
     folderEmpty: state => state.navigator.folderEmpty,
     fetchWait: state => state.navigator.fetchWait,
-    prevPath: state => state.navigator.prevPath
+    prevPath: state => state.navigator.prevPath,
+    navStack: state => state.navigator.navStack
   }),
   mounted () {
     const self = this
@@ -149,7 +153,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog', 'setPrevPath']),
+    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog', 'setPrevPath', 'popNavStack']),
     isHiddenAction: function (item) {
       const itemIndex = this.appbarButtons.right.findIndex(x => x.id === item.id)
       if (itemIndex > -1 && this.appbarButtons.right[itemIndex].hidden) {
@@ -164,7 +168,12 @@ export default {
       return ''
     },
     goBack: function () {
-      const prevPath = this.prevPath
+      this.popNavStack()
+      this.clearSelection()
+      this.fetchSelection({
+        path: `/${this.navStack.join('/')}`
+      })
+      /* const prevPath = this.prevPath
       if (prevPath) {
         this.setPrevPath({
           path: prevPath.split(nodePath.basename(prevPath))[0]
@@ -173,7 +182,7 @@ export default {
         this.fetchSelection({
           path: prevPath
         })
-      }
+      } */
     },
     deleteItem: function () {
       const prevPath = this.getParentPath({ path: this.selectedItem })

@@ -62,8 +62,12 @@ export default {
     platform: state => state.config.platform
   }),
   methods: {
-    ...mapActions(['fetchSelection', 'clearSelection']),
+    ...mapActions(['fetchSelection', 'clearSelection', 'clearNavStack', 'pushNavStack']),
     onClickTreeItem: function (selection) {
+      this.clearNavStack()
+      this.pushNavStack({
+        path: selection.path
+      })
       this.clearSelection()
       this.fetchSelection(selection)
     }

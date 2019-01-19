@@ -123,7 +123,8 @@ export default {
       'selectItem',
       'setPrevPath',
       'setCurrentPath',
-      'openDialog'
+      'openDialog',
+      'pushNavStack'
     ]),
     isMenuDisabled: function (menuItem) {
       return Boolean(
@@ -135,6 +136,9 @@ export default {
     },
     onOpenItem: function () {
       if (this.item.is_dir) {
+        this.pushNavStack({
+          path: this.selectedItem
+        })
         this.setPrevPath({
           path: this.item.path.split(nodePath.basename(this.item.path))[0]
         })

@@ -9,5 +9,6 @@ export default {
   selectedItem: '',
   populateSelection: {},
   prevPath: '',
-  currentPath: ''
+  currentPath: '',
+  navStack: []
 }

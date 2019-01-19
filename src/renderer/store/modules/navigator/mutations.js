@@ -33,5 +33,14 @@ export default {
   },
   clearSelectedItem: function (state) {
     state.selectedItem = ''
+  },
+  pushNavStack: function (state, name) {
+    state.navStack.push(name)
+  },
+  popNavStack: function (state, name) {
+    state.navStack.pop()
+  },
+  clearNavStack: function (state) {
+    state.navStack = []
   }
 }

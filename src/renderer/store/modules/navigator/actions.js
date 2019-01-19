@@ -108,6 +108,7 @@ export default {
         context.commit('setSelection', data.files)
       }
     }).catch((err) => {
+      context.commit('popNavStack')
       context.dispatch('fetchSelection', { path: path.split(nodePath.basename(path))[0] })
       context.dispatch('openDialog', {
         name: 'alert',
@@ -275,5 +276,19 @@ export default {
   },
   setCurrentPath: function (context, { path }) {
     context.commit('setCurrentPath', path)
+  },
+  pushNavStack: function (context, { path }) {
+    const item = path && path.split('/')[path.split('/').length - 1]
+    item && context.commit(
+      'pushNavStack',
+      path.split('/')[path.split('/').length - 1]
+    )
+    !item && context.dispatch('clearNavStack')
+  },
+  popNavStack: function (context) {
+    context.commit('popNavStack')
+  },
+  clearNavStack: function (context) {
+    context.commit('clearNavStack')
   }
 }

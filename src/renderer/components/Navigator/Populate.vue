@@ -56,8 +56,6 @@
 <script>
 import { mapActions } from 'vuex'
 
-const nodePath = require('path')
-
 export default {
   name: 'populate',
   props: {
@@ -138,9 +136,6 @@ export default {
       if (this.item.is_dir) {
         this.pushNavStack({
           path: this.selectedItem
-        })
-        this.setPrevPath({
-          path: this.item.path.split(nodePath.basename(this.item.path))[0]
         })
         this.clearSelection()
         this.fetchSelection(this.item)

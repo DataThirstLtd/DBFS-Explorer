@@ -122,7 +122,6 @@ export default {
       'fetchSelection',
       'selectItem',
       'setPrevPath',
-      'setCurrentPath',
       'openDialog',
       'pushNavStack',
       'clearItem'
@@ -142,9 +141,6 @@ export default {
         })
         this.setPrevPath({
           path: this.item.path.split(nodePath.basename(this.item.path))[0]
-        })
-        this.setCurrentPath({
-          path: this.item.path + '/'
         })
         this.clearSelection()
         this.fetchSelection(this.item)

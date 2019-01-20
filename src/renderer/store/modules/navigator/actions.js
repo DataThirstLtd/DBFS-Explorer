@@ -152,7 +152,7 @@ export default {
   clearItem: function (context) {
     context.commit('clearSelectedItem')
   },
-  deleteSelected: function (context, { path, prevPath }) {
+  deleteSelected: function (context, { path, pwd }) {
     const url = helper.getUrlFromDomain(context.getters.getDomain)
     const token = context.getters.getToken
     return axios.post(
@@ -170,7 +170,7 @@ export default {
       if (status === 200) {
         context.dispatch('clearSelection')
         context.dispatch('fetchSelection', {
-          path: prevPath,
+          path: pwd,
           is_dir: true
         })
         context.dispatch('clearItem')
@@ -208,7 +208,7 @@ export default {
             axios.post(
               `${url}/${appConfig.ENDPOINTS.create}`,
               {
-                path: `${targetPath}${file.name}`,
+                path: `${targetPath}/${file.name}`,
                 overwrite: true
               },
               {
@@ -273,9 +273,6 @@ export default {
   },
   setPrevPath: function (context, { path }) {
     context.commit('setPrevPath', path)
-  },
-  setCurrentPath: function (context, { path }) {
-    context.commit('setCurrentPath', path)
   },
   pushNavStack: function (context, { path }) {
     const item = path && path.split('/')[path.split('/').length - 1]

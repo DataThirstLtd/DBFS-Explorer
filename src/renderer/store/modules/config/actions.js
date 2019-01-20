@@ -187,7 +187,7 @@ export default {
     context.commit('setDragInert')
   },
   dropFile: function (context, event) {
-    const currentPath = context.getters.getCurrentPath
+    const pwd = context.getters.getCurrentPath
     const files = Object.assign([], event.dataTransfer.files)
     context.dispatch('hideDrag')
     if (files.length > 0) {
@@ -200,7 +200,7 @@ export default {
         options: {
           list: listObject,
           type: 1,
-          toPath: currentPath || '/'
+          toPath: pwd
         }
       })
     }

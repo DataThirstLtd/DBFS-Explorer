@@ -12,6 +12,6 @@ export default {
     return state.prevPath
   },
   getCurrentPath: function (state) {
-    return state.currentPath
+    return `/${state.navStack.join('/')}`
   }
 }

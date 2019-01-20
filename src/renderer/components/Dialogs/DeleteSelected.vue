@@ -67,10 +67,10 @@ export default {
       this.closeDialog({ name: 'delete' })
     },
     onDelete: function () {
-      if (this.options && this.options.path && this.options.prevPath) {
+      if (this.options && this.options.path && this.options.pwd) {
         this.deleteSelected({
           path: this.options.path,
-          prevPath: this.options.prevPath
+          pwd: this.options.pwd
         })
       }
     }

@@ -54,7 +54,7 @@ export default {
   computed: mapState({
     selection: state => state.navigator.selection,
     folderEmpty: state => state.navigator.folderEmpty,
-    currentPath: state => state.navigator.currentPath,
+    navStack: state => state.navigator.navStack,
     active: state => state.config.dialogs.newFolder.active,
     onChangeActive: function () {
       return this.active
@@ -72,8 +72,7 @@ export default {
   methods: {
     ...mapActions(['createNewFolder', 'showInfoSnackbar', 'closeDialog']),
     show: function () {
-      console.log('showDialog', this.currentPath)
-      this.path = this.currentPath
+      this.path = `/${this.navStack.join('/')}`
       this.dialog = true
     },
     hide: function () {

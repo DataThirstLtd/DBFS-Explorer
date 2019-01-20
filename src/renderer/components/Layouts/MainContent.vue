@@ -118,7 +118,7 @@ export default {
           },
           {
             id: 'id-app-new-folder',
-            text: 'Delete',
+            text: 'New Folder',
             color: null,
             icon: 'fa-folder-plus',
             callback: this.newFolder,
@@ -137,7 +137,6 @@ export default {
     selectedItem: state => state.navigator.selectedItem,
     folderEmpty: state => state.navigator.folderEmpty,
     fetchWait: state => state.navigator.fetchWait,
-    prevPath: state => state.navigator.prevPath,
     navStack: state => state.navigator.navStack
   }),
   mounted () {
@@ -153,7 +152,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog', 'setPrevPath', 'popNavStack']),
+    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog', 'popNavStack']),
     isHiddenAction: function (item) {
       const itemIndex = this.appbarButtons.right.findIndex(x => x.id === item.id)
       if (itemIndex > -1 && this.appbarButtons.right[itemIndex].hidden) {
@@ -173,26 +172,16 @@ export default {
       this.fetchSelection({
         path: `/${this.navStack.join('/')}`
       })
-      /* const prevPath = this.prevPath
-      if (prevPath) {
-        this.setPrevPath({
-          path: prevPath.split(nodePath.basename(prevPath))[0]
-        })
-        this.clearSelection()
-        this.fetchSelection({
-          path: prevPath
-        })
-      } */
     },
     deleteItem: function () {
-      const prevPath = this.getParentPath({ path: this.selectedItem })
+      const pwd = `/${this.navStack.join('/')}`
       const path = this.selectedItem
       if (path && path !== '/') {
         this.openDialog({
           name: 'delete',
           options: {
             path: path,
-            prevPath: prevPath
+            pwd
           }
         })
       }

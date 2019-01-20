@@ -10,6 +10,7 @@ const uniqid = require('uniqid')
 const remote = require('electron').remote
 
 let logger = null
+let dragOverTimer = null
 
 function registerForSqlReady (context) {
   ipcRenderer.on('sql_ready', function (event, data) {
@@ -37,7 +38,7 @@ export default {
         table: 'user'
       }
     })
-    const dateISOString = new Date().toISOString()
+    const dateISOString = new Date().toISOString().replace(/:/g, '_')
     const logPath = nodePath.join(
       remote.app.getPath('logs'),
       'dbfs_explorer',
@@ -180,10 +181,19 @@ export default {
   closeDialog: function (context, { name }) {
     context.commit('setInertDialog', { name })
   },
-  showDrag: function (context, ev) {
+  showDrag: function (context, e) {
+    e && e.preventDefault()
+    if (dragOverTimer) {
+      clearInterval(dragOverTimer)
+      dragOverTimer = null
+    }
     context.commit('setDragActive')
+    dragOverTimer = setInterval(() => {
+      context.dispatch('hideDrag')
+    }, 200)
   },
-  hideDrag: function (context) {
+  hideDrag: function (context, e) {
+    e && e.preventDefault()
     context.commit('setDragInert')
   },
   dropFile: function (context, event) {

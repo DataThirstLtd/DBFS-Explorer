@@ -5,7 +5,6 @@ import TransferActivity from '@/threads/TransferActivity'
 
 let transferActivity = null
 
-const fs = require('fs')
 const nodePath = require('path')
 const base64 = require('file-base64')
 
@@ -223,7 +222,6 @@ export default {
               }
               // Convert base64 string into small chunks
               const chunks = base64String.match(new RegExp('.{1,' + 256000 + '}', 'g'))
-              fs.writeFileSync('/Users/kksai/Test/base64_decode/upload', chunks.toString())
               // Add new thread worker or job into thread pool
               // NOTE: By default 2 threads will be spawned. User can configure this any time.
               // Threads will be created based on CPU cores

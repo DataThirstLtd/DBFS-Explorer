@@ -100,7 +100,6 @@ AddBlock.prototype.cancelJob = function ({ transferId }) {
 
 function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, done, progress) {
   console.log('on entry uploadHandler', transferId)
-  const fs = this.require('fs')
   const axios = this.require('axios')
   const forEach = this.require('async-foreach').forEach
   const chunksLength = chunks.length - 1
@@ -133,7 +132,6 @@ function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, do
     })
   }, function () {
     console.log('all done')
-    fs.writeFileSync('/Users/kksai/Test/base64_decode/stream', uploadStream.toString())
     // Close handle
     axios.post(
       `${url}/api/2.0/dbfs/close`,
@@ -159,7 +157,6 @@ function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, do
 function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }, done, progress) {
   console.log('on entry downloadHandler')
   console.log('thread entry id', transferId, file, endpoint, url, token, targetPath)
-  const fs = this.require('fs')
   const base64 = this.require('file-base64')
   const EventEmitter = this.require('events')
   const axios = this.require('axios')
@@ -215,7 +212,6 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
     } else {
       console.log('totalSizeBytes', totalSizeBytes)
       console.log('finishedSizeBytes', finishedSizeBytes)
-      fs.writeFileSync('/Users/kksai/Test/base64_decode/download', base64String.toString())
       // Decode base64 file
       base64.decode(`${base64String.toString()}`, targetPath, function (err) {
         if (!err) {

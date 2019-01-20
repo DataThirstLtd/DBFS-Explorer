@@ -85,15 +85,23 @@
             this.initTransferActivity({
               threadCount: settings[targetIndex].value || appConfig.defaultThreadCount
             })
+            this.writeLog({
+              level: 'info',
+              message: `onSettingsChange -> initTransferActivity Thread Count ${settings[targetIndex].value || appConfig.defaultThreadCount}`
+            })
           } else {
             this.initTransferActivity({
               threadCount: appConfig.defaultThreadCount
+            })
+            this.writeLog({
+              level: 'info',
+              message: `onSettingsChange -> initTransferActivity Thread Count DEFAULT ${appConfig.defaultThreadCount}`
             })
           }
         }
       }
     },
-    mounted () {
+    created () {
       if (this.rootFs.length < 1) {
         if (this.domain && this.token) {
           this.initHome()
@@ -116,7 +124,8 @@
         'showDrag',
         'hideDrag',
         'dropFile',
-        'initTransferActivity'
+        'initTransferActivity',
+        'writeLog'
       ]),
       initHome: function () {
         const context = this

@@ -92,6 +92,8 @@ export default {
         path,
         folderName
       })
+      this.folderName = ''
+      this.path = ''
     }
   }
 }

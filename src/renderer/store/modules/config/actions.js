@@ -1,8 +1,15 @@
 import { ipcRenderer } from 'electron'
 import { platform } from 'os'
 import appConfig from '@/app.config.js'
+const { createLogger, format, transports } = require('winston')
+const { combine, timestamp, label, prettyPrint } = format
 
+const fsExtra = require('fs-extra')
+const nodePath = require('path')
 const uniqid = require('uniqid')
+const remote = require('electron').remote
+
+let logger = null
 
 function registerForSqlReady (context) {
   ipcRenderer.on('sql_ready', function (event, data) {
@@ -30,6 +37,56 @@ export default {
         table: 'user'
       }
     })
+    const dateISOString = new Date().toISOString()
+    const logPath = nodePath.join(
+      remote.app.getPath('logs'),
+      'dbfs_explorer',
+      dateISOString
+    )
+    fsExtra.ensureDir(logPath)
+    logger = createLogger({
+      format: combine(
+        label({ label: 'DBFS-Explorer' }),
+        timestamp(),
+        prettyPrint()
+      ),
+      transports: [
+        new transports.File({
+          filename: nodePath.join(logPath, 'debug.log'),
+          level: 'debug'
+        }),
+        new transports.File({
+          filename: nodePath.join(logPath, 'verbose.log'),
+          level: 'verbose'
+        }),
+        new transports.File({
+          filename: nodePath.join(logPath, 'info.log'),
+          level: 'info'
+        }),
+        new transports.File({
+          filename: nodePath.join(logPath, 'error.log'),
+          level: 'error'
+        }),
+        new transports.File({
+          filename: nodePath.join(logPath, 'combined.log')
+        })
+      ]
+    })
+    if (logger) {
+      logger.log({
+        level: 'info',
+        message: 'What time is the testing at?'
+      })
+      logger.log({
+        level: 'info',
+        message: 'What time is the testing at?'
+      })
+    }
+  },
+  writeLog: function (context, { level, message }) {
+    if (level && typeof message === 'string') {
+      logger.log({ level, message })
+    }
   },
   fetchSettings: function (context) {
     ipcRenderer.send('sql', {

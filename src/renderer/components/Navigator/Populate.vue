@@ -124,7 +124,8 @@ export default {
       'setPrevPath',
       'setCurrentPath',
       'openDialog',
-      'pushNavStack'
+      'pushNavStack',
+      'clearItem'
     ]),
     isMenuDisabled: function (menuItem) {
       return Boolean(
@@ -147,6 +148,7 @@ export default {
         })
         this.clearSelection()
         this.fetchSelection(this.item)
+        this.clearItem()
       } else {
         this.showInfoSnackbar({
           message: 'Not a directory',

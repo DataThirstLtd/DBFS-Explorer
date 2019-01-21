@@ -175,7 +175,7 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
       data: {
         path: file.path,
         offset: offset,
-        length: 500000
+        length: 200000
       },
       headers: {
         'Authorization': `Bearer ${token}`
@@ -195,20 +195,21 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
 
   events.on('response', function ({ data }) {
     finishedSizeBytes = finishedSizeBytes + data.bytes_read
-    offset = finishedSizeBytes
+    offset = finishedSizeBytes + 1
+    const fullProgress = (finishedSizeBytes / totalSizeBytes) * 100
     console.log('finishedSizeBytes', finishedSizeBytes,
       'offset', offset,
       'bytes_read', data.bytes_read,
-      'totalSizeBytes', totalSizeBytes
+      'totalSizeBytes', totalSizeBytes,
+      'progress', fullProgress
     )
-    const fullProgress = (finishedSizeBytes / totalSizeBytes) * 100
     progress({
       progress: parseFloat(fullProgress).toFixed(1),
       transferId: transferId
     })
     base64String.push(data.data)
-    if (data.bytes_read !== 0) {
-      download({ offset: offset + 1 })
+    if (data.bytes_read) {
+      download({ offset: offset })
     } else {
       console.log('totalSizeBytes', totalSizeBytes)
       console.log('finishedSizeBytes', finishedSizeBytes)

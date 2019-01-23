@@ -5,8 +5,9 @@ import TransferActivity from '@/threads/TransferActivity'
 
 let transferActivity = null
 
+const fs = require('fs')
 const nodePath = require('path')
-const base64 = require('file-base64')
+const base64 = require('base64-js')
 
 export default {
   initTransferActivity: function (context, { threadCount }) {
@@ -199,46 +200,48 @@ export default {
         console.log('prepareUpload id', transferId, index)
         if (selected) {
           // Encode data into base64 string
-          base64.encode(file.path, function (err, base64String) {
-            if (err) {
-              return
+          fs.readFile(file.path, function (err, readData) {
+            if (!err) {
+              const base64String = base64.fromByteArray(readData)
+              if (base64String) {
+                // Create data hanlde
+                axios.post(
+                  `${url}/${appConfig.ENDPOINTS.create}`,
+                  {
+                    path: `${targetPath}/${file.name}`,
+                    overwrite: true
+                  },
+                  {
+                    headers: {
+                      'Authorization': `Bearer ${token}`
+                    }
+                  }
+                ).then(({ status, data }) => {
+                  if (status !== 200) {
+                    // Report message
+                    return
+                  }
+                  // Convert base64 string into small chunks
+                  const chunks = base64String.match(new RegExp('.{1,' + 256000 + '}', 'g'))
+                  // Add new thread worker or job into thread pool
+                  // NOTE: By default 2 threads will be spawned. User can configure this any time.
+                  // Threads will be created based on CPU cores
+                  context.dispatch('addJob', {
+                    url: url,
+                    token: token,
+                    handle: data.handle,
+                    chunks: chunks,
+                    transferId: transferId,
+                    file: file,
+                    targetPath: targetPath,
+                    endpoint: appConfig.ENDPOINTS.addBlock,
+                    type: 1
+                  })
+                }).catch((error) => {
+                  console.log(error)
+                })
+              }
             }
-            // Create data hanlde
-            axios.post(
-              `${url}/${appConfig.ENDPOINTS.create}`,
-              {
-                path: `${targetPath}/${file.name}`,
-                overwrite: true
-              },
-              {
-                headers: {
-                  'Authorization': `Bearer ${token}`
-                }
-              }
-            ).then(({ status, data }) => {
-              if (status !== 200) {
-                // Report message
-                return
-              }
-              // Convert base64 string into small chunks
-              const chunks = base64String.match(new RegExp('.{1,' + 256000 + '}', 'g'))
-              // Add new thread worker or job into thread pool
-              // NOTE: By default 2 threads will be spawned. User can configure this any time.
-              // Threads will be created based on CPU cores
-              context.dispatch('addJob', {
-                url: url,
-                token: token,
-                handle: data.handle,
-                chunks: chunks,
-                transferId: transferId,
-                file: file,
-                targetPath: targetPath,
-                endpoint: appConfig.ENDPOINTS.addBlock,
-                type: 1
-              })
-            }).catch((error) => {
-              console.log(error)
-            })
           })
         }
       })

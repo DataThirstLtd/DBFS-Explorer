@@ -157,7 +157,8 @@ function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, do
 function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }, done, progress) {
   console.log('on entry downloadHandler')
   console.log('thread entry id', transferId, file, endpoint, url, token, targetPath)
-  const base64 = this.require('file-base64')
+  const fs = this.require('fs')
+  const base64 = this.require('base64-js')
   const EventEmitter = this.require('events')
   const axios = this.require('axios')
   const events = new EventEmitter()
@@ -165,7 +166,7 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
 
   const totalSizeBytes = file.size // Total Size of the file in bytes
   let finishedSizeBytes = 0 // Size of downloaded the file in bytes
-  let offset = 0 // Offset byte value to start downloading data
+  let remainingSizeBytes = 0 // remaining size in bytes = totalSizeBytes - finishedSizeBytes
   const base64String = []
 
   const download = function ({ offset }) {
@@ -175,7 +176,7 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
       data: {
         path: file.path,
         offset: offset,
-        length: 200000
+        length: 900000
       },
       headers: {
         'Authorization': `Bearer ${token}`
@@ -195,12 +196,12 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
 
   events.on('response', function ({ data }) {
     finishedSizeBytes = finishedSizeBytes + data.bytes_read
-    offset = finishedSizeBytes + 1
+    remainingSizeBytes = totalSizeBytes - finishedSizeBytes
     const fullProgress = (finishedSizeBytes / totalSizeBytes) * 100
-    console.log('finishedSizeBytes', finishedSizeBytes,
-      'offset', offset,
+    console.log(
+      'finishedSizeBytes', finishedSizeBytes,
       'bytes_read', data.bytes_read,
-      'totalSizeBytes', totalSizeBytes,
+      'remainingSizeBytes', remainingSizeBytes,
       'progress', fullProgress
     )
     progress({
@@ -208,19 +209,25 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
       transferId: transferId
     })
     base64String.push(data.data)
-    if (data.bytes_read) {
-      download({ offset: offset })
+    if (remainingSizeBytes > 0) {
+      download({ offset: finishedSizeBytes })
     } else {
-      console.log('totalSizeBytes', totalSizeBytes)
-      console.log('finishedSizeBytes', finishedSizeBytes)
-      // Decode base64 file
-      base64.decode(`${base64String.toString()}`, targetPath, function (err) {
-        if (!err) {
-          done(transferId)
-        } else {
-          // Cancel the download and notify error to the user
+      console.log(
+        'download finish:::',
+        'finishedSizeBytes', finishedSizeBytes,
+        'totalSizeBytes', totalSizeBytes
+      )
+      fs.writeFile(
+        targetPath,
+        base64.toByteArray(base64String.join('')),
+        function (err) {
+          if (!err) {
+            done(transferId)
+          } else {
+            // Notify error
+          }
         }
-      })
+      )
     }
   })
 

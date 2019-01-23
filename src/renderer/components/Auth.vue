@@ -12,6 +12,7 @@
           prepend-icon="fa-link"
           flat solo
           v-model="inputDomain"
+          label="hello"
           placeholder="Enter URL or domain name"
           :disabled="loading">
         </v-text-field>
@@ -56,14 +57,20 @@ export default {
   }),
   watch: {
     onInit (state) {
+      console.log('onInit')
       if (state) {
         this.inputDomain = this.domain
         this.inputToken = this.token
       }
     }
   },
-  created () {
+  mounted () {
+    const self = this
     this.init()
+    this.$root.$on('shareCredentials', ({ domain, token }) => {
+      self.inputDomain = domain
+      self.inputToken = token
+    })
   },
   methods: {
     ...mapGetters(['getToken', 'getDomain', 'doesAuthDataExists']),
@@ -80,7 +87,7 @@ export default {
           message: 'login attempt -> Success'
         })
         context.loading = false
-        context.$router.push('home')
+        context.$router.replace('home')
       }).catch((error) => {
         context.writeLog({
           level: 'error',

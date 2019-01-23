@@ -13,5 +13,8 @@ export default {
   },
   getCurrentPath: function (state) {
     return `/${state.navStack.join('/')}`
+  },
+  getTransferList: function (state) {
+    return state.config.dialogs.transferState.list
   }
 }

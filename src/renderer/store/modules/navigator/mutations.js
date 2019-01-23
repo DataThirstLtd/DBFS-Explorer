@@ -1,3 +1,6 @@
+import appConfig from '@/app.config.js'
+// import immutableUpdate from 'immutability-helper'
+
 export default {
   setRootFs: function (state, data) {
     state.rootFs = data
@@ -39,5 +42,8 @@ export default {
   },
   clearNavStack: function (state) {
     state.navStack = []
+  },
+  resetNavigatorStates: function (state) {
+    state = Object.assign({}, appConfig.initialNavigatorStates)
   }
 }

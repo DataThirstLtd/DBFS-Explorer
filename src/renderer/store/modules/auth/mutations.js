@@ -1,3 +1,5 @@
+import appConfig from '@/app.config.js'
+
 export default {
   setDomain: function (state, domain) {
     state.domain = domain
@@ -28,5 +30,9 @@ export default {
   setCredentials: function (state, { domain, token }) {
     state.domain = domain
     state.token = token
+  },
+  resetAuthStates: function (state) {
+    state = Object.assign({}, appConfig.initialAuthStates)
+    console.log('resetAuthStates', state)
   }
 }

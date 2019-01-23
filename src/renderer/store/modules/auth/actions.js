@@ -30,7 +30,27 @@ export default {
       }
     })
   },
+  loadCredentials: async function (context) {
+    return new Promise((resolve, reject) => {
+      resolve({
+        domain: context.getters.getDomain,
+        token: context.getters.getToken
+      })
+    })
+  },
   updateCredentials: function (context, data) {
     context.commit('setCredentials', data)
+  },
+  disconnect: async function (context) {
+    return new Promise((resolve, reject) => {
+      context.dispatch('cancelAllTransfers')
+      context.dispatch('clearConfigStates')
+      context.dispatch('clearNavigatorStates')
+      context.dispatch('clearAuthStates')
+      resolve()
+    })
+  },
+  clearAuthStates: function (context) {
+    context.commit('resetAuthStates')
   }
 }

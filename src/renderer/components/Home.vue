@@ -13,6 +13,8 @@
     <data-transfer />
     <transfer-state />
     <app-settings />
+    <disconnect />
+    <persistant-loader />
     <!-- Misc -->
     <drag />
     <overlay />
@@ -36,6 +38,8 @@
   import DataTransfer from './Dialogs/DataTransfer'
   import TransferState from './Dialogs/TransferState'
   import AppSettings from './Dialogs/AppSettings'
+  import Disconnect from './Dialogs/Disconnect'
+  import PersistantLoader from './Dialogs/PersistantLoader'
   // Import Other Components
   import Drag from './Misc/Drag'
   import Overlay from './Misc/Overlay'
@@ -51,6 +55,8 @@
       DataTransfer,
       TransferState,
       AppSettings,
+      Disconnect,
+      PersistantLoader,
       Drag,
       Overlay
     },

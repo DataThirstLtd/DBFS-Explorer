@@ -246,5 +246,8 @@ export default {
   },
   updateJobProgress: function (context, data) {
     context.commit('setJobProgress', data)
+  },
+  clearConfigStates: function (context) {
+    context.commit('resetConfigStates')
   }
 }

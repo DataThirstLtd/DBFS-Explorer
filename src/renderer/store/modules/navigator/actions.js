@@ -272,6 +272,13 @@ export default {
   cancelTransfer: function (context, data) {
     transferActivity.cancelJob(data)
   },
+  cancelAllTransfers: function (context, data) {
+    const list = context.getters.getListDataTransfer
+    console.log(list)
+    /* list && list.constructor === [].constructor && list.forEach((item) => {
+      context.dispatch('cancelTransfer', item)
+    }) */
+  },
   setPrevPath: function (context, { path }) {
     context.commit('setPrevPath', path)
   },
@@ -288,5 +295,8 @@ export default {
   },
   clearNavStack: function (context) {
     context.commit('clearNavStack')
+  },
+  clearNavigatorStates: function (context) {
+    context.commit('resetNavigatorStates')
   }
 }

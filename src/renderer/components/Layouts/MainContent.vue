@@ -20,24 +20,24 @@
       <div
         v-for="item in appbarButtons.right"
         :key="item.id">
-        <v-btn
-          v-if="isHiddenAction(item) ? selectedItem ? true : false : true"
-          class="ig-folder-actions-button"
-          small
-          icon
-          light
-          @click="item.callback">
-          <v-tooltip
-            bottom>
+        <v-tooltip
+          bottom>
+          <v-btn
+            v-if="isHiddenAction(item) ? selectedItem ? true : false : true"
+            slot="activator"
+            class="ig-folder-actions-button"
+            small
+            icon
+            light
+            @click="item.callback">
             <v-icon
               :color="item.color || null"
-              slot="activator"
               small>
               {{ item.icon }}
             </v-icon>
-            <span>{{ item.tooltip }}</span>
-          </v-tooltip>
-        </v-btn>
+          </v-btn>
+          <span>{{ item.tooltip }}</span>
+        </v-tooltip>
       </div>
     </v-toolbar>
     <div v-if="selection && selection.length < 1 && !fetchWait && !folderEmpty.state"

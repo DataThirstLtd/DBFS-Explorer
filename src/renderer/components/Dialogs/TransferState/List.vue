@@ -51,7 +51,7 @@
             </v-progress-linear>
             <v-list-tile-sub-title
               v-else>
-              Waiting ...
+             {{ item.abort ? 'Canceled' : ' Waiting ...' }}
             </v-list-tile-sub-title> 
           </v-list-tile-content>
           <v-list-tile-action>

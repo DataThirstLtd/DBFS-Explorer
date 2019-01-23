@@ -56,8 +56,6 @@
 <script>
 import { mapActions } from 'vuex'
 
-const nodePath = require('path')
-
 export default {
   name: 'populate',
   props: {
@@ -122,8 +120,9 @@ export default {
       'fetchSelection',
       'selectItem',
       'setPrevPath',
-      'setCurrentPath',
-      'openDialog'
+      'openDialog',
+      'pushNavStack',
+      'clearItem'
     ]),
     isMenuDisabled: function (menuItem) {
       return Boolean(
@@ -135,14 +134,12 @@ export default {
     },
     onOpenItem: function () {
       if (this.item.is_dir) {
-        this.setPrevPath({
-          path: this.item.path.split(nodePath.basename(this.item.path))[0]
-        })
-        this.setCurrentPath({
-          path: this.item.path + '/'
+        this.pushNavStack({
+          path: this.selectedItem
         })
         this.clearSelection()
         this.fetchSelection(this.item)
+        this.clearItem()
       } else {
         this.showInfoSnackbar({
           message: 'Not a directory',

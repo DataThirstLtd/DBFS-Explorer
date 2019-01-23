@@ -1,12 +1,12 @@
+import appConfig from '@/app.config.js'
+// import immutableUpdate from 'immutability-helper'
+
 export default {
   setRootFs: function (state, data) {
     state.rootFs = data
   },
   setPrevPath: function (state, path) {
     state.prevPath = path
-  },
-  setCurrentPath: function (state, path) {
-    state.currentPath = path
   },
   setSelectionEmpty: function (state) {
     state.selection = []
@@ -33,5 +33,17 @@ export default {
   },
   clearSelectedItem: function (state) {
     state.selectedItem = ''
+  },
+  pushNavStack: function (state, name) {
+    state.navStack.push(name)
+  },
+  popNavStack: function (state, name) {
+    state.navStack.pop()
+  },
+  clearNavStack: function (state) {
+    state.navStack = []
+  },
+  resetNavigatorStates: function (state) {
+    state = Object.assign({}, appConfig.initialNavigatorStates)
   }
 }

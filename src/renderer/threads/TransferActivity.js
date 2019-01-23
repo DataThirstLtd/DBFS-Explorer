@@ -103,12 +103,14 @@ function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, do
   const axios = this.require('axios')
   const forEach = this.require('async-foreach').forEach
   const chunksLength = chunks.length - 1
+  const uploadStream = []
   forEach(chunks, function (chunk, index) {
     const asyncDone = this.async()
+    uploadStream.push(chunk.toString())
     axios.post(
       `${url}/${endpoint}`,
       {
-        data: chunk,
+        data: chunk.toString(),
         handle: handle
       },
       {
@@ -156,15 +158,16 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
   console.log('on entry downloadHandler')
   console.log('thread entry id', transferId, file, endpoint, url, token, targetPath)
   const fs = this.require('fs')
+  const base64 = this.require('base64-js')
   const EventEmitter = this.require('events')
   const axios = this.require('axios')
   const events = new EventEmitter()
   events.setMaxListeners(100)
-  let fileHandle = null
 
   const totalSizeBytes = file.size // Total Size of the file in bytes
   let finishedSizeBytes = 0 // Size of downloaded the file in bytes
-  let offset = 0 // Offset byte value to start downloading data
+  let remainingSizeBytes = 0 // remaining size in bytes = totalSizeBytes - finishedSizeBytes
+  const base64String = []
 
   const download = function ({ offset }) {
     axios({
@@ -172,7 +175,8 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
       url: `${url}/${endpoint}`,
       data: {
         path: file.path,
-        offset: offset
+        offset: offset,
+        length: 900000
       },
       headers: {
         'Authorization': `Bearer ${token}`
@@ -192,38 +196,42 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
 
   events.on('response', function ({ data }) {
     finishedSizeBytes = finishedSizeBytes + data.bytes_read
-    offset = finishedSizeBytes + 1
-    console.log('finishedSizeBytes', finishedSizeBytes, 'offset', offset, 'bytes_read', data.bytes_read)
+    remainingSizeBytes = totalSizeBytes - finishedSizeBytes
     const fullProgress = (finishedSizeBytes / totalSizeBytes) * 100
+    console.log(
+      'finishedSizeBytes', finishedSizeBytes,
+      'bytes_read', data.bytes_read,
+      'remainingSizeBytes', remainingSizeBytes,
+      'progress', fullProgress
+    )
     progress({
       progress: parseFloat(fullProgress).toFixed(1),
       transferId: transferId
     })
-    fileHandle.write(data.data)
-    if (data.bytes_read !== 0) {
-      download({ offset: offset + 1 })
+    base64String.push(data.data)
+    if (remainingSizeBytes > 0) {
+      download({ offset: finishedSizeBytes })
     } else {
-      console.log('totalSizeBytes', totalSizeBytes)
-      console.log('finishedSizeBytes', finishedSizeBytes)
-      fileHandle.end()
-      // Convert base64 file into original file
-      done(transferId)
+      console.log(
+        'download finish:::',
+        'finishedSizeBytes', finishedSizeBytes,
+        'totalSizeBytes', totalSizeBytes
+      )
+      fs.writeFile(
+        targetPath,
+        base64.toByteArray(base64String.join('')),
+        function (err) {
+          if (!err) {
+            done(transferId)
+          } else {
+            // Notify error
+          }
+        }
+      )
     }
   })
 
-  // Create file at target path
-  fileHandle = fs.createWriteStream(
-    targetPath,
-    {
-      flags: 'w',
-      encoding: 'utf8'
-    }
-  )
-  if (fileHandle) {
-    download({ offset: 0 })
-  } else {
-    console.log('TransferActivity -> Unable to open file stream.')
-  }
+  download({ offset: 0 })
 }
 
 export default AddBlock

@@ -1,13 +1,5 @@
-export default {
-  rootFs: [],
-  fetchWait: false,
-  selection: [],
-  folderEmpty: {
-    valid: false,
-    path: ''
-  },
-  selectedItem: '',
-  populateSelection: {},
-  prevPath: '',
-  currentPath: ''
-}
+import appConfig from '@/app.config.js'
+
+const states = Object.assign({}, appConfig.initialNavigatorStates)
+
+export default states

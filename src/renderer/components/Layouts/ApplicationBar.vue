@@ -3,56 +3,60 @@
     <v-layout align-center row
       fill-height :class="`${getPlatform() === 'darwin' ? 'space-left' : null}`">
       <p class="app-title">
-        DBFS-Explorer
+        DBFS-Explorer | {{ $platform }}
       </p>
       <span style="padding: 0 10px">
         {{ routeName }}
       </span>
       <div
         v-if="routeName !== 'auth'">
+        <v-tooltip
+          v-for="item in buttons.left"
+          :key="item.id"
+          bottom>
           <v-btn
-            v-for="item in buttons.left" small
-            :key="item.id" @click="item.callback"
-            icon light class="drag-safe btn">
-            <v-tooltip
-              bottom>
-              <v-icon
-                slot="activator"
-                small>
-                  {{ item.icon }}
-                </v-icon>
-              <span>{{ item.tooltip }}</span>
-            </v-tooltip>
+            :disabled="persistantLoaderState"
+            slot="activator"
+            class="drag-safe btn"
+            icon small light 
+            @click="item.callback">
+            <v-icon
+              small>
+              {{ item.icon }}
+            </v-icon>
           </v-btn>
+          <span>{{ item.tooltip }}</span>
+        </v-tooltip>
       </div>
       <v-spacer />
       <div
         v-for="item in buttons.right"
         :key="item.id">
-        <v-btn
-          v-if="checkPlatform(item) && hiddenOnPage(item)"
-          class="drag-safe btn"
-          small
-          icon
-          light
-          @click="item.callback">
-          <v-tooltip
-            bottom>
+         <v-tooltip
+          bottom>
+          <v-btn
+            v-if="checkPlatform(item) && hiddenOnPage(item)"
+            :disabled="persistantLoaderState"
+            slot="activator"
+            class="drag-safe btn"
+            small
+            icon
+            light
+            @click="item.callback">
             <v-icon
-              slot="activator"
               small>
-                {{ item.icon }}
-              </v-icon>
-            <span>{{ item.tooltip }}</span>
-          </v-tooltip>
-        </v-btn>
+              {{ item.icon }}
+            </v-icon>
+          </v-btn>
+          <span>{{ item.tooltip }}</span>
+        </v-tooltip>
       </div>
     </v-layout>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'application-bar',
@@ -81,7 +85,7 @@ export default {
             callback: () => { this.toggleDialog({ name: 'transferState' }) },
             platforms: ['darwin', 'win32', 'linux'],
             tooltip: 'Download/Upload Activity',
-            hiddenOnPages: []
+            hiddenOnPages: ['auth']
           }
         ],
         right: [
@@ -95,6 +99,15 @@ export default {
             hiddenOnPages: ['auth']
           },
           {
+            id: 'id-app-load-credentials',
+            text: 'Load Credentials',
+            icon: 'fa-key',
+            callback: this.onClickLoadCredentials,
+            platforms: ['darwin', 'win32', 'linux'],
+            tooltip: 'Load Credentials',
+            hiddenOnPages: ['home']
+          },
+          {
             id: 'id-app-about',
             text: 'About',
             icon: 'fa-star',
@@ -102,21 +115,31 @@ export default {
             platforms: ['darwin', 'win32', 'linux'],
             tooltip: 'About',
             hiddenOnPages: []
-          }/* ,
+          },
           {
             id: 'id-app-logout',
             text: 'Logout',
             icon: 'fa-power-off',
-            callback: () => { console.log(this.isLoggedIn()) },
+            callback: () => { this.openDialog({ name: 'disconnect' }) },
             platforms: ['darwin', 'win32', 'linux'],
-            tooltip: 'Logout'
-          } */
+            tooltip: 'Logout',
+            hiddenOnPages: ['auth']
+          }
         ]
       }
     }
   },
+  computed: mapState({
+    persistantLoaderState: state => state.config.dialogs.persistantLoader.active
+  }),
   methods: {
-    ...mapActions(['openDialog', 'toggleDialog']),
+    ...mapActions(['openDialog', 'toggleDialog', 'loadCredentials']),
+    onClickLoadCredentials: function () {
+      const self = this
+      this.loadCredentials().then(({domain, token}) => {
+        self.$root.$emit('shareCredentials', { domain, token })
+      })
+    },
     maximizeApp: function () {
       this.$electron.remote.getCurrentWindow().maximize()
     },
@@ -133,7 +156,6 @@ export default {
       if (item && item.hiddenOnPages &&
       item.hiddenOnPages.constructor === [].constructor &&
       item.hiddenOnPages.length > 0) {
-        console.log(item)
         if (item.hiddenOnPages.indexOf(this.routeName) > -1) {
           return false
         }

@@ -2,7 +2,6 @@
   <div id="wrapper"
     @click="onClickHome"
     @dragover="showDrag"
-    @dragleave="hideDrag"
     @drop="dropFile">
     <!-- layouts -->
     <sidebar :rootFs="rootFs"/>
@@ -14,6 +13,8 @@
     <data-transfer />
     <transfer-state />
     <app-settings />
+    <disconnect />
+    <persistant-loader />
     <!-- Misc -->
     <drag />
     <overlay />
@@ -26,7 +27,8 @@
    */
   import { mapState, mapGetters, mapActions } from 'vuex'
   import helper from '@/assets/helper.js'
-  // Import appConfig from '@/app.config.js'
+  import appConfig from '@/app.config.js'
+
   import Sidebar from './Layouts/Sidebar'
   import MainContent from './Layouts/MainContent'
   // Import dialogs
@@ -36,6 +38,8 @@
   import DataTransfer from './Dialogs/DataTransfer'
   import TransferState from './Dialogs/TransferState'
   import AppSettings from './Dialogs/AppSettings'
+  import Disconnect from './Dialogs/Disconnect'
+  import PersistantLoader from './Dialogs/PersistantLoader'
   // Import Other Components
   import Drag from './Misc/Drag'
   import Overlay from './Misc/Overlay'
@@ -51,6 +55,8 @@
       DataTransfer,
       TransferState,
       AppSettings,
+      Disconnect,
+      PersistantLoader,
       Drag,
       Overlay
     },
@@ -59,14 +65,44 @@
       domain: state => state.auth.domain,
       rootFs: state => state.navigator.rootFs,
       selectedItem: state => state.navigator.selectedItem,
+      settings: state => state.config.settings,
+      platform: state => state.config.platform,
       onInit () {
         return Boolean(this.token && this.domain)
+      },
+      onSettingsChange () {
+        return this.settings
       }
     }),
     watch: {
-      onInit (state) {
+      onInit: function (state) {
+        console.log('onInit', state)
         if (state) {
           this.initHome()
+        }
+      },
+      onSettingsChange: function (settings) {
+        console.log('onSettingsChange', settings)
+        if (settings && settings.constructor === [].constructor) {
+          // If thread-count in settings
+          const targetIndex = settings.findIndex(x => x.key === 'thread-count')
+          if (targetIndex > -1) {
+            this.initTransferActivity({
+              threadCount: settings[targetIndex].value || appConfig.defaultThreadCount
+            })
+            this.writeLog({
+              level: 'info',
+              message: `onSettingsChange -> initTransferActivity Thread Count ${settings[targetIndex].value || appConfig.defaultThreadCount}`
+            })
+          } else {
+            this.initTransferActivity({
+              threadCount: appConfig.defaultThreadCount
+            })
+            this.writeLog({
+              level: 'info',
+              message: `onSettingsChange -> initTransferActivity Thread Count DEFAULT ${appConfig.defaultThreadCount}`
+            })
+          }
         }
       }
     },
@@ -92,7 +128,9 @@
         'clearItem',
         'showDrag',
         'hideDrag',
-        'dropFile'
+        'dropFile',
+        'initTransferActivity',
+        'writeLog'
       ]),
       initHome: function () {
         const context = this

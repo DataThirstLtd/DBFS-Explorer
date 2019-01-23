@@ -7,7 +7,7 @@
         About
       </v-card-title>
       <v-card-text>
-        <h1 style="font-weight: 400;"> DBFS-Explorer </h1>
+        <h1 style="font-weight: 500;"> DBFS-Explorer </h1>
         <p>Version 0.1.0</p>
         <p>Copyright &copy; 2019 Data Thirst Ltd. All rights reserved</p>
       </v-card-text>

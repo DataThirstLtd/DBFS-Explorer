@@ -11,8 +11,8 @@ export default {
   isLoggedIn: function (state) {
     return state.loggedIn
   },
-  getListDataTransfer: function (state) {
-    return state.dialogs.dataTransfer.options.list
+  getTransferStateList: function (state) {
+    return state.dialogs.transferState.list
   },
   getDialogs: function (state) {
     return state.dialogs

@@ -1,8 +1,16 @@
 import { ipcRenderer } from 'electron'
 import { platform } from 'os'
 import appConfig from '@/app.config.js'
+const { createLogger, format, transports } = require('winston')
+const { combine, timestamp, label, prettyPrint } = format
 
+const fsExtra = require('fs-extra')
+const nodePath = require('path')
 const uniqid = require('uniqid')
+const remote = require('electron').remote
+
+let logger = null
+let dragOverTimer = null
 
 function registerForSqlReady (context) {
   ipcRenderer.on('sql_ready', function (event, data) {
@@ -11,7 +19,7 @@ function registerForSqlReady (context) {
     } else {
       if (data.commit) {
         context.commit(data.commit, data.data)
-        data.commit === 'setSettings' && context.dispatch('initTransferActivity')
+        data.commit === 'setSettings' && context.dispatch('applySettings', data.data)
       }
     }
   })
@@ -30,8 +38,58 @@ export default {
         table: 'user'
       }
     })
+    const dateISOString = new Date().toISOString().replace(/:/g, '_')
+    const logPath = nodePath.join(
+      remote.app.getPath('logs'),
+      'dbfs_explorer',
+      dateISOString
+    )
+    fsExtra.ensureDir(logPath)
+    logger = createLogger({
+      format: combine(
+        label({ label: 'DBFS-Explorer' }),
+        timestamp(),
+        prettyPrint()
+      ),
+      transports: [
+        new transports.File({
+          filename: nodePath.join(logPath, 'debug.log'),
+          level: 'debug'
+        }),
+        new transports.File({
+          filename: nodePath.join(logPath, 'verbose.log'),
+          level: 'verbose'
+        }),
+        new transports.File({
+          filename: nodePath.join(logPath, 'info.log'),
+          level: 'info'
+        }),
+        new transports.File({
+          filename: nodePath.join(logPath, 'error.log'),
+          level: 'error'
+        }),
+        new transports.File({
+          filename: nodePath.join(logPath, 'combined.log')
+        })
+      ]
+    })
+    if (logger) {
+      logger.log({
+        level: 'info',
+        message: 'What time is the testing at?'
+      })
+      logger.log({
+        level: 'info',
+        message: 'What time is the testing at?'
+      })
+    }
   },
-  fetchSettings: function () {
+  writeLog: function (context, { level, message }) {
+    if (level && typeof message === 'string') {
+      logger.log({ level, message })
+    }
+  },
+  fetchSettings: function (context) {
     ipcRenderer.send('sql', {
       commit: 'setSettings',
       name: 'readFullTable',
@@ -39,6 +97,23 @@ export default {
         table: 'settings'
       }
     })
+  },
+  applySettings: function (context, data) {
+    console.log('applySettings', data)
+    if (data && data.constructor === [].constructor) {
+      if (data.length > 0) {
+        // Apply settings from data
+        data.forEach((dataSetting) => {
+          context.dispatch('updateSettings', dataSetting)
+        })
+      } else {
+        console.log('apply default settings')
+        // Apply default settings
+        appConfig.defaultSettings.forEach((defaultSetting) => {
+          context.dispatch('updateSettings', defaultSetting)
+        })
+      }
+    }
   },
   writeSql: function (context, data) {
     ipcRenderer.send('sql', {
@@ -70,15 +145,11 @@ export default {
               value: parseInt(settings[index].value)
             })
           } else {
-            // Resolve default value
-            resolve({
-              value: appConfig.defaultThreadCount
-            })
+            reject(new Error(`Setting with key: ${key} not found.`))
           }
         } else {
           // Settings not found in the database
           // Create new settings from app.config.js
-          console.log('DEBUG:111')
           const settings = Object.assign([], appConfig.defaultSettings)
           settings.forEach((item) => {
             if (item && item.constructor === {}.constructor) {
@@ -110,14 +181,23 @@ export default {
   closeDialog: function (context, { name }) {
     context.commit('setInertDialog', { name })
   },
-  showDrag: function (context, ev) {
+  showDrag: function (context, e) {
+    e && e.preventDefault()
+    if (dragOverTimer) {
+      clearInterval(dragOverTimer)
+      dragOverTimer = null
+    }
     context.commit('setDragActive')
+    dragOverTimer = setInterval(() => {
+      context.dispatch('hideDrag')
+    }, 200)
   },
-  hideDrag: function (context) {
+  hideDrag: function (context, e) {
+    e && e.preventDefault()
     context.commit('setDragInert')
   },
   dropFile: function (context, event) {
-    const currentPath = context.getters.getCurrentPath
+    const pwd = context.getters.getCurrentPath
     const files = Object.assign([], event.dataTransfer.files)
     context.dispatch('hideDrag')
     if (files.length > 0) {
@@ -130,7 +210,7 @@ export default {
         options: {
           list: listObject,
           type: 1,
-          toPath: currentPath || '/'
+          toPath: pwd
         }
       })
     }
@@ -166,5 +246,8 @@ export default {
   },
   updateJobProgress: function (context, data) {
     context.commit('setJobProgress', data)
+  },
+  clearConfigStates: function (context) {
+    context.commit('resetConfigStates')
   }
 }

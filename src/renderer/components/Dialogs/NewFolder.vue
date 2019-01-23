@@ -42,8 +42,6 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 
-const nodePath = require('path')
-
 export default {
   name: 'new-folder',
   data () {
@@ -56,6 +54,7 @@ export default {
   computed: mapState({
     selection: state => state.navigator.selection,
     folderEmpty: state => state.navigator.folderEmpty,
+    navStack: state => state.navigator.navStack,
     active: state => state.config.dialogs.newFolder.active,
     onChangeActive: function () {
       return this.active
@@ -73,14 +72,8 @@ export default {
   methods: {
     ...mapActions(['createNewFolder', 'showInfoSnackbar', 'closeDialog']),
     show: function () {
-      if (this.selection[0]) {
-        let path = this.selection[0].path
-        this.path = path ? path.split(nodePath.basename(path))[0] : '/'
-        this.dialog = true
-      } else if (this.folderEmpty.valid) {
-        this.path = this.folderEmpty.path
-        this.dialog = true
-      }
+      this.path = `/${this.navStack.join('/')}`
+      this.dialog = true
     },
     hide: function () {
       this.closeDialog({ name: 'newFolder' })
@@ -98,6 +91,8 @@ export default {
         path,
         folderName
       })
+      this.folderName = ''
+      this.path = ''
     }
   }
 }

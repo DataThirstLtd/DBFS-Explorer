@@ -1,3 +1,5 @@
+import appConfig from '@/app.config.js'
+
 export default {
   setPlatform: function (state, platform) {
     state.platform = platform
@@ -13,6 +15,8 @@ export default {
     )
     if (index > -1) {
       state.settings[index].value = value
+    } else {
+      state.settings.push({ key, value })
     }
   },
   setInfoSnackbar: function (state, data) {
@@ -87,5 +91,9 @@ export default {
     const list = Object.assign([], state.dialogs.transferState.list)
     const targetIndex = list.findIndex(x => x.transferId === transferId)
     targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].progress = progress)
+  },
+  resetConfigStates: function (state) {
+    state = Object.assign({}, appConfig.initialConfigStates)
+    console.log(state)
   }
 }

@@ -10,31 +10,34 @@
         @click="goBack">
         <v-icon small>fa-arrow-left</v-icon>
       </v-btn>
-      <div>
+      <!-- <div>
         {{ getParentPath(selection[0]) || (folderEmpty.valid ? folderEmpty.path : '') }}
+      </div> -->
+      <div>
+        {{ `/${navStack.join('/')}` }}
       </div>
       <v-spacer />
       <div
         v-for="item in appbarButtons.right"
         :key="item.id">
-        <v-btn
-          v-if="isHiddenAction(item) ? selectedItem ? true : false : true"
-          class="ig-folder-actions-button"
-          small
-          icon
-          light
-          @click="item.callback">
-          <v-tooltip
-            bottom>
+        <v-tooltip
+          bottom>
+          <v-btn
+            v-if="isHiddenAction(item) ? selectedItem ? true : false : true"
+            slot="activator"
+            class="ig-folder-actions-button"
+            small
+            icon
+            light
+            @click="item.callback">
             <v-icon
               :color="item.color || null"
-              slot="activator"
               small>
               {{ item.icon }}
             </v-icon>
-            <span>{{ item.tooltip }}</span>
-          </v-tooltip>
-        </v-btn>
+          </v-btn>
+          <span>{{ item.tooltip }}</span>
+        </v-tooltip>
       </div>
     </v-toolbar>
     <div v-if="selection && selection.length < 1 && !fetchWait && !folderEmpty.state"
@@ -115,14 +118,10 @@ export default {
           },
           {
             id: 'id-app-new-folder',
-            text: 'Delete',
+            text: 'New Folder',
             color: null,
             icon: 'fa-folder-plus',
-            callback: () => {
-              this.openDialog({
-                name: 'newFolder'
-              })
-            },
+            callback: this.newFolder,
             platforms: ['darwin', 'win32', 'linux'],
             tooltip: 'Create a new folder',
             hidden: false
@@ -138,7 +137,7 @@ export default {
     selectedItem: state => state.navigator.selectedItem,
     folderEmpty: state => state.navigator.folderEmpty,
     fetchWait: state => state.navigator.fetchWait,
-    prevPath: state => state.navigator.prevPath
+    navStack: state => state.navigator.navStack
   }),
   mounted () {
     const self = this
@@ -153,7 +152,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog']),
+    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog', 'popNavStack']),
     isHiddenAction: function (item) {
       const itemIndex = this.appbarButtons.right.findIndex(x => x.id === item.id)
       if (itemIndex > -1 && this.appbarButtons.right[itemIndex].hidden) {
@@ -168,21 +167,21 @@ export default {
       return ''
     },
     goBack: function () {
+      this.popNavStack()
       this.clearSelection()
       this.fetchSelection({
-        path: this.prevPath
+        path: `/${this.navStack.join('/')}`
       })
     },
     deleteItem: function () {
-      const prevPath = this.getParentPath({ path: this.selectedItem })
-      console.log(prevPath)
+      const pwd = `/${this.navStack.join('/')}`
       const path = this.selectedItem
       if (path && path !== '/') {
         this.openDialog({
           name: 'delete',
           options: {
             path: path,
-            prevPath: prevPath
+            pwd
           }
         })
       }
@@ -223,6 +222,11 @@ export default {
     openProperties: function () {
       this.openDialog({
         name: 'properties'
+      })
+    },
+    newFolder: function () {
+      this.openDialog({
+        name: 'newFolder'
       })
     }
   }

@@ -10,7 +10,7 @@
         Disconnect
       </v-card-title>
       <v-card-text>
-        All download/upload operations, if any, will be closed
+        All download/upload operations, if any, will be terminated
         Are you sure you want to disconnect from server?
       </v-card-text>
       <v-card-actions>
@@ -59,7 +59,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['openDialog', 'closeDialog', 'disconnect']),
+    ...mapActions(['openDialog', 'closeDialog', 'disconnect', 'cancelAllTransfers']),
     show: function () {
       this.dialog = true
     },
@@ -70,10 +70,13 @@ export default {
       const self = this
       this.dialog = false
       this.openDialog({ name: 'persistantLoader' })
-      this.disconnect().then(() => {
-        // Go to Auth page
-        this.closeDialog({ name: 'persistantLoader' })
-        self.$router.replace('auth')
+
+      this.cancelAllTransfers().then(() => {
+        self.disconnect().then(() => {
+          // Go to Auth page
+          self.closeDialog({ name: 'persistantLoader' })
+          self.$router.replace('auth')
+        })
       })
     }
   }

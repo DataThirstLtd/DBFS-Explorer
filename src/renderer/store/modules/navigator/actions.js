@@ -273,11 +273,13 @@ export default {
     transferActivity.cancelJob(data)
   },
   cancelAllTransfers: function (context, data) {
-    const list = context.getters.getListDataTransfer
-    console.log(list)
-    /* list && list.constructor === [].constructor && list.forEach((item) => {
-      context.dispatch('cancelTransfer', item)
-    }) */
+    return new Promise((resolve, reject) => {
+      const list = context.getters.getTransferStateList
+      list && list.constructor === [].constructor && list.forEach((item) => {
+        context.dispatch('cancelTransfer', item)
+      })
+      resolve()
+    })
   },
   setPrevPath: function (context, { path }) {
     context.commit('setPrevPath', path)

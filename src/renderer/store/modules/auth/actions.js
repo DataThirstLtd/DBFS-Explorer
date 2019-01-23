@@ -43,7 +43,6 @@ export default {
   },
   disconnect: async function (context) {
     return new Promise((resolve, reject) => {
-      context.dispatch('cancelAllTransfers')
       context.dispatch('clearConfigStates')
       context.dispatch('clearNavigatorStates')
       context.dispatch('clearAuthStates')

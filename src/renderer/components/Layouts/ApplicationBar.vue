@@ -104,7 +104,7 @@ export default {
             icon: 'fa-key',
             callback: this.onClickLoadCredentials,
             platforms: ['darwin', 'win32', 'linux'],
-            tooltip: 'Load Credentials',
+            tooltip: 'Last saved credentials',
             hiddenOnPages: ['home']
           },
           {

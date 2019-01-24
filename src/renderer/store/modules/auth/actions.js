@@ -1,13 +1,11 @@
 import axios from 'axios'
 import appConfig from '@/app.config.js'
-import helper from '@/assets/helper.js'
 
 export default {
   login: function (context, data) {
-    const domain = helper.filterDomainFromUrl(data.domain)
-    const token = data.token
+    const { domain, token } = data
     return axios.get(
-      `https://${domain}.azuredatabricks.net/${appConfig.ENDPOINTS.list}?path=/`,
+      `${domain}/${appConfig.ENDPOINTS.list}?path=/`,
       {
         headers: {
           'Authorization': `Bearer ${token}`

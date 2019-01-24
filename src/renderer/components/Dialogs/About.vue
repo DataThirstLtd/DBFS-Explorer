@@ -7,6 +7,21 @@
         About
       </v-card-title>
       <v-card-text>
+        <div
+          style="margin: 5px 0;">
+          <v-layout
+            row>
+            <img
+              class="auth-logo"
+              src="@/assets/logo.png"
+              small>
+            <p
+              class="auth-company"
+              small>
+              Data Thirst
+            </p>
+          </v-layout>
+        </div>
         <h1 style="font-weight: 500;"> DBFS-Explorer </h1>
         <p>Version 0.1.0</p>
         <p>Copyright &copy; 2019 Data Thirst Ltd. All rights reserved</p>

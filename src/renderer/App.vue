@@ -143,6 +143,34 @@
   #command-bar > .wrapper .command {
     margin: 5px 0;
   }
+  .auth-logo {
+    width: auto;
+    height: 22px;
+    margin-left: -5px;
+    margin-top: 6.5px;
+  }
+  .auth-logo[small] {
+    width: auto;
+    height: 20px;
+    margin-left: -5px;
+    margin-top: 4.7px;
+  }
+  .auth-company {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 0;
+  }
+  .auth-company[small] {
+    font-size: 23px;
+    font-weight: bold;
+    margin: 0;
+  }
+  .copyright-info {
+    text-align: center;
+    color: #333333;
+    font-size: 12px;
+    margin: 10px 0;
+  }
   .hero {
     position: absolute;
     top: 50%;

@@ -1,6 +1,5 @@
 import axios from 'axios'
 import appConfig from '@/app.config.js'
-import helper from '@/assets/helper.js'
 import TransferActivity from '@/threads/TransferActivity'
 
 let transferActivity = null
@@ -44,7 +43,7 @@ export default {
     }
   },
   getStatus: function (context, data) {
-    const url = helper.getUrlFromDomain(context.getters.getDomain)
+    const url = context.getters.getDomain
     const token = context.getters.getToken
     return axios.get(
       `${url}/${appConfig.ENDPOINTS.getStatus}?path=${data.item}`,
@@ -63,7 +62,7 @@ export default {
     }
   },
   fetchRootFs: function (context) {
-    const url = helper.getUrlFromDomain(context.getters.getDomain)
+    const url = context.getters.getDomain
     const token = context.getters.getToken
     return axios.get(
       `${url}/${appConfig.ENDPOINTS.list}?path=/`,
@@ -82,7 +81,7 @@ export default {
     context.commit('setSelectionEmpty')
   },
   fetchSelection: function (context, { path }) {
-    const url = helper.getUrlFromDomain(context.getters.getDomain)
+    const url = context.getters.getDomain
     const token = context.getters.getToken
     context.commit('setFetchWait')
     return axios.get(
@@ -120,7 +119,7 @@ export default {
     })
   },
   createNewFolder: function (context, { path, folderName }) {
-    const url = helper.getUrlFromDomain(context.getters.getDomain)
+    const url = context.getters.getDomain
     const token = context.getters.getToken
     return axios.post(
       `${url}/${appConfig.ENDPOINTS.mkdirs}`,
@@ -153,7 +152,7 @@ export default {
     context.commit('clearSelectedItem')
   },
   deleteSelected: function (context, { path, pwd }) {
-    const url = helper.getUrlFromDomain(context.getters.getDomain)
+    const url = context.getters.getDomain
     const token = context.getters.getToken
     return axios.post(
       `${url}/${appConfig.ENDPOINTS.delete}`,
@@ -191,7 +190,7 @@ export default {
     // Iterate through files selected
     if (options.list.length > 0) {
       // Get domain info
-      const url = helper.getUrlFromDomain(context.getters.getDomain)
+      const url = context.getters.getDomain
       const token = context.getters.getToken
       // Close file selection dialog
       context.dispatch('closeDialog', { name: 'dataTransfer' })
@@ -250,7 +249,7 @@ export default {
   prepareDownload: function (context, { options }) {
     console.log(options)
     if (options.list.length > 0) {
-      const url = helper.getUrlFromDomain(context.getters.getDomain)
+      const url = context.getters.getDomain
       const token = context.getters.getToken
       context.dispatch('closeDialog', { name: 'dataTransfer' })
       options.list.forEach(({ file, selected, transferId, targetPath }) => {

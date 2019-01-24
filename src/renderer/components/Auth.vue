@@ -153,6 +153,10 @@ export default {
       }
     },
     fillCredentials: function ({ domain, token }) {
+      // Validate url
+      // Url should match either azure or aws url formats
+      // azure - https://domain.azuredatabricks.net
+      // aws - https://domain.cloud.databricks.com
       if (domain && token && (domain.match(helper.getRegXObject().azure || domain.match(helper.getRegXObject().aws)))) {
         const extractedUrl = domain.match(helper.getRegXObject().domain)
         this.activeSuffix = `.${domain.split(extractedUrl[0])[1]}`

@@ -2,12 +2,12 @@
   "name": "dbfs_explorer",
   "version": "0.1.0",
   "author": "saikksub <saikksub@gmail.com>",
-  "description": "DBFS EXPLORER",
+  "description": "DBFS Explorer for Databricks",
   "license": null,
   "main": "./dist/electron/main.js",
+  "private": true
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
-    "buildnopub": "node .electron-vue/build.js --publish=never && electron-builder --publish=never",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
@@ -22,7 +22,7 @@
   },
   "build": {
     "productName": "dbfs_explorer",
-    "appId": "com.example.yourapp",
+    "appId": "net.datathirst.dbfs.explorer",
     "directories": {
       "output": "build"
     },

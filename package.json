@@ -21,7 +21,7 @@
     "postinstall": "npm run lint:fix && install-app-deps"
   },
   "engines" : { 
-      "node" : ">=4.11" 
+      "node" : ">=6.4" 
       },
   "build": {
     "productName": "dbfs_explorer",

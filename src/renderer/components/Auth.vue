@@ -2,24 +2,11 @@
   <div>
     <div class="hero">
       <v-card flat width="500px">
-        <div
-          style="margin: 5px 0;">
-          <v-layout
-            row>
-            <img
-              class="auth-logo"
-              src="@/assets/logo.png">
-            <p
-              class="auth-company">
-              Data Thirst
-            </p>
-          </v-layout>
-        </div>
         <h1 class="light-text">
-          Welcome to DBFS-Explorer
+          DBFS-Explorer for Databricks
         </h1>
         <p style="padding: 10px 0;">
-          Please provide URL and Bearer token to get started.
+          Please provide URL and Bearer token to get started:
         </p>
         <v-radio-group
           v-model="activeSuffix"

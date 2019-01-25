@@ -5,7 +5,7 @@
   "description": "DBFS Explorer for Databricks",
   "license": null,
   "main": "./dist/electron/main.js",
-  "private": true
+  "private": true,
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",

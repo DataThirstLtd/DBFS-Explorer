@@ -79,12 +79,16 @@ export default {
     const targetIndex = list.findIndex(x => x.transferId === transferId)
     targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].done = true)
   },
-  setAbortTransfer: function (state, { transferId }) {
+  /* setAbortTransfer: function (state, { transferId }) {
     const list = Object.assign([], state.dialogs.transferState.list)
     const targetIndex = list.findIndex(x => x.transferId === transferId)
     console.log('setAbortTransfer', targetIndex)
-    targetIndex > -1 && (state.dialogs.transferState.list[targetIndex].abort = true)
+    targetIndex > -1 && ()
     console.log('setAbortTransfer abort::', state.dialogs.transferState.list[targetIndex].abort)
+  }, */
+  setAbortTransfer: function (state, { transferId }) {
+    const index = state.dialogs.transferState.list.map(item => { return item.transferId }).indexOf(transferId)
+    index > -1 && (state.dialogs.transferState.list[index].abort = true)
   },
   setJobProgress: function (state, { transferId, progress }) {
     console.log(transferId, progress)
@@ -95,5 +99,9 @@ export default {
   resetConfigStates: function (state) {
     state = Object.assign({}, appConfig.initialConfigStates)
     console.log(state)
+  },
+  clearTransferListItem: function (state, { transferId }) {
+    const index = state.dialogs.transferState.list.map(item => { return item.transferId }).indexOf(transferId)
+    index > -1 && state.dialogs.transferState.list.splice(index, 1)
   }
 }

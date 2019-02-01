@@ -20,9 +20,9 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "postinstall": "npm run lint:fix && install-app-deps"
   },
-  "engines" : { 
-      "node" : ">=6.4" 
-      },
+  "engines": {
+    "node": ">=6.4"
+  },
   "build": {
     "productName": "dbfs_explorer",
     "appId": "net.datathirst.dbfs.explorer",

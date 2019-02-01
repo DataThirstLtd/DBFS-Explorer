@@ -242,12 +242,21 @@ export default {
     })
   },
   abortTransfer: function (context, data) {
-    context.commit('setAbortTransfer', data)
+    context.commit('setAbortTransfer', { transferId: data.transferId })
+    // context.commit('setAbortTransfer', data)
   },
   updateJobProgress: function (context, data) {
     context.commit('setJobProgress', data)
   },
   clearConfigStates: function (context) {
     context.commit('resetConfigStates')
+  },
+  clearFinished: function (context) {
+    const List = Object.assign([], context.getters.getTransferStates)
+    List.forEach((listItem) => {
+      if (listItem && (listItem.done || listItem.abort)) {
+        context.commit('clearTransferListItem', { transferId: listItem.transferId })
+      }
+    })
   }
 }

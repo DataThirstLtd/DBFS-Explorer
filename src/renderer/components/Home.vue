@@ -76,13 +76,11 @@
     }),
     watch: {
       onInit: function (state) {
-        console.log('onInit', state)
         if (state) {
           this.initHome()
         }
       },
       onSettingsChange: function (settings) {
-        console.log('onSettingsChange', settings)
         if (settings && settings.constructor === [].constructor) {
           // If thread-count in settings
           const targetIndex = settings.findIndex(x => x.key === 'thread-count')

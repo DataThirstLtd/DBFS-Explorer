@@ -27,7 +27,6 @@ function registerForSqlReady (context) {
 
 export default {
   init: function (context) {
-    console.log('init')
     // Set current running platform
     context.commit('setPlatform', platform())
     registerForSqlReady(context)
@@ -99,7 +98,6 @@ export default {
     })
   },
   applySettings: function (context, data) {
-    console.log('applySettings', data)
     if (data && data.constructor === [].constructor) {
       if (data.length > 0) {
         // Apply settings from data
@@ -107,7 +105,6 @@ export default {
           context.dispatch('updateSettings', dataSetting)
         })
       } else {
-        console.log('apply default settings')
         // Apply default settings
         appConfig.defaultSettings.forEach((defaultSetting) => {
           context.dispatch('updateSettings', defaultSetting)

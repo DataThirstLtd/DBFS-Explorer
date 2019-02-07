@@ -72,6 +72,7 @@
     "titlebar": "^1.4.0",
     "uniqid": "^5.0.3",
     "vue": "^2.5.22",
+    "vue-template-compiler": "^2.5.22",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuetify": "^1.4.3",

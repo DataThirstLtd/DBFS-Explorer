@@ -17,6 +17,20 @@
           </v-icon>
         </v-btn>
         Dowloads and Uploads
+        <v-spacer />
+        <v-btn
+          :disabled="list.length < 1 || !list.some(item => { return Boolean(item.done || item.abort) })"
+          flat
+          small
+          color="#2A2A2A"
+          @click="clearFinished">
+          <v-icon
+            small left
+            class="black--text">
+            fa-times
+          </v-icon>
+          Clear Finished
+        </v-btn>
       </v-card-title>
       <v-card-text
         v-if="list && list.constructor === [].constructor && list.length > 0"
@@ -69,7 +83,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['closeDialog'])
+    ...mapActions(['closeDialog', 'clearFinished'])
   }
 }
 </script>

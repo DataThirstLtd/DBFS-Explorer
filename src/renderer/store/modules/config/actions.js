@@ -27,7 +27,6 @@ function registerForSqlReady (context) {
 
 export default {
   init: function (context) {
-    console.log('init')
     // Set current running platform
     context.commit('setPlatform', platform())
     registerForSqlReady(context)
@@ -99,7 +98,6 @@ export default {
     })
   },
   applySettings: function (context, data) {
-    console.log('applySettings', data)
     if (data && data.constructor === [].constructor) {
       if (data.length > 0) {
         // Apply settings from data
@@ -107,7 +105,6 @@ export default {
           context.dispatch('updateSettings', dataSetting)
         })
       } else {
-        console.log('apply default settings')
         // Apply default settings
         appConfig.defaultSettings.forEach((defaultSetting) => {
           context.dispatch('updateSettings', defaultSetting)
@@ -242,12 +239,21 @@ export default {
     })
   },
   abortTransfer: function (context, data) {
-    context.commit('setAbortTransfer', data)
+    context.commit('setAbortTransfer', { transferId: data.transferId })
+    // context.commit('setAbortTransfer', data)
   },
   updateJobProgress: function (context, data) {
     context.commit('setJobProgress', data)
   },
   clearConfigStates: function (context) {
     context.commit('resetConfigStates')
+  },
+  clearFinished: function (context) {
+    const List = Object.assign([], context.getters.getTransferStates)
+    List.forEach((listItem) => {
+      if (listItem && (listItem.done || listItem.abort)) {
+        context.commit('clearTransferListItem', { transferId: listItem.transferId })
+      }
+    })
   }
 }

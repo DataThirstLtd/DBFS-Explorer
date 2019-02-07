@@ -11,7 +11,6 @@ const base64 = require('base64-js')
 export default {
   initTransferActivity: function (context, { threadCount }) {
     if (transferActivity === null) {
-      console.log('initTransferActivity', threadCount)
       transferActivity = new TransferActivity({
         threadCount: threadCount
       })
@@ -180,7 +179,6 @@ export default {
   },
   addJob: async function (context, data) {
     if (transferActivity) {
-      console.log(data.transferId)
       transferActivity.addJob(data)
     }
   },
@@ -196,7 +194,6 @@ export default {
       context.dispatch('closeDialog', { name: 'dataTransfer' })
       // Iterate through file selected
       options.list.forEach(({ file, selected, transferId }, index) => {
-        console.log('prepareUpload id', transferId, index)
         if (selected) {
           // Encode data into base64 string
           fs.readFile(file.path, function (err, readData) {
@@ -247,13 +244,11 @@ export default {
     }
   },
   prepareDownload: function (context, { options }) {
-    console.log(options)
     if (options.list.length > 0) {
       const url = context.getters.getDomain
       const token = context.getters.getToken
       context.dispatch('closeDialog', { name: 'dataTransfer' })
       options.list.forEach(({ file, selected, transferId, targetPath }) => {
-        console.log('prepareDownload', { file, selected, transferId, targetPath })
         if (selected) {
           context.dispatch('addJob', {
             url: url,

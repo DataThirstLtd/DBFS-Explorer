@@ -19,5 +19,8 @@ export default {
   },
   getSettings: function (state) {
     return state.settings
+  },
+  getTransferStates: function (state) {
+    return state.dialogs.transferState.list
   }
 }

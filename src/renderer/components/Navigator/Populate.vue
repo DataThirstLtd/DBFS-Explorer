@@ -23,6 +23,15 @@
         <p class="name">
           {{ item.path.split('/').pop() || item.path }}
         </p>
+        <div
+          v-if="!item.is_dir && !item.file_size"
+          class="vindicator">
+          <v-icon
+            class="icon"
+            small>
+            fa-times
+          </v-icon>
+        </div>
       </div>
       <v-menu
         v-model="contextMenu.showMenu"
@@ -167,6 +176,7 @@ export default {
 
 <style scoped>
   .item-wrapper {
+    position: relative;
     width: 100px;
     height: auto;
     margin: 10px;
@@ -183,5 +193,17 @@ export default {
   }
   .item-wrapper[active] {
     background: rgba(22, 82, 179, 0.452);
+  }
+  .item-wrapper > .vindicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .item-wrapper > .vindicator > .icon {
+    background-color: rgb(219, 33, 33);
+    color: white;
+    padding: 7px 10px;
+    border-radius: 50px;
   }
 </style>

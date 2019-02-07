@@ -8,7 +8,6 @@ function AddBlock ({ threadCount }) {
   if (!(this instanceof AddBlock)) {
     return new AddBlock({ threadCount: 2 })
   }
-  console.log('onTransferActivity', threadCount)
   this.setMaxListeners(100)
   this.pool = []
   this.runner = []
@@ -48,9 +47,7 @@ AddBlock.prototype.startJob = function (object) {
         self.emit('done', { transferId })
         if (self.runner.length < self.limitCount) {
           let poolItem = self.pool.pop()
-          console.log('starting new job: pre-condition', poolItem)
           if (poolItem && poolItem.data) {
-            console.log('starting new job: post-condition')
             self.startJob(poolItem)
           }
         }

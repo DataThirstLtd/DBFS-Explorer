@@ -74,9 +74,6 @@ export default {
   computed: mapState({
     domain: state => state.auth.domain,
     token: state => state.auth.token,
-    onChangeActiveSuffix: function () {
-      return this.activeSuffix
-    },
     onInit () {
       return Boolean(this.token && this.domain)
     }
@@ -87,9 +84,6 @@ export default {
         domain: this.domain,
         token: this.token
       })
-    },
-    onChangeActiveSuffix: function (suffix) {
-      console.log(suffix)
     }
   },
   mounted () {

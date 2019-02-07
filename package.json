@@ -1,6 +1,6 @@
 {
   "name": "dbfs_explorer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "saikksub <saikksub@gmail.com>",
   "description": "DBFS Explorer for Databricks",
   "license": null,
@@ -20,11 +20,11 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "postinstall": "npm run lint:fix && install-app-deps"
   },
-  "engines" : { 
-      "node" : ">=6.4" 
-      },
+  "engines": {
+    "node": ">=6.4"
+  },
   "build": {
-    "productName": "dbfs_explorer",
+    "productName": "DBFS Explorer",
     "appId": "net.datathirst.dbfs.explorer",
     "directories": {
       "output": "build"

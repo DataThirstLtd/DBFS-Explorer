@@ -60,8 +60,19 @@
                 <v-list-tile-title>
                   Size
                 </v-list-tile-title>
-                <v-list-tile-sub-title>
+                <v-list-tile-sub-title
+                  v-if="info.file_size">
                   {{ getSize(info.file_size) }}
+                </v-list-tile-sub-title>
+                <v-list-tile-sub-title
+                  v-else>
+                  <v-chip
+                    label
+                    color="red"
+                    text-color="white"
+                    style="margin: 5px 0;">
+                    File corrupted
+                  </v-chip>
                 </v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>

@@ -1,7 +1,47 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu
+} from 'electron'
 import Sqlite3 from './database'
+
+// Import application menu configuration
+import appMenu from './menu.js'
+import macMenu from './macMenu.js'
+
+app.setAboutPanelOptions({
+  applicationName: app.getName(),
+  applicationVersion: app.getVersion(),
+  copyright: '© 2019 Data Thirst Ltd. All rights reserved.'
+})
+
+if (process.platform === 'darwin') {
+  appMenu.unshift(macMenu)
+
+  appMenu[1].submenu.push(
+    { type: 'separator' },
+    {
+      label: 'Speech',
+      submenu: [
+        { role: 'startspeaking' },
+        { role: 'stopspeaking' }
+      ]
+    }
+  )
+
+  appMenu[3].submenu.push(
+    { role: 'close' },
+    { role: 'minimize' },
+    { role: 'zoom' },
+    { type: 'separator' },
+    { role: 'front' }
+  )
+}
+
+const menu = Menu.buildFromTemplate(appMenu)
 
 const os = require('os')
 const path = require('path')
@@ -48,6 +88,7 @@ function createWindow () {
   })
 
   mainWindow.loadURL(winURL)
+  Menu.setApplicationMenu(menu)
   // mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', () => {

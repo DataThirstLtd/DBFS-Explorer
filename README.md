@@ -2,7 +2,7 @@
 
 > DBFS EXPLORER
 
-![Image of Yaktocat](screenshots/DBFS_explorer_context_menu.png)
+![Screenshot of DBFS-Explorer](screenshots/DBFS_explorer_context_menu.png)
 
 #### Build Setup
 

@@ -24,7 +24,7 @@
     "node": ">=6.4"
   },
   "build": {
-    "productName": "dbfs_explorer",
+    "productName": "DBFS Explorer",
     "appId": "net.datathirst.dbfs.explorer",
     "directories": {
       "output": "build"

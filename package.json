@@ -1,6 +1,6 @@
 {
   "name": "dbfs_explorer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "saikksub <saikksub@gmail.com>",
   "description": "DBFS Explorer for Databricks",
   "license": null,

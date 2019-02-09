@@ -1,12 +1,19 @@
+/**
+ * Transfer Activity is responsible for upload and download operations.
+ */
+
 'use strict'
 
 const EventEmitter = require('events').EventEmitter
 const util = require('util')
 const spawn = require('threads').spawn
 
-function AddBlock ({ threadCount }) {
-  if (!(this instanceof AddBlock)) {
-    return new AddBlock({ threadCount: 2 })
+/**
+ * TransferActivity class
+ */
+function TransferActivity ({ threadCount }) {
+  if (!(this instanceof TransferActivity)) {
+    return new TransferActivity({ threadCount: 2 })
   }
   this.setMaxListeners(100)
   this.pool = []
@@ -14,9 +21,12 @@ function AddBlock ({ threadCount }) {
   this.limitCount = threadCount
 }
 
-util.inherits(AddBlock, EventEmitter)
+util.inherits(TransferActivity, EventEmitter)
 
-AddBlock.prototype.addJob = function (obj) {
+/**
+ * Add job into the job queue.
+ */
+TransferActivity.prototype.addJob = function (obj) {
   const self = this
   self.pool.push({
     job: null,
@@ -29,10 +39,13 @@ AddBlock.prototype.addJob = function (obj) {
       self.startJob(self.pool.pop())
     }
     clearInterval(waitTimer)
-  }, 5000)
+  }, 1000)
 }
 
-AddBlock.prototype.startJob = function (object) {
+/**
+ * Start job from job queue.
+ */
+TransferActivity.prototype.startJob = function (object) {
   if (object && object.data) {
     const self = this
     self.emit('startJob', object.data)
@@ -65,7 +78,10 @@ AddBlock.prototype.startJob = function (object) {
   }
 }
 
-AddBlock.prototype.cancelJob = function ({ transferId }) {
+/**
+ * Cancel queued or current running job
+ */
+TransferActivity.prototype.cancelJob = function ({ transferId }) {
   const self = this
   console.log('on cancel job', transferId)
   if (transferId) {
@@ -95,6 +111,9 @@ AddBlock.prototype.cancelJob = function ({ transferId }) {
   self.emit('abort', { transferId })
 }
 
+/**
+ * Upload thread handler
+ */
 function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, done, progress) {
   console.log('on entry uploadHandler', transferId)
   const axios = this.require('axios')
@@ -151,6 +170,9 @@ function uploadHandler ({ url, token, transferId, handle, chunks, endpoint }, do
   })
 }
 
+/**
+ * Download thread handler
+ */
 function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }, done, progress) {
   console.log('on entry downloadHandler')
   console.log('thread entry id', transferId, file, endpoint, url, token, targetPath)
@@ -162,6 +184,7 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
   events.setMaxListeners(100)
 
   const totalSizeBytes = file.size // Total Size of the file in bytes
+  console.log(totalSizeBytes)
   let finishedSizeBytes = 0 // Size of downloaded the file in bytes
   let remainingSizeBytes = 0 // remaining size in bytes = totalSizeBytes - finishedSizeBytes
   const base64String = []
@@ -231,4 +254,4 @@ function downloadHandler ({ url, token, transferId, endpoint, file, targetPath }
   download({ offset: 0 })
 }
 
-export default AddBlock
+export default TransferActivity

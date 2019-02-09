@@ -1,5 +1,9 @@
-import appConfig from '@/app.config.js'
+/**
+ * Initial states for application User interface configuration.
+ */
 
-const states = Object.assign({}, appConfig.initialConfigStates)
+import initialStates from '@/initialStates/config'
+
+const states = Object.assign({}, initialStates)
 
 export default states

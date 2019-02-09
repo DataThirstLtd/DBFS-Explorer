@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="ig-selected-item-wrapper">
-      <div class="item-wrapper"
+      <div
+        class="item-wrapper"
         :active="selectedItem === item.path"
         @dblclick="onOpenItem"
         @click="onSelectItem"
@@ -20,7 +21,9 @@
           large>
           fa-file
         </v-icon>
-        <p class="name">
+        <p
+          class="name"
+          :active="selectedItem === item.path">
           {{ item.path.split('/').pop() || item.path }}
         </p>
         <div
@@ -175,25 +178,52 @@ export default {
 </script>
 
 <style scoped>
+
   .item-wrapper {
     position: relative;
     width: 100px;
     height: auto;
+    min-height: 110px;
     margin: 10px;
+    padding: 20px 10px;
     cursor: pointer;
   }
+
   .item-wrapper > .icon {
     position: relative;
     left: 50%;
     transform: translateX(-50%);
     padding: 10px 0;
   }
+
   .item-wrapper > .name {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    padding: 10px;
     text-align: center;
+    word-break: break-all;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
+
   .item-wrapper[active] {
-    background: rgba(22, 82, 179, 0.452);
+    background: #E2ECFE;
+    border-radius: 5px;
+    z-index: 500;
   }
+
+  .item-wrapper > .name[active] {
+    background: #E2ECFE;
+    word-break: normal;
+    overflow: auto;
+    white-space: normal;
+    text-overflow: unset;
+    z-index: 500;
+  }
+
   .item-wrapper > .vindicator {
     position: absolute;
     top: 0;
@@ -206,4 +236,5 @@ export default {
     padding: 7px 10px;
     border-radius: 50px;
   }
+
 </style>

@@ -10,9 +10,6 @@
         @click="goBack">
         <v-icon small>fa-arrow-left</v-icon>
       </v-btn>
-      <!-- <div>
-        {{ getParentPath(selection[0]) || (folderEmpty.valid ? folderEmpty.path : '') }}
-      </div> -->
       <div>
         {{ `/${navStack.join('/')}` }}
       </div>
@@ -49,7 +46,8 @@
       style="text-align: center; padding: 20px;">
       Empty Folder
     </div>
-    <div style="padding: 10px;" class="wrapper">
+    <div
+      style="padding: 5px 10px;">
       <v-layout
         v-if="fetchWait"
         row>

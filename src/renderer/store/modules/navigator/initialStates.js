@@ -1,5 +1,9 @@
-import appConfig from '@/app.config.js'
+/**
+ * Initial states for file navigator/explorer.
+ */
 
-const states = Object.assign({}, appConfig.initialNavigatorStates)
+import initialStates from '@/initialStates/nav'
+
+const states = Object.assign({}, initialStates)
 
 export default states

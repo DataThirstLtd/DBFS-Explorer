@@ -1,7 +1,15 @@
+/**
+ * Actions for authentication.
+ */
+
 import axios from 'axios'
 import appConfig from '@/app.config.js'
 
 export default {
+  /**
+   * Login with domain and bearer token.
+   * For successful authentication, this login action will try to fetch list of folders and files.
+   */
   login: function (context, data) {
     const { domain, token } = data
     return axios.get(
@@ -28,6 +36,11 @@ export default {
       }
     })
   },
+
+  /**
+   * Load credentials on request.
+   * This loadCredentials action will return an async promise for domain and bearer token.
+   */
   loadCredentials: async function (context) {
     return new Promise((resolve, reject) => {
       resolve({
@@ -36,17 +49,30 @@ export default {
       })
     })
   },
+
+  /**
+   * Update auth credential data.
+   */
   updateCredentials: function (context, data) {
     context.commit('setCredentials', data)
   },
+
+  /**
+   * Logout or disconnect from server.
+   * This will dispatch cleanup actions across the application.
+   */
   disconnect: async function (context) {
     return new Promise((resolve, reject) => {
       context.dispatch('clearConfigStates')
-      context.dispatch('clearNavigatorStates')
+      context.dispatch('clearNavigatorInitialStates')
       context.dispatch('clearAuthStates')
       resolve()
     })
   },
+
+  /**
+   * Clear authentication states
+   */
   clearAuthStates: function (context) {
     context.commit('resetAuthStates')
   }

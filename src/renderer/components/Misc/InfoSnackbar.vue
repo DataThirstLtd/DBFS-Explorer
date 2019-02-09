@@ -1,10 +1,10 @@
 <template>
   <v-snackbar
-    v-model="status" color="white" class="black--text"
+    v-model="status" color="#626262" class="white--text"
     bottom right multi-line :timeout="4000">
     <h4>{{ info.message }}</h4>
     <v-btn
-      color="pink"
+      color="white"
       flat
       @click="status = false">
       Close

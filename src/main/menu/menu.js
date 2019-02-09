@@ -1,3 +1,7 @@
+/**
+ * Default menu template for application
+ */
+
 export default [
   {
     label: 'Edit',

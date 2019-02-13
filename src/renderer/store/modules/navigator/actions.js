@@ -178,10 +178,24 @@ export default {
   },
 
   /**
+   * Highlight UI selection a folder or file by append.
+   * This will highlight select file or folder with background color.
+   */
+  selectAppendItems: function (context, { path }) {
+    const selectedItem = context.getters.getSelectedItems
+    const targetIndex = selectedItem.findIndex(x => x === path)
+    if (targetIndex < 0) {
+      context.commit('appendSelectedPath', path)
+    } else {
+      context.commit('deleteSelectedPath', targetIndex)
+    }
+  },
+
+  /**
    * Highlight UI selection a folder or file.
    * This will highlight select file or folder with background color.
    */
-  selectItem: function (context, { path }) {
+  selectItems: function (context, { path }) {
     if (path) {
       context.commit('setSelectedPath', path)
     }

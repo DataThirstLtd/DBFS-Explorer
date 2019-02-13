@@ -48,17 +48,31 @@ export default {
   },
 
   /**
+   * Append (String) selected path.
+   */
+  appendSelectedPath: function (state, path) {
+    state.selectedItem.push(path)
+  },
+
+  /**
+   * Delete (String) selected path.
+   */
+  deleteSelectedPath: function (state, index) {
+    typeof index === 'number' && state.selectedItem.splice(index, 1)
+  },
+
+  /**
    * Set (String) selected path.
    */
   setSelectedPath: function (state, path) {
-    state.selectedItem = path
+    state.selectedItem = [path]
   },
 
   /**
    * Set (String) selected path clear.
    */
   clearSelectedPath: function (state) {
-    state.selectedItem = ''
+    state.selectedItem = []
   },
 
   /**

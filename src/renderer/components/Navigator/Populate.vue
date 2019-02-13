@@ -3,27 +3,27 @@
     <div class="ig-selected-item-wrapper">
       <div
         class="item-wrapper"
-        :active="selectedItem === item.path"
+        :active="selectedItem.constructor === [].constructor && selectedItem.findIndex(x => x === item.path) > -1"
         @dblclick="onOpenItem"
         @click="onSelectItem"
         @contextmenu="showContextMenu">
         <v-icon
           v-if="item.is_dir"
           class="icon"
-          :active="selectedItem === item.path"
+          :active="selectedItem.constructor === [].constructor && selectedItem.findIndex(x => x === item.path) > -1"
           large>
           fa-folder
         </v-icon>
         <v-icon
           v-else
           class="icon"
-          :active="selectedItem === item.path"
+          :active="selectedItem.constructor === [].constructor && selectedItem.findIndex(x => x === item.path) > -1"
           large>
           fa-file
         </v-icon>
         <p
           class="name"
-          :active="selectedItem === item.path">
+          :active="selectedItem.constructor === [].constructor && selectedItem.findIndex(x => x === item.path) > -1">
           {{ item.path.split('/').pop() || item.path }}
         </p>
         <div
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'populate',
@@ -76,7 +76,7 @@ export default {
       required: true
     },
     selectedItem: {
-      type: String,
+      type: Array,
       required: true
     }
   },
@@ -116,7 +116,8 @@ export default {
             callback: () => { this.$root.$emit('openProperties') }
           }
         ]
-      }
+      },
+      meteCtrlKey: false
     }
   },
   mounted () {
@@ -130,11 +131,15 @@ export default {
       'showInfoSnackbar',
       'clearSelection',
       'fetchSelection',
-      'selectItem',
+      'selectAppendItems',
+      'selectItems',
       'setPrevPath',
       'openDialog',
       'pushNavStack',
       'clearItem'
+    ]),
+    ...mapGetters([
+      'getSelectedItems'
     ]),
     isMenuDisabled: function (menuItem) {
       return Boolean(
@@ -147,7 +152,7 @@ export default {
     onOpenItem: function () {
       if (this.item.is_dir) {
         this.pushNavStack({
-          path: this.selectedItem
+          path: this.item.path
         })
         this.clearSelection()
         this.fetchSelection(this.item)
@@ -159,13 +164,20 @@ export default {
         })
       }
     },
-    onSelectItem: function () {
-      this.selectItem(this.item)
+    onSelectItem: function (e, clearItems) {
+      if (e && e.metaKey && !clearItems) {
+        this.selectAppendItems(this.item)
+      } else {
+        this.selectItems(this.item)
+      }
     },
     showContextMenu: function (e) {
-      e.preventDefault()
+      const selectedItems = this.getSelectedItems()
+      if (selectedItems.findIndex(x => x === this.item.path) < 0) {
+        this.onSelectItem(e, true)
+      }
       const self = this
-      self.onSelectItem()
+      e.preventDefault()
       self.$root.$emit('hideContextMenu')
       self.contextMenu.x = e.clientX
       self.contextMenu.y = e.clientY

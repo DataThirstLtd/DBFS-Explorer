@@ -15,5 +15,12 @@ export default {
    */
   getCurrentPath: function (state) {
     return `/${state.navStack.join('/')}`
+  },
+
+  /**
+   * Get (String) selected items/paths from file navigator
+   */
+  getSelectedItems: function (state) {
+    return state.selectedItem
   }
 }

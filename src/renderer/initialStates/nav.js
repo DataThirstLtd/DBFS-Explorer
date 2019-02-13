@@ -6,7 +6,7 @@ export default {
     valid: false,
     path: ''
   },
-  selectedItem: '',
+  selectedItem: [],
   populateSelection: {},
   prevPath: '',
   currentPath: '',

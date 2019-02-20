@@ -240,4 +240,10 @@
     padding: 10px;
   }
 
+  .multi-list {
+    background: rgb(240, 240, 240);
+    margin: 10px 0;
+    padding: 10px;
+  }
+
 </style>

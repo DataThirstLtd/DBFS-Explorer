@@ -186,36 +186,44 @@ export default {
     },
     downloadItem: function () {
       const self = this
-      const itemIndex = self.selection.findIndex(x => x.path === self.selectedItem)
-      if (itemIndex > -1 && !self.selection[itemIndex].is_dir) {
-        const file = this.$electron.remote.dialog.showSaveDialog(
-          this.$electron.remote.getCurrentWindow(),
-          {
-            defaultPath: nodePath.basename(this.selectedItem)
-          }
-        )
-        if (file) {
-          const item = self.selection[itemIndex]
-          const uid = uniqid()
-          const transferObject = {
-            file: {
-              name: nodePath.basename(item.path),
-              path: item.path,
-              size: item.file_size
-            },
-            transferId: uid,
-            selected: true,
-            targetPath: file
-          }
-          this.openDialog({
-            name: 'dataTransfer',
-            options: {
-              list: [ transferObject ],
-              type: 0
-            }
-          })
+      const transferObject = []
+      const file = this.$electron.remote.dialog.showOpenDialog(
+        this.$electron.remote.getCurrentWindow(),
+        {
+          properties: ['openDirectory']
         }
-      }
+      )
+      console.log('file', file)
+      self.selectedItem.forEach((selected) => {
+        const itemIndex = self.selection.findIndex(x => x.path === selected)
+        if (itemIndex > -1 && !self.selection[itemIndex].is_dir) {
+          if (file) {
+            const item = self.selection[itemIndex]
+            const uid = uniqid()
+            transferObject.push({
+              file: {
+                name: nodePath.basename(item.path),
+                path: item.path,
+                size: item.file_size
+              },
+              transferId: uid,
+              selected: true,
+              targetPath: nodePath.join(
+                `${file[0]}`,
+                nodePath.basename(item.path)
+              )
+            })
+            console.log(transferObject)
+          }
+        }
+      })
+      this.openDialog({
+        name: 'dataTransfer',
+        options: {
+          list: transferObject,
+          type: 0
+        }
+      })
     },
     openProperties: function () {
       this.openDialog({

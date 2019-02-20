@@ -285,10 +285,10 @@ export default {
   /**
    * Toggle pre-selection Upload/Download transfer state of recently dropped file
    */
-  toggleListDataTransfer: function (context, { id }) {
-    if (id) {
-      const list = context.getters.getListDataTransfer
-      const targetIndex = list.findIndex(x => x.id === id)
+  toggleListDataTransfer: function (context, { transferId }) {
+    if (transferId) {
+      const list = context.getters.getTransferDataList
+      const targetIndex = list.findIndex(x => x.transferId === transferId)
       if (targetIndex > -1) {
         if (list[targetIndex].selected) {
           context.commit('setInertDataTransferItem', { index: targetIndex })

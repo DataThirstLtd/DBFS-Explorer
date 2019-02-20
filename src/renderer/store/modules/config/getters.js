@@ -35,6 +35,13 @@ export default {
   /**
    * Get (Array) list of transfer states (downloads and uploads)
    */
+  getTransferDataList: function (state) {
+    return state.dialogs.dataTransfer.options.list
+  },
+
+  /**
+   * Get (Array) list of transfer states (downloads and uploads)
+   */
   getTransferStateList: function (state) {
     return state.dialogs.transferState.list
   },

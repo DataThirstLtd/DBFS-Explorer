@@ -9,6 +9,7 @@ import TransferActivity from '@/threads/TransferActivity'
 const fs = require('fs')
 const nodePath = require('path')
 const base64 = require('base64-js')
+const forEach = require('async-foreach').forEach
 
 // Transfer Activity Handle
 let transferActivity = null
@@ -154,6 +155,8 @@ export default {
   createNewFolder: function (context, { path, folderName }) {
     const url = context.getters.getDomain
     const token = context.getters.getToken
+    context.dispatch('closeDialog', { name: 'newFolder' })
+    context.dispatch('openDialog', { name: 'persistantLader' })
     return axios.post(
       `${url}/${appConfig.ENDPOINTS.mkdirs}`,
       {
@@ -172,7 +175,7 @@ export default {
           is_dir: true
         })
         context.dispatch('fetchRootFs')
-        context.dispatch('closeDialog', { name: 'newFolder' })
+        context.dispatch('closeDialog', { name: 'persistantLoader' })
       }
     })
   },
@@ -211,8 +214,67 @@ export default {
   /**
    * Delete selected remote file or folder.
    */
-  deleteSelected: function (context, { path, pwd }) {
+  deleteSelected: function (context, { list, pwd }) {
     const url = context.getters.getDomain
+    const token = context.getters.getToken
+    context.dispatch('closeDialog', { name: 'delete' })
+    context.dispatch('openDialog', { name: 'persistantLoader' })
+    forEach(list, function (listItem) {
+      const asyncDone = this.async()
+      axios.post(
+        `${url}/${appConfig.ENDPOINTS.delete}`,
+        {
+          path: listItem,
+          recursive: true
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      ).then(({status}) => {
+        asyncDone()
+      })
+    }, function () {
+      // All done
+      context.dispatch('clearSelection')
+      context.dispatch('fetchSelection', {
+        path: pwd,
+        is_dir: true
+      })
+      context.dispatch('clearItem')
+      context.dispatch('fetchRootFs')
+      context.dispatch('closeDialog', { name: 'persistantLoader' })
+    })
+    /* forEach(list, function (listItem) {
+      const asyncDone = this.async()
+      axios.post(
+        `${url}/${appConfig.ENDPOINTS.delete}`,
+        {
+          path: listItem,
+          recursive: true
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      ).then(({status}) => {
+        asyncDone()
+        if (status === 200) {
+          context.dispatch('clearSelection')
+          context.dispatch('fetchSelection', {
+            path: pwd,
+            is_dir: true
+          })
+          context.dispatch('clearItem')
+          context.dispatch('fetchRootFs')
+          context.dispatch('closeDialog', { name: 'delete' })
+      }
+    }, function () {
+      console.log('all done')
+    }) */
+    /* const url = context.getters.getDomain
     const token = context.getters.getToken
     return axios.post(
       `${url}/${appConfig.ENDPOINTS.delete}`,
@@ -236,7 +298,7 @@ export default {
         context.dispatch('fetchRootFs')
         context.dispatch('closeDialog', { name: 'delete' })
       }
-    })
+    }) */
   },
 
   /**

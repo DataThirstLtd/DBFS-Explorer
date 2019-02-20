@@ -10,7 +10,19 @@
         Delete Folder
       </v-card-title>
       <v-card-text>
-        Are you sure about deleting "<strong>{{ options ? options.path : '' }}</strong>"?
+        Are you sure about deleting file(s)?
+        <v-list
+          v-if="options && options.list"
+          class="delete-list"
+          subheader>
+          <v-list-tile
+            v-for="item in options.list"
+            :key="item.transferId">
+            <v-list-tile-content>
+              <v-list-tile-title>{{ item }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -59,17 +71,19 @@ export default {
   methods: {
     ...mapActions(['openDialog', 'closeDialog', 'deleteSelected']),
     show: function () {
-      if (this.options && this.options.path) {
-        this.dialog = true
-      }
+      this.dialog = true
     },
     hide: function () {
       this.closeDialog({ name: 'delete' })
     },
     onDelete: function () {
-      if (this.options && this.options.path && this.options.pwd) {
+      if (
+        this.options && this.options.list &&
+        this.options.list.constructor === [].constructor &&
+        this.options.list.length > 0 && this.options.pwd
+      ) {
         this.deleteSelected({
-          path: this.options.path,
+          list: this.options.list,
           pwd: this.options.pwd
         })
       }
@@ -78,3 +92,12 @@ export default {
 }
 </script>
 
+<style scoped>
+  .delete-list {
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgb(240, 240, 240);
+    color: black;
+    margin-top: 10px;
+  }
+</style>

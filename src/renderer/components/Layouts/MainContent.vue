@@ -173,12 +173,12 @@ export default {
     },
     deleteItem: function () {
       const pwd = `/${this.navStack.join('/')}`
-      const path = this.selectedItem
-      if (path && path !== '/') {
+      const list = this.selectedItem
+      if (list && list.findIndex(x => x === '/') < 0) {
         this.openDialog({
           name: 'delete',
           options: {
-            path: path,
+            list: list,
             pwd
           }
         })
@@ -193,37 +193,38 @@ export default {
           properties: ['openDirectory']
         }
       )
-      console.log('file', file)
-      self.selectedItem.forEach((selected) => {
-        const itemIndex = self.selection.findIndex(x => x.path === selected)
-        if (itemIndex > -1 && !self.selection[itemIndex].is_dir) {
-          if (file) {
-            const item = self.selection[itemIndex]
-            const uid = uniqid()
-            transferObject.push({
-              file: {
-                name: nodePath.basename(item.path),
-                path: item.path,
-                size: item.file_size
-              },
-              transferId: uid,
-              selected: true,
-              targetPath: nodePath.join(
-                `${file[0]}`,
-                nodePath.basename(item.path)
-              )
-            })
-            console.log(transferObject)
+      if (file && file.constructor === [].constructor && file.length > 0) {
+        self.selectedItem.forEach((selected) => {
+          const itemIndex = self.selection.findIndex(x => x.path === selected)
+          if (itemIndex > -1 && !self.selection[itemIndex].is_dir) {
+            if (file) {
+              const item = self.selection[itemIndex]
+              const uid = uniqid()
+              transferObject.push({
+                file: {
+                  name: nodePath.basename(item.path),
+                  path: item.path,
+                  size: item.file_size
+                },
+                transferId: uid,
+                selected: true,
+                targetPath: nodePath.join(
+                  `${file[0]}`,
+                  nodePath.basename(item.path)
+                )
+              })
+              console.log(transferObject)
+            }
           }
-        }
-      })
-      this.openDialog({
-        name: 'dataTransfer',
-        options: {
-          list: transferObject,
-          type: 0
-        }
-      })
+        })
+        this.openDialog({
+          name: 'dataTransfer',
+          options: {
+            list: transferObject,
+            type: 0
+          }
+        })
+      }
     },
     openProperties: function () {
       this.openDialog({

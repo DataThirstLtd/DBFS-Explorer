@@ -18,6 +18,12 @@ export default [
     ]
   },
   {
+    label: 'Navigator',
+    submenu: [
+      { id: 'navigator-select-all', label: 'Select All Files/Folders', accelerator: 'CmdOrCtrl+Shift+A' }
+    ]
+  },
+  {
     role: 'window',
     submenu: [
       { role: 'minimize' },

@@ -44,6 +44,8 @@
   import Drag from './Misc/Drag'
   import Overlay from './Misc/Overlay'
 
+  const { ipcRenderer } = require('electron')
+
   export default {
     name: 'home',
     components: {
@@ -113,6 +115,7 @@
         }
       }
       this.fetchSettings()
+      this.registerInvokeAppMenuItem()
     },
     methods: {
       ...mapGetters(['doesAuthDataExists']),
@@ -128,7 +131,8 @@
         'hideDrag',
         'dropFile',
         'initTransferActivity',
-        'writeLog'
+        'writeLog',
+        'selectAllItems'
       ]),
       initHome: function () {
         const context = this
@@ -163,6 +167,17 @@
             this.clearItem()
           }
         }
+      },
+      registerInvokeAppMenuItem: function () {
+        const self = this
+        ipcRenderer.on('onInvokeAppMenuItem', function (event, { command }) {
+          switch (command) {
+            case 'NAV_SELECT_ALL':
+              self.selectAllItems()
+              break
+            default: break
+          }
+        })
       }
     }
   }

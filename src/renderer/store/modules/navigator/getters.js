@@ -22,5 +22,12 @@ export default {
    */
   getSelectedItems: function (state) {
     return state.selectedItem
+  },
+
+  /**
+   * Get (Array) list of items (Files/Folders) from file navigator
+   */
+  getSelection: function (state) {
+    return state.selection
   }
 }

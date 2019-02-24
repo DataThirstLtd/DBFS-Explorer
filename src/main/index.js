@@ -102,6 +102,9 @@ function createWindow () {
   Menu.setApplicationMenu(menu)
   // mainWindow.webContents.openDevTools()
 
+  // Add shortcut event callbacks
+  addShortcutCallbacks(mainWindow, menu)
+
   mainWindow.on('closed', () => {
     mainWindow = null
   })
@@ -193,6 +196,17 @@ function replaySender (sender, commit, error, data) {
     error: error, // Error object
     data: data // Resultant data
   })
+}
+
+/**
+ * Add shortcut callback to the application menu
+ */
+function addShortcutCallbacks (window, menu) {
+  menu.getMenuItemById('navigator-select-all').click = function () {
+    window.webContents.send('onInvokeAppMenuItem', {
+      command: 'NAV_SELECT_ALL'
+    })
+  }
 }
 
 /**

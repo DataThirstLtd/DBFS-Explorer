@@ -196,13 +196,25 @@ export default {
   },
 
   /**
-   * Highlight UI selection a folder or file.
+   * Highlight UI selection: a folder or file.
    * This will highlight select file or folder with background color.
    */
   selectItems: function (context, { path }) {
     if (path) {
       context.commit('setSelectedPath', path)
     }
+  },
+
+  /**
+   * Highlight UI selection: all folders or files of current working directory.
+   * This will highlight select files or folders with background color.
+   */
+  selectAllItems: function (context) {
+    const allFilesFolders = context.getters.getSelection
+    context.commit('clearSelectedPath')
+    allFilesFolders && allFilesFolders.forEach(({ path }) => {
+      path && context.commit('appendSelectedPath', path)
+    })
   },
 
   /**

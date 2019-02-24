@@ -58,5 +58,12 @@ export default {
    */
   getSettings: function (state) {
     return state.settings
+  },
+
+  /**
+   * Get (Boolean) if any dialog is opened
+   */
+  getDialogsCount: function (state) {
+    return Boolean(state.dialogs.count > 0)
   }
 }

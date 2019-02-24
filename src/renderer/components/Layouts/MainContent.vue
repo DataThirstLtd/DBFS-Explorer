@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import Folder from '@/components/Navigator/Folder'
 
 const nodePath = require('path')
@@ -139,6 +139,46 @@ export default {
   }),
   mounted () {
     const self = this
+    this.$nextTick(() => {
+      document.body.addEventListener('keyup', (e) => {
+        const selection = self.getSelection()
+        if (selection && selection.length > 0) {
+          if (e.keyCode === 39) {
+            // Arrow right
+            if (self.selectedItem && self.selectedItem.length === 1) {
+              const targetIndex = selection.findIndex(x => x.path === self.selectedItem[0])
+              if (targetIndex > -1 && selection.length - 1 > targetIndex) {
+                self.selectItems(selection[targetIndex + 1])
+              } else {
+                self.selectItems(selection[0])
+              }
+            } else {
+              self.selectItems(selection[0])
+            }
+          } else if (e.keyCode === 37) {
+            // Arrow left
+            if (self.selectedItem && self.selectedItem.length === 1) {
+              const targetIndex = selection.findIndex(x => x.path === self.selectedItem[0])
+              console.log(targetIndex - 1)
+              if (targetIndex > -1 && selection.length - 1 >= targetIndex) {
+                if ((targetIndex - 1) >= 0) {
+                  self.selectItems(selection[targetIndex - 1])
+                } else {
+                  self.selectItems(selection[selection.length - 1])
+                }
+              } else {
+                self.selectItems(selection[0])
+              }
+            } else {
+              self.selectItems(selection[0])
+            }
+          }
+        }
+        if (e.keyCode === 8) {
+          !self.getDialogsCount() && self.goBack()
+        }
+      })
+    })
     this.$root.$on('deleteItem', () => {
       self.deleteItem()
     })
@@ -150,7 +190,17 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog', 'popNavStack']),
+    ...mapGetters([
+      'getSelection',
+      'getDialogsCount'
+    ]),
+    ...mapActions([
+      'clearSelection',
+      'fetchSelection',
+      'openDialog',
+      'popNavStack',
+      'selectItems'
+    ]),
     isHiddenAction: function (item) {
       const itemIndex = this.appbarButtons.right.findIndex(x => x.id === item.id)
       if (itemIndex > -1 && this.appbarButtons.right[itemIndex].hidden) {

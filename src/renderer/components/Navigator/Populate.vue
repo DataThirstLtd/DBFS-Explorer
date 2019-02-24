@@ -158,10 +158,7 @@ export default {
         this.fetchSelection(this.item)
         this.clearItem()
       } else {
-        this.showInfoSnackbar({
-          message: 'Not a directory',
-          status: true
-        })
+        this.$root.$emit('downloadItem')
       }
     },
     onSelectItem: function (e, clearItems) {

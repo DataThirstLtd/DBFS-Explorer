@@ -118,7 +118,10 @@
       this.registerInvokeAppMenuItem()
     },
     methods: {
-      ...mapGetters(['doesAuthDataExists']),
+      ...mapGetters([
+        'doesAuthDataExists',
+        'getSelectedItems'
+      ]),
       ...mapActions([
         'init',
         'login',
@@ -132,7 +135,9 @@
         'dropFile',
         'initTransferActivity',
         'writeLog',
-        'selectAllItems'
+        'selectAllItems',
+        'openDialog',
+        'toggleDialog'
       ]),
       initHome: function () {
         const context = this
@@ -174,6 +179,23 @@
           switch (command) {
             case 'NAV_SELECT_ALL':
               self.selectAllItems()
+              break
+            case 'NAV_SHOW_PROPERTIES':
+              if (self.getSelectedItems().length > 0) {
+                self.openDialog({
+                  name: 'properties'
+                })
+              }
+              break
+            case 'NAV_CREATE_FOLDER':
+              self.openDialog({
+                name: 'newFolder'
+              })
+              break
+            case 'NAV_VIEW_TRANSFERSTATE':
+              self.toggleDialog({
+                name: 'transferState'
+              })
               break
             default: break
           }

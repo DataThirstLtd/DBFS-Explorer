@@ -207,6 +207,21 @@ function addShortcutCallbacks (window, menu) {
       command: 'NAV_SELECT_ALL'
     })
   }
+  menu.getMenuItemById('navigator-view-properties').click = function () {
+    window.webContents.send('onInvokeAppMenuItem', {
+      command: 'NAV_SHOW_PROPERTIES'
+    })
+  }
+  menu.getMenuItemById('navigator-create-folder').click = function () {
+    window.webContents.send('onInvokeAppMenuItem', {
+      command: 'NAV_CREATE_FOLDER'
+    })
+  }
+  menu.getMenuItemById('navigator-view-transferstate').click = function () {
+    window.webContents.send('onInvokeAppMenuItem', {
+      command: 'NAV_VIEW_TRANSFERSTATE'
+    })
+  }
 }
 
 /**

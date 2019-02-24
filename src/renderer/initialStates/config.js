@@ -8,6 +8,7 @@ export default {
   },
   loggedIn: false,
   dialogs: {
+    count: 0,
     about: {
       active: false
     },

@@ -58,6 +58,7 @@ export default {
     if (name && name in state.dialogs) {
       state.dialogs[`${name}`].active = true
       state.dialogs[`${name}`].options = options || null
+      state.dialogs.count += 1
     }
   },
 
@@ -69,6 +70,7 @@ export default {
     if (name && name in state.dialogs) {
       state.dialogs[`${name}`].active = false
       state.dialogs[`${name}`].options = null
+      state.dialogs.count -= 1
     }
   },
 

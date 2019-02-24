@@ -195,7 +195,6 @@ export default {
           console.error(error)
         })
       } else {
-        console.log(this.selectedItem)
         forEach(this.selectedItem, function (selected) {
           const asyncDone = this.async()
           self.getStatus({

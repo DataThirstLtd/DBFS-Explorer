@@ -40,10 +40,11 @@
                   : item.type ? `Uploading ${item.progress}% of ${getSize(item.file.size)}`
                   : `Downloading ${item.progress}% ${getSize(item.file.size) || ''}`}
                 </strong>
-                ${item.file.name}`
+                <b>Downloading from</b> - ${item.file.path}`
               "/>
-            <v-list-tile-sub-title
-              v-html="item.file.path" />
+            <v-list-tile-sub-title>
+              <b>Downloading into</b> - {{ item.targetPath }}
+            </v-list-tile-sub-title>
             <v-progress-linear
               v-if="!item.abort && item.started"
               :value="item.progress"

@@ -190,7 +190,7 @@ export default {
       const file = this.$electron.remote.dialog.showOpenDialog(
         this.$electron.remote.getCurrentWindow(),
         {
-          properties: ['openDirectory']
+          properties: ['openDirectory', 'createDirectory']
         }
       )
       if (file && file.constructor === [].constructor && file.length > 0) {
@@ -213,7 +213,6 @@ export default {
                   nodePath.basename(item.path)
                 )
               })
-              console.log(transferObject)
             }
           }
         })

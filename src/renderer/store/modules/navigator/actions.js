@@ -29,7 +29,7 @@ export default {
           transferId: transferId
         })
       })
-      transferActivity.on('waitListJob', function ({ transferId, type, file }) {
+      transferActivity.on('waitListJob', function ({ transferId, type, file, targetPath }) {
         context.dispatch('waitListJob', {
           transferId: transferId,
           type: type,
@@ -37,7 +37,8 @@ export default {
           started: false,
           progress: 0,
           done: false,
-          abort: false
+          abort: false,
+          targetPath
         })
       })
       transferActivity.on('done', function (data) {

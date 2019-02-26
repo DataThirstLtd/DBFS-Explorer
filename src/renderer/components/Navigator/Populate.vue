@@ -226,7 +226,7 @@ export default {
 
   .item-wrapper > .name[active] {
     background: #E2ECFE;
-    word-break: normal;
+    word-break: break-all;
     overflow: auto;
     white-space: normal;
     text-overflow: unset;

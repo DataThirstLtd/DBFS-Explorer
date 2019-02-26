@@ -16,11 +16,13 @@ const os = require('os')
 const path = require('path')
 
 // Set about panel for macOS. This will be ignored for windows
-app.setAboutPanelOptions({
-  applicationName: app.getName(),
-  applicationVersion: app.getVersion(),
-  copyright: '© 2019 Data Thirst Ltd. All rights reserved.'
-})
+if (os.platform() === 'darwin') {
+  app.setAboutPanelOptions({
+    applicationName: app.getName(),
+    applicationVersion: app.getVersion(),
+    copyright: '© 2019 Data Thirst Ltd. All rights reserved.'
+  })
+}
 
 // macOS specific menu template
 if (process.platform === 'darwin') {

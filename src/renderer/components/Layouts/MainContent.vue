@@ -177,6 +177,18 @@ export default {
         if (e.keyCode === 8) {
           !self.getDialogsCount() && self.goBack()
         }
+        if (e.keyCode === 13) {
+          const selectedItem = self.getSelectedItems()
+          if (selectedItem && selectedItem.length === 1) {
+            const selection = self.getSelection()
+            if (selection) {
+              const targetIndex = selection.findIndex(x => x.path === selectedItem[0])
+              if (targetIndex > -1) {
+                self.$root.$emit('openItem', selection[targetIndex])
+              }
+            }
+          }
+        }
       })
     })
     this.$root.$on('deleteItem', () => {
@@ -192,7 +204,8 @@ export default {
   methods: {
     ...mapGetters([
       'getSelection',
-      'getDialogsCount'
+      'getDialogsCount',
+      'getSelectedItems'
     ]),
     ...mapActions([
       'clearSelection',

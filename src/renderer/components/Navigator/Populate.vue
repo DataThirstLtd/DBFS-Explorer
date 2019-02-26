@@ -125,6 +125,11 @@ export default {
     self.$root.$on('hideContextMenu', () => {
       self.contextMenu.showMenu = false
     })
+    self.$root.$on('openItem', (data) => {
+      if (data.path === self.item.path) {
+        self.onOpenItem(data)
+      }
+    })
   },
   methods: {
     ...mapActions([

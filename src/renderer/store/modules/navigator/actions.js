@@ -1,14 +1,24 @@
+/**
+ * Actions for application file navigator/explorer.
+ */
+
 import axios from 'axios'
 import appConfig from '@/app.config.js'
 import TransferActivity from '@/threads/TransferActivity'
 
-let transferActivity = null
-
 const fs = require('fs')
 const nodePath = require('path')
 const base64 = require('base64-js')
+const forEach = require('async-foreach').forEach
+
+// Transfer Activity Handle
+let transferActivity = null
 
 export default {
+  /**
+   * Initialize Transfer Activity.
+   * Transfer Activity handles upload and download operations
+   */
   initTransferActivity: function (context, { threadCount }) {
     if (transferActivity === null) {
       transferActivity = new TransferActivity({
@@ -19,7 +29,7 @@ export default {
           transferId: transferId
         })
       })
-      transferActivity.on('waitListJob', function ({ transferId, type, file }) {
+      transferActivity.on('waitListJob', function ({ transferId, type, file, targetPath }) {
         context.dispatch('waitListJob', {
           transferId: transferId,
           type: type,
@@ -27,7 +37,8 @@ export default {
           started: false,
           progress: 0,
           done: false,
-          abort: false
+          abort: false,
+          targetPath
         })
       })
       transferActivity.on('done', function (data) {
@@ -41,6 +52,11 @@ export default {
       })
     }
   },
+
+  /**
+   * Get status of DBFS remote server.
+   * It is used to verify the given domain and bearer token.
+   */
   getStatus: function (context, data) {
     const url = context.getters.getDomain
     const token = context.getters.getToken
@@ -53,6 +69,10 @@ export default {
       }
     )
   },
+
+  /**
+   * Update application root folder.
+   */
   updateRootFs: function (context, data) {
     if (
       data && data.constructor === [].constructor
@@ -60,6 +80,10 @@ export default {
       context.commit('setRootFs', data)
     }
   },
+
+  /**
+   * Get list of files and folders of root folder
+   */
   fetchRootFs: function (context) {
     const url = context.getters.getDomain
     const token = context.getters.getToken
@@ -76,9 +100,17 @@ export default {
       }
     })
   },
+
+  /**
+   * Clear contents files/folders inside selected folder.
+   */
   clearSelection: function (context) {
     context.commit('setSelectionEmpty')
   },
+
+  /**
+   * Get list of files and folders of a selected folder
+   */
   fetchSelection: function (context, { path }) {
     const url = context.getters.getDomain
     const token = context.getters.getToken
@@ -117,9 +149,15 @@ export default {
       })
     })
   },
+
+  /**
+   * Create a new folder at specified path
+   */
   createNewFolder: function (context, { path, folderName }) {
     const url = context.getters.getDomain
     const token = context.getters.getToken
+    context.dispatch('closeDialog', { name: 'newFolder' })
+    context.dispatch('openDialog', { name: 'persistantLader' })
     return axios.post(
       `${url}/${appConfig.ENDPOINTS.mkdirs}`,
       {
@@ -138,20 +176,118 @@ export default {
           is_dir: true
         })
         context.dispatch('fetchRootFs')
-        context.dispatch('closeDialog', { name: 'newFolder' })
+        context.dispatch('closeDialog', { name: 'persistantLoader' })
       }
     })
   },
-  selectItem: function (context, { path }) {
-    if (path) {
-      context.commit('setSelectedItem', path)
+
+  /**
+   * Highlight UI selection a folder or file by append.
+   * This will highlight select file or folder with background color.
+   */
+  selectAppendItems: function (context, { path }) {
+    const selectedItem = context.getters.getSelectedItems
+    const targetIndex = selectedItem.findIndex(x => x === path)
+    if (targetIndex < 0) {
+      context.commit('appendSelectedPath', path)
+    } else {
+      context.commit('deleteSelectedPath', targetIndex)
     }
   },
-  clearItem: function (context) {
-    context.commit('clearSelectedItem')
+
+  /**
+   * Highlight UI selection: a folder or file.
+   * This will highlight select file or folder with background color.
+   */
+  selectItems: function (context, { path }) {
+    if (path) {
+      context.commit('setSelectedPath', path)
+    }
   },
-  deleteSelected: function (context, { path, pwd }) {
+
+  /**
+   * Highlight UI selection: all folders or files of current working directory.
+   * This will highlight select files or folders with background color.
+   */
+  selectAllItems: function (context) {
+    const allFilesFolders = context.getters.getSelection
+    context.commit('clearSelectedPath')
+    allFilesFolders && allFilesFolders.forEach(({ path }) => {
+      path && context.commit('appendSelectedPath', path)
+    })
+  },
+
+  /**
+   * Clear UI selection of a folder or file.
+   */
+  clearItem: function (context) {
+    context.commit('clearSelectedPath')
+  },
+
+  /**
+   * Delete selected remote file or folder.
+   */
+  deleteSelected: function (context, { list, pwd }) {
     const url = context.getters.getDomain
+    const token = context.getters.getToken
+    context.dispatch('closeDialog', { name: 'delete' })
+    context.dispatch('openDialog', { name: 'persistantLoader' })
+    forEach(list, function (listItem) {
+      const asyncDone = this.async()
+      axios.post(
+        `${url}/${appConfig.ENDPOINTS.delete}`,
+        {
+          path: listItem,
+          recursive: true
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      ).then(({status}) => {
+        asyncDone()
+      })
+    }, function () {
+      // All done
+      context.dispatch('clearSelection')
+      context.dispatch('fetchSelection', {
+        path: pwd,
+        is_dir: true
+      })
+      context.dispatch('clearItem')
+      context.dispatch('fetchRootFs')
+      context.dispatch('closeDialog', { name: 'persistantLoader' })
+    })
+    /* forEach(list, function (listItem) {
+      const asyncDone = this.async()
+      axios.post(
+        `${url}/${appConfig.ENDPOINTS.delete}`,
+        {
+          path: listItem,
+          recursive: true
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      ).then(({status}) => {
+        asyncDone()
+        if (status === 200) {
+          context.dispatch('clearSelection')
+          context.dispatch('fetchSelection', {
+            path: pwd,
+            is_dir: true
+          })
+          context.dispatch('clearItem')
+          context.dispatch('fetchRootFs')
+          context.dispatch('closeDialog', { name: 'delete' })
+      }
+    }, function () {
+      console.log('all done')
+    }) */
+    /* const url = context.getters.getDomain
     const token = context.getters.getToken
     return axios.post(
       `${url}/${appConfig.ENDPOINTS.delete}`,
@@ -175,13 +311,21 @@ export default {
         context.dispatch('fetchRootFs')
         context.dispatch('closeDialog', { name: 'delete' })
       }
-    })
+    }) */
   },
+
+  /**
+   * Add new transfer job (upload/download)
+   */
   addJob: async function (context, data) {
     if (transferActivity) {
       transferActivity.addJob(data)
     }
   },
+
+  /**
+   * Prepare upload of specified file.
+   */
   prepareUpload: function (context, { options }) {
     // Get target working directory path where file will be created
     const targetPath = context.getters.getCurrentPath
@@ -243,6 +387,10 @@ export default {
       })
     }
   },
+
+  /**
+   * Prepare upload of specified file.
+   */
   prepareDownload: function (context, { options }) {
     if (options.list.length > 0) {
       const url = context.getters.getDomain
@@ -263,9 +411,17 @@ export default {
       })
     }
   },
+
+  /**
+   * Cancel upload or download of specified file.
+   */
   cancelTransfer: function (context, data) {
     transferActivity.cancelJob(data)
   },
+
+  /**
+   * Cancel upload or download of all files in transfer list.
+   */
   cancelAllTransfers: function (context, data) {
     return new Promise((resolve, reject) => {
       const list = context.getters.getTransferStateList
@@ -275,9 +431,18 @@ export default {
       resolve()
     })
   },
+
+  /**
+   * Set previous path in action bar
+   */
   setPrevPath: function (context, { path }) {
     context.commit('setPrevPath', path)
   },
+
+  /**
+   * Push/Add a folder name to navigation stack.
+   * Navigation stacks used to generate relative paths of selected folder.
+   */
   pushNavStack: function (context, { path }) {
     const item = path && path.split('/')[path.split('/').length - 1]
     item && context.commit(
@@ -286,13 +451,28 @@ export default {
     )
     !item && context.dispatch('clearNavStack')
   },
+
+  /**
+   * Pop/Remove a folder name from navigation stack.
+   * Navigation stacks used to generate relative paths of selected folder.
+   */
   popNavStack: function (context) {
     context.commit('popNavStack')
   },
+
+  /**
+   * Clear navigation stack by replacing with, '/', root.
+   * Navigation stacks used to generate relative paths of selected folder.
+   */
   clearNavStack: function (context) {
     context.commit('clearNavStack')
   },
-  clearNavigatorStates: function (context) {
+
+  /**
+   * Clear navigation initial states.
+   * clearNavigatorInitialStates will be called when user logout.
+   */
+  clearNavigatorInitialStates: function (context) {
     context.commit('resetNavigatorStates')
   }
 }

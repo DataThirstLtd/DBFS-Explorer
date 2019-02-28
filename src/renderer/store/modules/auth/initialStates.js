@@ -1,5 +1,8 @@
-import appConfig from '@/app.config.js'
+/**
+ * Initial states for authentication.
+ */
 
-const states = Object.assign({}, appConfig.initialAuthStates)
+import initialStates from '@/initialStates/auth'
+const states = Object.assign({}, initialStates)
 
 export default states

@@ -44,6 +44,8 @@
   import Drag from './Misc/Drag'
   import Overlay from './Misc/Overlay'
 
+  const { ipcRenderer } = require('electron')
+
   export default {
     name: 'home',
     components: {
@@ -113,9 +115,13 @@
         }
       }
       this.fetchSettings()
+      this.registerInvokeAppMenuItem()
     },
     methods: {
-      ...mapGetters(['doesAuthDataExists']),
+      ...mapGetters([
+        'doesAuthDataExists',
+        'getSelectedItems'
+      ]),
       ...mapActions([
         'init',
         'login',
@@ -128,7 +134,10 @@
         'hideDrag',
         'dropFile',
         'initTransferActivity',
-        'writeLog'
+        'writeLog',
+        'selectAllItems',
+        'openDialog',
+        'toggleDialog'
       ]),
       initHome: function () {
         const context = this
@@ -163,6 +172,34 @@
             this.clearItem()
           }
         }
+      },
+      registerInvokeAppMenuItem: function () {
+        const self = this
+        ipcRenderer.on('onInvokeAppMenuItem', function (event, { command }) {
+          switch (command) {
+            case 'NAV_SELECT_ALL':
+              self.selectAllItems()
+              break
+            case 'NAV_SHOW_PROPERTIES':
+              if (self.getSelectedItems().length > 0) {
+                self.openDialog({
+                  name: 'properties'
+                })
+              }
+              break
+            case 'NAV_CREATE_FOLDER':
+              self.openDialog({
+                name: 'newFolder'
+              })
+              break
+            case 'NAV_VIEW_TRANSFERSTATE':
+              self.toggleDialog({
+                name: 'transferState'
+              })
+              break
+            default: break
+          }
+        })
       }
     }
   }

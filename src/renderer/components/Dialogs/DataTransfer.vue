@@ -19,7 +19,7 @@
             three-line>
             <v-list-tile
               v-for="item in options.list"
-              :key="item.id"
+              :key="item.transferId"
               @click="onToggleSelection(item)">
               <v-list-tile-action>
                 <v-checkbox
@@ -116,8 +116,8 @@ export default {
     getSize: function (data) {
       return helper.getReadableFileSize({ size: data })
     },
-    onToggleSelection: function ({ id }) {
-      this.toggleListDataTransfer({ id })
+    onToggleSelection: function ({ transferId }) {
+      this.toggleListDataTransfer({ transferId })
     },
     onContinue: function () {
       if ((this.options && this.options.type > -1) && this.options.type === 1) {

@@ -1,26 +1,29 @@
 <template>
   <div>
     <div class="ig-selected-item-wrapper">
-      <div class="item-wrapper"
-        :active="selectedItem === item.path"
+      <div
+        class="item-wrapper"
+        :active="selectedItem.constructor === [].constructor && selectedItem.findIndex(x => x === item.path) > -1"
         @dblclick="onOpenItem"
         @click="onSelectItem"
         @contextmenu="showContextMenu">
         <v-icon
           v-if="item.is_dir"
           class="icon"
-          :active="selectedItem === item.path"
+          :active="selectedItem.constructor === [].constructor && selectedItem.findIndex(x => x === item.path) > -1"
           large>
           fa-folder
         </v-icon>
         <v-icon
           v-else
           class="icon"
-          :active="selectedItem === item.path"
+          :active="selectedItem.constructor === [].constructor && selectedItem.findIndex(x => x === item.path) > -1"
           large>
           fa-file
         </v-icon>
-        <p class="name">
+        <p
+          class="name"
+          :active="selectedItem.constructor === [].constructor && selectedItem.findIndex(x => x === item.path) > -1">
           {{ item.path.split('/').pop() || item.path }}
         </p>
         <div
@@ -63,7 +66,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'populate',
@@ -73,7 +76,7 @@ export default {
       required: true
     },
     selectedItem: {
-      type: String,
+      type: Array,
       required: true
     }
   },
@@ -113,7 +116,8 @@ export default {
             callback: () => { this.$root.$emit('openProperties') }
           }
         ]
-      }
+      },
+      meteCtrlKey: false
     }
   },
   mounted () {
@@ -121,17 +125,26 @@ export default {
     self.$root.$on('hideContextMenu', () => {
       self.contextMenu.showMenu = false
     })
+    self.$root.$on('openItem', (data) => {
+      if (data.path === self.item.path) {
+        self.onOpenItem(data)
+      }
+    })
   },
   methods: {
     ...mapActions([
       'showInfoSnackbar',
       'clearSelection',
       'fetchSelection',
-      'selectItem',
+      'selectAppendItems',
+      'selectItems',
       'setPrevPath',
       'openDialog',
       'pushNavStack',
       'clearItem'
+    ]),
+    ...mapGetters([
+      'getSelectedItems'
     ]),
     isMenuDisabled: function (menuItem) {
       return Boolean(
@@ -144,25 +157,29 @@ export default {
     onOpenItem: function () {
       if (this.item.is_dir) {
         this.pushNavStack({
-          path: this.selectedItem
+          path: this.item.path
         })
         this.clearSelection()
         this.fetchSelection(this.item)
         this.clearItem()
       } else {
-        this.showInfoSnackbar({
-          message: 'Not a directory',
-          status: true
-        })
+        this.$root.$emit('downloadItem')
       }
     },
-    onSelectItem: function () {
-      this.selectItem(this.item)
+    onSelectItem: function (e, clearItems) {
+      if (e && e.metaKey && !clearItems) {
+        this.selectAppendItems(this.item)
+      } else {
+        this.selectItems(this.item)
+      }
     },
     showContextMenu: function (e) {
-      e.preventDefault()
+      const selectedItems = this.getSelectedItems()
+      if (selectedItems.findIndex(x => x === this.item.path) < 0) {
+        this.onSelectItem(e, true)
+      }
       const self = this
-      self.onSelectItem()
+      e.preventDefault()
       self.$root.$emit('hideContextMenu')
       self.contextMenu.x = e.clientX
       self.contextMenu.y = e.clientY
@@ -175,25 +192,52 @@ export default {
 </script>
 
 <style scoped>
+
   .item-wrapper {
     position: relative;
     width: 100px;
     height: auto;
+    min-height: 110px;
     margin: 10px;
+    padding: 20px 10px;
     cursor: pointer;
   }
+
   .item-wrapper > .icon {
     position: relative;
     left: 50%;
     transform: translateX(-50%);
     padding: 10px 0;
   }
+
   .item-wrapper > .name {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    padding: 10px;
     text-align: center;
+    word-break: break-all;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
+
   .item-wrapper[active] {
-    background: rgba(22, 82, 179, 0.452);
+    background: #E2ECFE;
+    border-radius: 5px;
+    z-index: 500;
   }
+
+  .item-wrapper > .name[active] {
+    background: #E2ECFE;
+    word-break: break-all;
+    overflow: auto;
+    white-space: normal;
+    text-overflow: unset;
+    z-index: 500;
+  }
+
   .item-wrapper > .vindicator {
     position: absolute;
     top: 0;
@@ -206,4 +250,5 @@ export default {
     padding: 7px 10px;
     border-radius: 50px;
   }
+
 </style>

@@ -1,7 +1,14 @@
+/**
+ * Default application configuration
+ */
 
+// Number of threads to invoke for download/upload operations
 const DEFAULT_THREAD_COUNT = 2
 
 export default {
+  /**
+   * Azure DBFS API end points
+   */
   ENDPOINTS: {
     addBlock: 'api/2.0/dbfs/add-block',
     close: 'api/2.0/dbfs/close',
@@ -14,84 +21,14 @@ export default {
     put: 'api/2.0/dbfs/put',
     read: 'api/2.0/dbfs/read'
   },
+  /**
+   * Default thread count for download/upload operations
+   */
   defaultThreadCount: DEFAULT_THREAD_COUNT,
+  /**
+   * Default application settings
+   */
   defaultSettings: [
     { key: 'thread-count', value: DEFAULT_THREAD_COUNT }
-  ],
-  initialAuthStates: {
-    token: '',
-    domain: ''
-  },
-  initialConfigStates: {
-    platform: '',
-    info: {
-      snackbar: {
-        status: false,
-        message: ''
-      }
-    },
-    loggedIn: false,
-    dialogs: {
-      about: {
-        active: false
-      },
-      properties: {
-        active: false
-      },
-      delete: {
-        active: false,
-        options: null
-      },
-      newFolder: {
-        active: false,
-        options: null
-      },
-      dataTransfer: {
-        active: false,
-        options: {
-          list: [],
-          type: -1
-        }
-      },
-      transferState: {
-        active: false,
-        list: []
-      },
-      alert: {
-        active: false,
-        options: {
-          title: '',
-          message: ''
-        }
-      },
-      settings: {
-        active: false,
-        options: {}
-      },
-      disconnect: {
-        active: false,
-        options: {}
-      },
-      persistantLoader: {
-        active: false,
-        options: {}
-      }
-    },
-    drag: false,
-    settings: []
-  },
-  initialNavigatorStates: {
-    rootFs: [],
-    fetchWait: false,
-    selection: [],
-    folderEmpty: {
-      valid: false,
-      path: ''
-    },
-    selectedItem: '',
-    populateSelection: {},
-    prevPath: '',
-    currentPath: '',
-    navStack: []
-  }
+  ]
 }

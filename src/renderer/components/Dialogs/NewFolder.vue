@@ -69,6 +69,14 @@ export default {
       }
     }
   },
+  mounted () {
+    const self = this
+    document.body.addEventListener('keyup', (e) => {
+      if (self.dialog && e.keyCode === 13) {
+        self.onClickNewFolder()
+      }
+    })
+  },
   methods: {
     ...mapActions(['createNewFolder', 'showInfoSnackbar', 'closeDialog']),
     show: function () {

@@ -9,15 +9,22 @@ import {
 import Sqlite3 from './database'
 
 // Import application menu configuration
-import appMenu from './menu.js'
-import macMenu from './macMenu.js'
+import appMenu from './menu/menu.js'
+import macMenu from './menu/macMenu.js'
 
-app.setAboutPanelOptions({
-  applicationName: app.getName(),
-  applicationVersion: app.getVersion(),
-  copyright: '© 2019 Data Thirst Ltd. All rights reserved.'
-})
+const os = require('os')
+const path = require('path')
 
+// Set about panel for macOS. This will be ignored for windows
+if (os.platform() === 'darwin') {
+  app.setAboutPanelOptions({
+    applicationName: app.getName(),
+    applicationVersion: app.getVersion(),
+    copyright: '© 2019 Data Thirst Ltd. All rights reserved.'
+  })
+}
+
+// macOS specific menu template
 if (process.platform === 'darwin') {
   appMenu.unshift(macMenu)
 
@@ -41,11 +48,10 @@ if (process.platform === 'darwin') {
   )
 }
 
+// Build electron Menu object from menu template
 const menu = Menu.buildFromTemplate(appMenu)
 
-const os = require('os')
-const path = require('path')
-
+// Get SQL database Instance
 const db = new Sqlite3({
   path: path.join(
     os.homedir(),
@@ -54,6 +60,7 @@ const db = new Sqlite3({
   name: 'app'
 })
 
+// Initialize SQL database
 db.init()
 
 /**
@@ -64,11 +71,17 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
+// Application window
 let mainWindow
+
+// Renderer URL
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
+/**
+ * Creates default application window
+ */
 function createWindow () {
   /**
    * Initial window options
@@ -90,6 +103,9 @@ function createWindow () {
   mainWindow.loadURL(winURL)
   Menu.setApplicationMenu(menu)
   // mainWindow.webContents.openDevTools()
+
+  // Add shortcut event callbacks
+  addShortcutCallbacks(mainWindow, menu)
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -113,29 +129,55 @@ app.on('activate', () => {
   }
 })
 
+/**
+ * Listen to the channel "sql", when a new message arrives listener would be called
+ * with event, sql CRUD configuration
+ */
+
 ipcMain.on('sql', function (event, config) {
+  // Validate SQL CRUD configuration
   if (config && config.constructor === {}.constructor &&
-      'name' in config && 'data' in config &&
-      'commit' in config) {
+    'name' in config && 'data' in config &&
+    'commit' in config) {
+    // CRUD operation type
     switch (config.name) {
+      /**
+       * Read entire rows of specified table
+       */
       case 'readFullTable':
         db.readFullTable(config.data, function (error, data) {
           replaySender(event.sender, config.commit, error, data)
         })
         break
+
+      /**
+       * Read table with entry/row id
+       */
       case 'readTableEntryID':
         db.readTableEntryID(config.data, function (error, data) {
           replaySender(event.sender, config.commit, error, data)
         })
         break
+
+      /**
+       * Write a new entry/row of specified table
+       */
       case 'writeTable':
         db.writeTable(config.data, function () {})
         break
+
+      /**
+       * Update table row of specified id
+       */
       case 'UpdateTableByID':
         db.updateTableByID(config.data, function (error, data) {
           replaySender(event.sender, config.commit, error, data)
         })
         break
+
+      /**
+       * Delete table row of specified id
+       */
       case 'DeleteTableById':
         db.deleteTableById(config.data, function (error, data) {
           replaySender(event.sender, config.commit, error, data)
@@ -146,12 +188,42 @@ ipcMain.on('sql', function (event, config) {
   }
 })
 
+/**
+ * Replay sender with SQL resultant data, error (if any)
+ * and commit string for vuex store
+ */
 function replaySender (sender, commit, error, data) {
   sender.send('sql_ready', {
-    commit: commit,
-    error: error,
-    data: data
+    commit: commit, // Vuex commit message
+    error: error, // Error object
+    data: data // Resultant data
   })
+}
+
+/**
+ * Add shortcut callback to the application menu
+ */
+function addShortcutCallbacks (window, menu) {
+  menu.getMenuItemById('navigator-select-all').click = function () {
+    window.webContents.send('onInvokeAppMenuItem', {
+      command: 'NAV_SELECT_ALL'
+    })
+  }
+  menu.getMenuItemById('navigator-view-properties').click = function () {
+    window.webContents.send('onInvokeAppMenuItem', {
+      command: 'NAV_SHOW_PROPERTIES'
+    })
+  }
+  menu.getMenuItemById('navigator-create-folder').click = function () {
+    window.webContents.send('onInvokeAppMenuItem', {
+      command: 'NAV_CREATE_FOLDER'
+    })
+  }
+  menu.getMenuItemById('navigator-view-transferstate').click = function () {
+    window.webContents.send('onInvokeAppMenuItem', {
+      command: 'NAV_VIEW_TRANSFERSTATE'
+    })
+  }
 }
 
 /**

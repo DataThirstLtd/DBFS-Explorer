@@ -26,7 +26,7 @@ export default {
       required: true
     },
     selectedItem: {
-      type: String,
+      type: Array,
       required: true
     }
   },

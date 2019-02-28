@@ -10,9 +10,6 @@
         @click="goBack">
         <v-icon small>fa-arrow-left</v-icon>
       </v-btn>
-      <!-- <div>
-        {{ getParentPath(selection[0]) || (folderEmpty.valid ? folderEmpty.path : '') }}
-      </div> -->
       <div>
         {{ `/${navStack.join('/')}` }}
       </div>
@@ -49,7 +46,8 @@
       style="text-align: center; padding: 20px;">
       Empty Folder
     </div>
-    <div style="padding: 10px;" class="wrapper">
+    <div
+      style="padding: 5px 10px;">
       <v-layout
         v-if="fetchWait"
         row>
@@ -72,7 +70,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import Folder from '@/components/Navigator/Folder'
 
 const nodePath = require('path')
@@ -141,6 +139,58 @@ export default {
   }),
   mounted () {
     const self = this
+    this.$nextTick(() => {
+      document.body.addEventListener('keyup', (e) => {
+        const selection = self.getSelection()
+        if (selection && selection.length > 0) {
+          if (e.keyCode === 39) {
+            // Arrow right
+            if (self.selectedItem && self.selectedItem.length === 1) {
+              const targetIndex = selection.findIndex(x => x.path === self.selectedItem[0])
+              if (targetIndex > -1 && selection.length - 1 > targetIndex) {
+                self.selectItems(selection[targetIndex + 1])
+              } else {
+                self.selectItems(selection[0])
+              }
+            } else {
+              self.selectItems(selection[0])
+            }
+          } else if (e.keyCode === 37) {
+            // Arrow left
+            if (self.selectedItem && self.selectedItem.length === 1) {
+              const targetIndex = selection.findIndex(x => x.path === self.selectedItem[0])
+              console.log(targetIndex - 1)
+              if (targetIndex > -1 && selection.length - 1 >= targetIndex) {
+                if ((targetIndex - 1) >= 0) {
+                  self.selectItems(selection[targetIndex - 1])
+                } else {
+                  self.selectItems(selection[selection.length - 1])
+                }
+              } else {
+                self.selectItems(selection[0])
+              }
+            } else {
+              self.selectItems(selection[0])
+            }
+          }
+        }
+        if (e.keyCode === 8) {
+          !self.getDialogsCount() && self.goBack()
+        }
+        if (e.keyCode === 13) {
+          const selectedItem = self.getSelectedItems()
+          if (selectedItem && selectedItem.length === 1) {
+            const selection = self.getSelection()
+            if (selection) {
+              const targetIndex = selection.findIndex(x => x.path === selectedItem[0])
+              if (targetIndex > -1) {
+                self.$root.$emit('openItem', selection[targetIndex])
+              }
+            }
+          }
+        }
+      })
+    })
     this.$root.$on('deleteItem', () => {
       self.deleteItem()
     })
@@ -152,7 +202,18 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['clearSelection', 'fetchSelection', 'openDialog', 'popNavStack']),
+    ...mapGetters([
+      'getSelection',
+      'getDialogsCount',
+      'getSelectedItems'
+    ]),
+    ...mapActions([
+      'clearSelection',
+      'fetchSelection',
+      'openDialog',
+      'popNavStack',
+      'selectItems'
+    ]),
     isHiddenAction: function (item) {
       const itemIndex = this.appbarButtons.right.findIndex(x => x.id === item.id)
       if (itemIndex > -1 && this.appbarButtons.right[itemIndex].hidden) {
@@ -175,12 +236,12 @@ export default {
     },
     deleteItem: function () {
       const pwd = `/${this.navStack.join('/')}`
-      const path = this.selectedItem
-      if (path && path !== '/') {
+      const list = this.selectedItem
+      if (list && list.findIndex(x => x === '/') < 0) {
         this.openDialog({
           name: 'delete',
           options: {
-            path: path,
+            list: list,
             pwd
           }
         })
@@ -188,35 +249,43 @@ export default {
     },
     downloadItem: function () {
       const self = this
-      const itemIndex = self.selection.findIndex(x => x.path === self.selectedItem)
-      if (itemIndex > -1 && !self.selection[itemIndex].is_dir) {
-        const file = this.$electron.remote.dialog.showSaveDialog(
-          this.$electron.remote.getCurrentWindow(),
-          {
-            defaultPath: nodePath.basename(this.selectedItem)
-          }
-        )
-        if (file) {
-          const item = self.selection[itemIndex]
-          const uid = uniqid()
-          const transferObject = {
-            file: {
-              name: nodePath.basename(item.path),
-              path: item.path,
-              size: item.file_size
-            },
-            transferId: uid,
-            selected: true,
-            targetPath: file
-          }
-          this.openDialog({
-            name: 'dataTransfer',
-            options: {
-              list: [ transferObject ],
-              type: 0
-            }
-          })
+      const transferObject = []
+      const file = this.$electron.remote.dialog.showOpenDialog(
+        this.$electron.remote.getCurrentWindow(),
+        {
+          properties: ['openDirectory', 'createDirectory']
         }
+      )
+      if (file && file.constructor === [].constructor && file.length > 0) {
+        self.selectedItem.forEach((selected) => {
+          const itemIndex = self.selection.findIndex(x => x.path === selected)
+          if (itemIndex > -1 && !self.selection[itemIndex].is_dir) {
+            if (file) {
+              const item = self.selection[itemIndex]
+              const uid = uniqid()
+              transferObject.push({
+                file: {
+                  name: nodePath.basename(item.path),
+                  path: item.path,
+                  size: item.file_size
+                },
+                transferId: uid,
+                selected: true,
+                targetPath: nodePath.join(
+                  `${file[0]}`,
+                  nodePath.basename(item.path)
+                )
+              })
+            }
+          }
+        })
+        this.openDialog({
+          name: 'dataTransfer',
+          options: {
+            list: transferObject,
+            type: 0
+          }
+        })
       }
     },
     openProperties: function () {

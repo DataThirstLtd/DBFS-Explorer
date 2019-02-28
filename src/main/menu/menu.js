@@ -1,3 +1,7 @@
+/**
+ * Default menu template for application
+ */
+
 export default [
   {
     label: 'Edit',
@@ -11,6 +15,15 @@ export default [
       { role: 'pasteandmatchstyle' },
       { role: 'delete' },
       { role: 'selectall' }
+    ]
+  },
+  {
+    label: 'Navigator',
+    submenu: [
+      { id: 'navigator-select-all', label: 'Select All Files/Folders', accelerator: 'CmdOrCtrl+Shift+A' },
+      { id: 'navigator-view-properties', label: 'Show Properties', accelerator: 'CmdOrCtrl+I' },
+      { id: 'navigator-create-folder', label: 'Create New Folder', accelerator: 'CmdOrCtrl+Shift+N' },
+      { id: 'navigator-view-transferstate', label: 'View Downloads/Uploads', accelerator: 'CmdOrCtrl+J' }
     ]
   },
   {

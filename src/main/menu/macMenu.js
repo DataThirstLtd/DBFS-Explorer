@@ -1,3 +1,7 @@
+/**
+ * macOS specific Menu template
+ */
+
 export default {
   label: '',
   submenu: [

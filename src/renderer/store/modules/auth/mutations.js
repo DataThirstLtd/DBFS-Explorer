@@ -1,13 +1,28 @@
+/**
+ * Mutations for authentication.
+ */
+
 import appConfig from '@/app.config.js'
 
 export default {
+  /**
+   * Set (String) domain.
+   */
   setDomain: function (state, domain) {
     state.domain = domain
   },
+
+  /**
+   * Set (String) bearer token.
+   */
   setToken: function (state, token) {
     state.token = token
   },
-  setUser: function (state, data) {
+
+  /**
+   * Set (Array) credentials from SQL
+   */
+  setCredentialsFromSql: function (state, data) {
     if (data &&
       data.constructor === [].constructor &&
       data.length > 0
@@ -25,10 +40,18 @@ export default {
     }
     state.onAuthReady = true
   },
+
+  /**
+   * Set (String) credentials
+   */
   setCredentials: function (state, { domain, token }) {
     state.domain = domain
     state.token = token
   },
+
+  /**
+   * Set (Object) default auth states.
+   */
   resetAuthStates: function (state) {
     state = Object.assign({}, appConfig.initialAuthStates)
   }

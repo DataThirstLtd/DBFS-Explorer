@@ -167,7 +167,7 @@ export default {
       }
     },
     onSelectItem: function (e, clearItems) {
-      if (e && e.metaKey && !clearItems) {
+      if (e && (e.metaKey || e.ctrlKey) && !clearItems) {
         this.selectAppendItems(this.item)
       } else {
         this.selectItems(this.item)

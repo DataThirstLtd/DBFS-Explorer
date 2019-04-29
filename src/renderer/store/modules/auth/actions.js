@@ -16,7 +16,8 @@ export default {
       `${domain}/${appConfig.ENDPOINTS.list}?path=/`,
       {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Access-Control-Allow-Origin': '*'
         }
       }
     ).then((res) => {

@@ -7,6 +7,7 @@ import {
   Menu
 } from 'electron'
 import Sqlite3 from './database'
+import { autoUpdater } from 'electron-updater'
 
 // Import application menu configuration
 import appMenu from './menu/menu.js'
@@ -96,7 +97,8 @@ function createWindow () {
     titleBarStyle: 'hiddenInset',
     show: false,
     webPreferences: {
-      webSecurity: false
+      webSecurity: true,
+      nodeIntegration: true
     }
   })
 
@@ -234,9 +236,6 @@ function addShortcutCallbacks (window, menu) {
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
  */
 
-/*
-import { autoUpdater } from 'electron-updater'
-
 autoUpdater.on('update-downloaded', () => {
   autoUpdater.quitAndInstall()
 })
@@ -244,4 +243,3 @@ autoUpdater.on('update-downloaded', () => {
 app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
- */

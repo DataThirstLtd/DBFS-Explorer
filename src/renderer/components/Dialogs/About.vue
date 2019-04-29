@@ -23,7 +23,7 @@
           </v-layout>
         </div>
         <h1 style="font-weight: 500;"> DBFS-Explorer </h1>
-        <p>Version 0.1.0</p>
+        <p>Version v{{ version }}</p>
         <p>Copyright &copy; 2019 Data Thirst Ltd. All rights reserved</p>
       </v-card-text>
       <v-card-actions>
@@ -46,7 +46,8 @@ export default {
   name: 'about',
   data () {
     return {
-      dialog: false
+      dialog: false,
+      version: this.$electron.remote.app.getVersion()
     }
   },
   computed: mapState({

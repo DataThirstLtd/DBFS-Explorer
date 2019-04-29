@@ -167,7 +167,7 @@ export default {
       }
     },
     onSelectItem: function (e, clearItems) {
-      if (e && e.metaKey && !clearItems) {
+      if (e && ((this.$platform === 'darwin' && e.metaKey) || (this.$platform === 'win32' && e.ctrlKey)) && !clearItems) {
         this.selectAppendItems(this.item)
       } else {
         this.selectItems(this.item)

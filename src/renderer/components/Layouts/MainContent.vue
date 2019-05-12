@@ -3,7 +3,7 @@
     small>
     <v-toolbar
       v-if="selection"
-      class="content-nav"
+      class="options"
       height="50px"
       flat>
       <v-btn icon
@@ -47,6 +47,7 @@
       Empty Folder
     </div>
     <div
+      class="files"
       style="padding: 5px 10px;">
       <v-layout
         v-if="fetchWait"

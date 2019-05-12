@@ -1,6 +1,8 @@
 <template>
   <div id="sidebar" small>
-    <div class="wrapper">
+    <div
+      class="wrapper"
+      style="overflow: auto;">
       <div
         v-if="rootFs.length < 1"
         class="hero-x">

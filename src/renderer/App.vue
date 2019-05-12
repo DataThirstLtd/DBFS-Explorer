@@ -128,6 +128,7 @@
     border-right-style: solid;
     border-right-color: rgba(229, 229, 229, 0.596);
     border-right-width: 1px;
+    overflow: auto;
   }
 
   #sidebar[small] {
@@ -143,34 +144,25 @@
     background: white;
   }
 
+  #main-content > .options {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+  }
+
   #main-content[small] {
     top: 39px;
   }
 
-  #command-bar {
-    position: fixed;
-    top: 60px;
-    right: 0;
+  #main-content > .files {
+    position: absolute;
+    top: 52px;
+    left: 0;
     bottom: 0;
-    width: 40px;
-    background: #FFFFFF;
-    border-left-style: solid;
-    border-left-color: rgba(229, 229, 229, 0.596);
-    border-left-width: 1px;
-  }
-
-  #command-bar[small] {
-    top: 39px;
-  }
-
-  #command-bar > .wrapper {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  #command-bar > .wrapper .command {
-    margin: 5px 0;
+    right: 0;
+    overflow-y: auto;
   }
 
   .auth-logo {

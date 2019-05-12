@@ -97,7 +97,7 @@ function createWindow () {
     titleBarStyle: 'hiddenInset',
     show: false,
     webPreferences: {
-      webSecurity: true,
+      webSecurity: process.env.NODE_ENV !== 'development',
       nodeIntegration: true
     }
   })

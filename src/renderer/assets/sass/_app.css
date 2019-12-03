@@ -9,3 +9,10 @@ button {
   height: 2rem;
   -webkit-app-region: drag;
 }
+.main-content {
+  position: fixed;
+  top: 2rem;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}

@@ -7,9 +7,14 @@
 module.exports = {
   theme: {
     extend: {
+      width: {
+        'auth-box': '32rem'
+      },
       colors: {
         'container': '#121212',
-        'hover-one': '#282828'
+        'hover-one': '#282828',
+        'label-one': '#a1a1a1',
+        'primary': '#ff5224'
       }
     }
   },

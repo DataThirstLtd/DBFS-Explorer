@@ -1,5 +1,10 @@
 <template>
-  <div class="title-bar bg-container text-xs text-white">
+  <div :class="{
+    'title-bar': true,
+    'bg-container': !transparent,
+    'text-xs': true,
+    'text-white': true
+  }">
     <div class="flex h-full items-center">
       <div class="px-3">
         DBFS-Explorer
@@ -55,6 +60,13 @@ import Icon from '@/components/icon'
 const remote = require('electron').remote
 
 export default {
+  props: {
+    transparent: {
+      type: Boolean,
+      require: false,
+      default: () => false
+    }
+  },
   components: {
     Icon
   },

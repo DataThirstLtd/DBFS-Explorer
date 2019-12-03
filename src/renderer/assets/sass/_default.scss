@@ -4,8 +4,25 @@ body {
   font-family: SourceSansPro;
 }
 
-button {
+button, input {
   outline: none !important;
+}
+
+input::placeholder {
+  color: #a1a1a1;
+}
+
+input[type=radio] {
+  border: 2px solid #ff5224;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  -webkit-appearance: none;
+}
+
+input[type=radio]:checked {
+  background: #ff5224;
 }
 
 .font-bold {
@@ -26,4 +43,11 @@ button {
 .font-thin {
   font-family: SourceSansPro;
   font-weight: 200;
+}
+
+.hero-xy {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

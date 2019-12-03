@@ -87,11 +87,11 @@ function startMainWindow () {
   })
 
   if (isDev) {
-    winConfig.windows.main.loadURL(getUrl('home'))
+    winConfig.windows.main.loadURL(getUrl('sign-in'))
     // Open the DevTools.
     // winConfig.windows.main.webContents.openDevTools()
   } else {
-    winConfig.windows.main.loadURL(getUrl('home'))
+    winConfig.windows.main.loadURL(getUrl('sign-in'))
   }
 
   

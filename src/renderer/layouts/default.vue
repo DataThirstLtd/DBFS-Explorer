@@ -1,19 +1,10 @@
 <template>
   <div>
-    <app-header />
     <nuxt />
   </div>
 </template>
 
-<script>
-import appHeader from '@/components/header'
-export default {
-  components: { appHeader }
-}
-</script>
-
-<style>
-body {
-  margin: 0 !important;
-}
+<style lang="scss">
+  @import url('@/assets/sass/_app.scss');
+  @import url('@/assets/sass/_default.scss');
 </style>

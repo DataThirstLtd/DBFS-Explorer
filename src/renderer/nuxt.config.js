@@ -4,22 +4,15 @@
  * @link {https://nuxtjs.org/guide/configuration/}
  */
 
-
 module.exports = {
   mode: 'spa', // or 'universal'
   head: {
     title: 'dbfs-explorer'
   },
   loading: false,
-  plugins: [
-    
-    
-    
-  ],
+  plugins: [],
   buildModules: [
-    
+    '@nuxtjs/tailwindcss'
   ],
-  modules: [
-    
-  ],
-};
+  modules: []
+}

@@ -1,0 +1,12 @@
+button {
+  -webkit-app-region: no-drag;
+}
+
+.title-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2rem;
+  -webkit-app-region: drag;
+}

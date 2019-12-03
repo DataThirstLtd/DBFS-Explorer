@@ -16,3 +16,18 @@ button {
   bottom: 0;
   left: 0;
 }
+#sidebar {
+  position: fixed;
+  top: 2rem;
+  bottom: 0;
+  left: 0;
+  width: 28vh;
+}
+.nav-content {
+  position: fixed;
+  top: 2rem;
+  right: 0;
+  bottom: 0;
+  left: 28vh;
+  overflow-y: auto;
+}

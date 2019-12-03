@@ -75,9 +75,9 @@ function startSplashWindow () {
 function startMainWindow () {
   // Create the browser window.
   winConfig.windows.main = new BrowserWindow({
-    width: 1200,
-    minWidth: 870,
-    height: 800,
+    width: 800,
+    minWidth: 800,
+    height: 600,
     minHeight: 600,
     frame: platform() === 'win32' ? false : true,
     titleBarStyle: 'hidden',

@@ -1,140 +1,55 @@
 {
-  "name": "dbfs_explorer",
-  "version": "0.1.3",
-  "author": "saikksub <saikksub@gmail.com>",
+  "name": "dbfs-explorer",
+  "version": "1.0.0",
   "description": "DBFS Explorer for Databricks",
-  "license": null,
-  "main": "./dist/electron/main.js",
-  "private": true,
+  "main": "./dist/main/index.js",
   "scripts": {
-    "build": "node .electron-vue/build.js && electron-builder",
-    "build:dir": "node .electron-vue/build.js && electron-builder --dir",
-    "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
-    "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
-    "rebuild": "./node_modules/.bin/electron-rebuild .",
-    "dev": "node .electron-vue/dev-runner.js",
-    "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
-    "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src",
-    "pack": "npm run pack:main && npm run pack:renderer",
-    "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
-    "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "postinstall": "npm run lint:fix && install-app-deps"
+    "dev": "cross-env-shell NODE_ENV=development node .electron-nuxt/index.js",
+    "build": "cross-env-shell NODE_ENV=production node .electron-nuxt/index.js",
+    "test:unit": "cross-env NODE_ENV=test TEST_TYPE=unit ava",
+    "test:e2e": "cross-env NODE_ENV=test TEST_TYPE=e2e ava",
+    "test": "npm run test:unit && npm run test:e2e",
+    "lint": "node_modules/.bin/eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter ./src",
+    "lint:fix": "npm run lint -- --fix",
+    "postinstall": "electron-builder install-app-deps & npm run lint:fix"
   },
-  "engines": {
-    "node": ">=6.4"
-  },
-  "build": {
-    "productName": "DBFS Explorer",
-    "appId": "net.datathirst.dbfs.explorer",
-    "publish": {
-      "provider": "github",
-      "repo": "DBFS-Explorer",
-      "owner": "DataThirstLtd"
-    },
-    "directories": {
-      "output": "build"
-    },
-    "files": [
-      "dist/electron/**/*"
-    ],
-    "dmg": {
-      "contents": [
-        {
-          "x": 410,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        },
-        {
-          "x": 130,
-          "y": 150,
-          "type": "file"
-        }
-      ]
-    },
-    "mac": {
-      "icon": "build/icons/icon.icns"
-    },
-    "win": {
-      "icon": "build/icons/icon.ico"
-    },
-    "linux": {
-      "icon": "build/icons"
-    }
-  },
-  "dependencies": {
-    "async-foreach": "^0.1.3",
-    "axios": "^0.18.0",
-    "base64-js": "^1.3.0",
-    "electron-updater": "^4.0.6",
-    "filesize": "^3.6.1",
-    "fs-extra": "^7.0.1",
-    "immutability-helper": "^2.9.1",
-    "is-url": "^1.2.4",
-    "promise": "^8.0.2",
-    "roboto-fontface": "^0.10.0",
-    "sqlite3": "^4.0.6",
-    "threads": "^0.12.0",
-    "titlebar": "^1.4.0",
-    "uniqid": "^5.0.3",
-    "vue": "^2.5.22",
-    "vue-electron": "^1.0.6",
-    "vue-router": "^3.0.1",
-    "vue-template-compiler": "^2.5.22",
-    "vuetify": "^1.4.3",
-    "vuex": "^3.1.0",
-    "winston": "^3.1.0",
-    "winston-electron": "^0.2.0"
+  "keywords": [],
+  "author": "Sai K K <saikksub@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/michalzaq12/electron-nuxt/blob/master/README.md",
+  "engines" : {
+    "node" : ">=8.10.0"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.6.3",
-    "ajv": "^6.7.0",
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^8.2.3",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-0": "^6.24.1",
-    "babel-register": "^6.26.0",
-    "babili-webpack-plugin": "^0.1.2",
-    "cfonts": "^2.4.0",
-    "chalk": "^2.4.2",
-    "copy-webpack-plugin": "^4.5.1",
-    "cross-env": "^5.1.6",
-    "css-loader": "^0.28.11",
-    "del": "^3.0.0",
-    "devtron": "^1.4.0",
-    "electron": "^5.0.0",
-    "electron-builder": "^20.38.5",
-    "electron-debug": "^1.5.0",
-    "electron-devtools-installer": "^2.2.4",
-    "electron-rebuild": "^1.8.2",
-    "eslint": "^4.19.1",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-friendly-formatter": "^4.0.1",
-    "eslint-loader": "^2.0.0",
-    "eslint-plugin-html": "^4.0.3",
-    "eslint-plugin-import": "^2.15.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-standard": "^3.1.0",
-    "file-loader": "^1.1.11",
-    "html-webpack-plugin": "^3.2.0",
-    "mini-css-extract-plugin": "0.4.0",
-    "multispinner": "^0.2.1",
-    "node-loader": "^0.6.0",
-    "node-sass": "^4.11.0",
-    "sass-loader": "^7.0.3",
-    "style-loader": "^0.21.0",
-    "url-loader": "^1.0.1",
-    "vue-html-loader": "^1.2.4",
-    "vue-loader": "^15.6.0",
-    "vue-style-loader": "^4.1.0",
-    "vue-template-compiler": "^2.5.22",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14",
-    "webpack-hot-middleware": "^2.22.2",
-    "webpack-merge": "^4.2.1"
+    "@xpda-dev/core": "^0.1.5",
+    "@xpda-dev/electron-launcher": "^0.1.1",
+    "@xpda-dev/electron-builder": "^0.1.1",
+    "@xpda-dev/webpack-step": "^0.1.2",
+    "deepmerge": "4.2.2",
+    "ava": "2.4.0",
+    "browser-env": "3.3.0",
+    "cross-env": "6.0.3",
+    "electron": "5.0.10",
+    "electron-builder": "22.1.0",
+    "electron-debug": "3.0.1",
+    "eslint": "5.16.0",
+    "babel-eslint": "10.0.3",
+    "eslint-friendly-formatter": "4.0.1",
+    "eslint-loader": "3.0.2",
+    "@nuxtjs/eslint-config": "1.1.2",
+    
+    "nuxt": "2.10.2",
+    "node-sass": "4.13.0",
+    "sass-loader": "8.0.0",
+    "spectron": "7.0.0",
+    "@types/webdriverio": "4.13.3",
+    "vue-devtools": "5.1.3",
+    "@vue/test-utils": "1.0.0-beta.29",
+    "require-extension-hooks": "0.3.3",
+    "require-extension-hooks-babel": "1.0.0",
+    "require-extension-hooks-vue": "0.4.2",
+    "babel-plugin-webpack-alias-7": "0.1.1",
+    "webpack": "4.41.2",
+    "webpack-node-externals": "1.7.2"
   }
 }

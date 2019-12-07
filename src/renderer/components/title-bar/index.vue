@@ -4,7 +4,8 @@
     'bg-container': !transparent,
     'text-xs': true,
     'text-white': true
-  }">
+  }"
+  >
     <div class="flex h-full items-center">
       <div class="px-3">
         DBFS-Explorer
@@ -53,22 +54,21 @@
   </div>
 </template>
 
-
 <script>
 import Icon from '@/components/icon'
 
 const remote = require('electron').remote
 
 export default {
+  components: {
+    Icon
+  },
   props: {
     transparent: {
       type: Boolean,
       require: false,
       default: () => false
     }
-  },
-  components: {
-    Icon
   },
   data () {
     return {
@@ -81,29 +81,29 @@ export default {
     }
   },
   methods: {
-    onClickMinimize: function () {
+    onClickMinimize () {
       remote.getCurrentWindow().minimize()
     },
-    onClickMaximize: function () {
+    onClickMaximize () {
       if (remote.getCurrentWindow().isMaximized()) {
         remote.getCurrentWindow().unmaximize()
       } else {
         remote.getCurrentWindow().maximize()
       }
     },
-    onClickClose: function () {
+    onClickClose () {
       remote.getCurrentWindow().close()
     },
-    onMouseEnterClose: function () {
+    onMouseEnterClose () {
       this.hover.close = true
     },
-    onMouseEnterMaximize: function () {
+    onMouseEnterMaximize () {
       this.hover.maximize = true
     },
-    onMouseEnterMinimize: function () {
+    onMouseEnterMinimize () {
       this.hover.minimize = true
     },
-    onMouseLeave: function () {
+    onMouseLeave () {
       this.hover.close = false
       this.hover.maximize = false
       this.hover.minimize = false

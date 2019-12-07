@@ -16,10 +16,10 @@
           Please provide URL and Bearer token to get started:
         </p>
         <div class="flex h-8 items-center w-full">
-          <input v-model="provider" type="radio" value="provider-azure" id="input-azure" />
+          <input id="input-azure" v-model="provider" type="radio" value="provider-azure">
           <label class="text-sm mx-2" for="input-azure">Azure</label>
 
-          <input v-model="provider" type="radio" value="provider-aws" id="input-aws" />
+          <input id="input-aws" v-model="provider" type="radio" value="provider-aws">
           <label class="text-sm mx-2" for="input-aws">AWS</label>
         </div>
         <div class="text-sm">
@@ -79,7 +79,7 @@ export default {
     })
   },
   methods: {
-    onClickContinue: function () {
+    onClickContinue () {
       this.loading = true
       setTimeout(() => {
         this.$router.replace({ path: '/home' })

@@ -1,7 +1,7 @@
 const path = require('path')
+const { platform } = require('os')
 const { app, BrowserWindow, ipcMain } = require('electron')
 
-const { platform } = require('os')
 const isDev = process.env.NODE_ENV === 'development'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -79,7 +79,7 @@ function startMainWindow () {
     minWidth: 800,
     height: 600,
     minHeight: 600,
-    frame: platform() === 'win32' ? false : true,
+    frame: platform() !== 'win32',
     titleBarStyle: 'hidden',
     show: false,
     backgroundColor: winConfig.colours.dark,
@@ -94,7 +94,6 @@ function startMainWindow () {
     winConfig.windows.main.loadURL(getUrl('sign-in'))
   }
 
-  
   winConfig.windows.main.setMenu(null)
 
   winConfig.windows.main.once('ready-to-show', () => {

@@ -41,6 +41,13 @@ import IconMinimize from './IconMinimize'
 import IconMaximize from './IconMaximize'
 
 export default {
+  components: {
+    IconClose,
+    IconFolder,
+    IconLayers,
+    IconMinimize,
+    IconMaximize
+  },
   props: {
     height: {
       type: Number,
@@ -62,13 +69,6 @@ export default {
       required: true,
       default: () => ''
     }
-  },
-  components: {
-    IconClose,
-    IconFolder,
-    IconLayers,
-    IconMinimize,
-    IconMaximize
   }
 }
 </script>

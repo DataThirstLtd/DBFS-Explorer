@@ -51,6 +51,30 @@
         />
       </button>
     </div>
+    <div v-else-if="platform === 'darwin' && menu" class="flex h-full items-center">
+      <button
+        class="h-6 no-drag px-2 bg-accent-two ml-20 mx-1 rounded-sm"
+        @click="onClickDownloader"
+      >
+        <icon
+          :width="13"
+          :height="13"
+          fill="#ffffff"
+          name="download"
+        />
+      </button>
+      <button
+        class="h-6 no-drag px-2 bg-accent-two rounded-sm mx-1 cursor-pointer"
+      >
+        <icon
+          :width="13"
+          :height="13"
+          fill="#ffffff"
+          name="add-folder"
+        />
+      </button>
+      <div class="flex-grow" />
+    </div>
   </div>
 </template>
 
@@ -66,7 +90,12 @@ export default {
   props: {
     transparent: {
       type: Boolean,
-      require: false,
+      required: false,
+      default: () => false
+    },
+    menu: {
+      type: Boolean,
+      required: false,
       default: () => false
     }
   },
@@ -107,6 +136,9 @@ export default {
       this.hover.close = false
       this.hover.maximize = false
       this.hover.minimize = false
+    },
+    onClickDownloader: function () {
+      this.$root.$emit('downloader/toggle')
     }
   }
 }

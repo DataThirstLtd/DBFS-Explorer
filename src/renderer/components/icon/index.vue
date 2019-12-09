@@ -30,6 +30,36 @@
       :height="height"
       :fill="fill"
     />
+    <icon-arrow-up
+      v-else-if="name === 'arrow-up'"
+      :width="width"
+      :height="height"
+      :fill="fill"
+    />
+    <icon-arrow-down
+      v-else-if="name === 'arrow-down'"
+      :width="width"
+      :height="height"
+      :fill="fill"
+    />
+    <icon-download
+      v-else-if="name === 'download'"
+      :width="width"
+      :height="height"
+      :fill="fill"
+    />
+    <icon-upload
+      v-else-if="name === 'upload'"
+      :width="width"
+      :height="height"
+      :fill="fill"
+    />
+    <icon-add-folder
+      v-else-if="name === 'add-folder'"
+      :width="width"
+      :height="height"
+      :fill="fill"
+    />
   </div>
 </template>
 
@@ -39,6 +69,11 @@ import IconFolder from './IconFolder'
 import IconLayers from './IconLayers'
 import IconMinimize from './IconMinimize'
 import IconMaximize from './IconMaximize'
+import IconArrowUp from './IconArrowUp'
+import IconArrowDown from './IconArrowDown'
+import IconDownload from './IconDownload'
+import IconUpload from './IconUpload'
+import IconAddFolder from './IconAddFolder'
 
 export default {
   components: {
@@ -46,7 +81,12 @@ export default {
     IconFolder,
     IconLayers,
     IconMinimize,
-    IconMaximize
+    IconMaximize,
+    IconArrowUp,
+    IconArrowDown,
+    IconDownload,
+    IconUpload,
+    IconAddFolder
   },
   props: {
     height: {

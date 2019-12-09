@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen text-white items-center p-2">
+  <div class="flex h-screen text-white items-center p-2 fade-in-transition">
     <title-bar :transparent="true" />
     <div class="flex-grow" />
     <div class="w-64 h-auto p-2">
@@ -35,6 +35,7 @@ export default {
   components: {
     Logo,
     TitleBar
-  }
+  },
+  transition: 'page'
 }
 </script>

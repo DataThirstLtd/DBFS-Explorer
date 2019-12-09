@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="fade-in-transition">
     <title-bar :transparent="true" />
     <div class="main-content">
       <nuxt />
@@ -18,5 +18,5 @@ export default {
 </script>
 
 <style lang="scss">
-  @import url('@/assets/sass/_default.scss')
+  @import url('@/assets/sass/_default.scss');
 </style>

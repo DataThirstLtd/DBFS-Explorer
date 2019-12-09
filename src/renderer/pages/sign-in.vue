@@ -61,6 +61,7 @@ import Spinner from '@/components/spinner'
 
 export default {
   layout: 'auth',
+  transition: 'bounce',
   components: {
     Logo,
     Spinner

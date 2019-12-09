@@ -80,7 +80,7 @@ function startMainWindow () {
     height: 600,
     minHeight: 600,
     frame: platform() !== 'win32',
-    titleBarStyle: 'hidden',
+    titleBarStyle: 'hiddenInset',
     show: false,
     backgroundColor: winConfig.colors.dark,
     webPreferences: Object.assign({}, winConfig.webPreferences)

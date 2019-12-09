@@ -6,7 +6,7 @@
     'text-white': true
   }"
   >
-    <div class="flex h-full items-center">
+    <div v-if="platform === 'win32'" class="flex h-full items-center">
       <div class="px-3">
         DBFS-Explorer
       </div>

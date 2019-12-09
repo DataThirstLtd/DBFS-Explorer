@@ -17,8 +17,8 @@ const winConfig = {
     nodeIntegration: true,
     webSecurity: false
   },
-  colours: {
-    dark: '#000000',
+  colors: {
+    dark: '#1E2128',
     light: '#ffffff'
   }
 }
@@ -39,7 +39,7 @@ function startSplashWindow () {
     resizable: false,
     frame: false,
     show: false,
-    backgroundColor: winConfig.colours.dark,
+    backgroundColor: winConfig.colors.dark,
     webPreferences: Object.assign({}, winConfig.webPreferences)
   })
 
@@ -82,7 +82,7 @@ function startMainWindow () {
     frame: platform() !== 'win32',
     titleBarStyle: 'hidden',
     show: false,
-    backgroundColor: winConfig.colours.dark,
+    backgroundColor: winConfig.colors.dark,
     webPreferences: Object.assign({}, winConfig.webPreferences)
   })
 

@@ -1,7 +1,5 @@
-@import url('../fonts/source-sans-pro.css');
-
 body {
-  font-family: SourceSansPro;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 button, input {
@@ -32,7 +30,7 @@ input[type=radio]:checked {
 
 .font-semibold {
   font-family: SourceSansPro;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .font-light {

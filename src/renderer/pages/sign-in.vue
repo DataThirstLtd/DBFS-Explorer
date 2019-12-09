@@ -10,7 +10,7 @@
       <div class="block m-auto rounded px-4 py-3" style="width: 24rem;">
         <div class="flex h-10 items-center">
           <logo class="h-8 w-auto" />
-          <h2 class="text-xl font-semibold mx-3">DBFS-Explorer</h2>
+          <h2 class="text-xl mx-3">DBFS-Explorer</h2>
         </div>
         <p class="text-sm text-label-one my-2">
           Please provide URL and Bearer token to get started:
@@ -41,7 +41,7 @@
             placeholder="Enter bearer token"
           >
           <button
-            class="px-2 bg-primary h-10 text-white w-full text-base font-semibold rounded uppercase"
+            class="px-2 bg-primary h-10 text-white w-full text-base rounded uppercase"
             @click="onClickContinue"
           >
             Continue

@@ -1,6 +1,6 @@
 <template>
-  <div id="sidebar" class="bg-container px-2 text-white text-sm">
-    <button class="w-full px-2 h-6 my-1 hover:bg-hover-one">
+  <div id="sidebar" class="bg-container text-white text-sm">
+    <button class="w-full h-4 px-3 my-1 hover:bg-hover-one">
       <div class="flex h-full items-center">
         <icon
           :width="14"

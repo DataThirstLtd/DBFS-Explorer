@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import Logo from '@/components/logo'
 import Spinner from '@/components/spinner'
 
@@ -79,12 +80,22 @@ export default {
       }, 1000)
     })
   },
+  created () {
+    this.readCredentials()
+      .then(data => {
+        console.log(data)
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  },
   methods: {
+    ...mapActions(['readCredentials']),
     onClickContinue () {
-      this.loading = true
+      /* this.loading = true
       setTimeout(() => {
         this.$router.replace({ path: '/home' })
-      }, 1000)
+      }, 1000) */
     }
   }
 }

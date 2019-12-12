@@ -60,10 +60,23 @@
       :height="height"
       :fill="fill"
     />
+    <icon-key
+      v-else-if="name === 'key'"
+      :width="width"
+      :height="height"
+      :fill="fill"
+    />
+    <icon-stand-by
+      v-else-if="name === 'stand-by'"
+      :width="width"
+      :height="height"
+      :fill="fill"
+    />
   </div>
 </template>
 
 <script>
+import IconKey from './IconKey'
 import IconClose from './IconClose'
 import IconFolder from './IconFolder'
 import IconLayers from './IconLayers'
@@ -74,9 +87,11 @@ import IconArrowDown from './IconArrowDown'
 import IconDownload from './IconDownload'
 import IconUpload from './IconUpload'
 import IconAddFolder from './IconAddFolder'
+import IconStandBy from './IconStandBy'
 
 export default {
   components: {
+    IconKey,
     IconClose,
     IconFolder,
     IconLayers,
@@ -86,7 +101,8 @@ export default {
     IconArrowDown,
     IconDownload,
     IconUpload,
-    IconAddFolder
+    IconAddFolder,
+    IconStandBy
   },
   props: {
     height: {

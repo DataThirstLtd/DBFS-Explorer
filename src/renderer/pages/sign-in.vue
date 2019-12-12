@@ -1,12 +1,6 @@
 <template>
   <div class="text-white">
-    <div v-if="loading">
-      <div class="hero-xy">
-        <spinner />
-      </div>
-      <logo class="hero-xy h-18 w-auto" />
-    </div>
-    <div v-else class="flex h-screen items-center">
+    <div class="flex h-screen items-center">
       <div class="block m-auto rounded px-4 py-3" style="width: 24rem;">
         <div class="flex h-10 items-center">
           <logo class="h-8 w-auto" />
@@ -26,6 +20,7 @@
           <div class="flex h-10 items-center">
             <p class="text-label-one">https://</p>
             <input
+              v-model="form.domain"
               class="bg-transparent w-64 rounded h-10 px-2"
               placeholder="Enter domain name"
             >
@@ -37,6 +32,7 @@
             </p>
           </div>
           <input
+            v-model="form.token"
             class="bg-transparent w-full rounded h-10 my-2"
             placeholder="Enter bearer token"
           >
@@ -58,44 +54,68 @@
 <script>
 import { mapActions } from 'vuex'
 import Logo from '@/components/logo'
-import Spinner from '@/components/spinner'
 
 export default {
   layout: 'auth',
   transition: 'bounce',
   components: {
-    Logo,
-    Spinner
+    Logo
   },
   data () {
     return {
-      loading: true,
-      provider: 'provider-azure'
+      provider: 'provider-azure',
+      form: {
+        domain: '',
+        token: '',
+        url: ''
+      }
+    }
+  },
+  computed: {
+    onChangeDomain () {
+      return this.form.domain
+    },
+    onChangeProvider () {
+      return this.provider
+    }
+  },
+  watch: {
+    onChangeDomain (domain) {
+      console.log('onChangeDomain', domain)
+      if (domain && typeof domain === 'string') {
+        this.form.url = `https://${domain}.${ this.provider === 'provider-azure' ? 'azuredatabricks.net' : 'cloud.databricks.com'}`
+      }
+    },
+    onChangeProvider (provider) {
+      this.form.url = `https://${this.form.domain}.${ provider === 'provider-azure' ? 'azuredatabricks.net' : 'cloud.databricks.com'}`
     }
   },
   mounted () {
+    this.$root.$emit('loader/show')
     this.$nextTick(() => {
       setTimeout(() => {
-        this.loading = false
+        this.$root.$emit('loader/hide')
       }, 1000)
     })
-  },
-  created () {
-    this.readCredentials()
-      .then(data => {
-        console.log(data)
-      })
-      .catch(err => {
-        console.error(err)
-      })
+    this.$root.$on('sign-in/fill-credentials', ({ domain, token }) => {
+      this.form.domain = domain
+      this.form.token = token
+    })
   },
   methods: {
-    ...mapActions(['readCredentials']),
+    ...mapActions(['signIn']),
     onClickContinue () {
-      /* this.loading = true
-      setTimeout(() => {
-        this.$router.replace({ path: '/home' })
-      }, 1000) */
+      const { domain, token, url } = this.form
+      this.$root.$emit('loader/show')
+      this.signIn({ domain, token, url })
+        .then(() => {
+          this.$router.push({ path: '/home' })
+        })
+        .finally(() => {
+          setTimeout(() => {
+            this.$root.$emit('loader/hide')
+          }, 1000)
+        })
     }
   }
 }

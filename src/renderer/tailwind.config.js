@@ -11,7 +11,9 @@ module.exports = {
         'auth-box': '32rem'
       },
       colors: {
+        'app-background': '#1E2128',
         'container': '#262A33',
+        'container-border': '#36393E',
         'accent-one': '#272D36',
         'accent-two': '#535353',
         'hover-one': '#282828',

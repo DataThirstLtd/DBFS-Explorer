@@ -1,5 +1,6 @@
 import { isArray } from 'util'
 import { remote } from 'electron'
+import dbfs from '@/dbfs'
 
 const path = require('path')
 const fs = require('fs-extra')
@@ -10,11 +11,34 @@ const appDataPath = path.join(
 
 fs.ensureDirSync(appDataPath)
 
-export const state = () => ({
-  authUser: null
-})
+function getDefaultStates () {
+  return {
+    authUser: null,
+    explorer: {
+      list: [],
+      navStack: ['/']
+    }
+  }
+}
+
+export const state = () => (getDefaultStates())
+
+export const mutations = {
+  ADD_AUTH_USER (state, data) {
+    state.authUser = Object.assign({}, data)
+  },
+  SET_LIST (state, data) {
+    state.explorer.list = Object.assign([], data)
+  },
+  CLEAR_DATA (state) {
+    Object.assign(state, getDefaultStates())
+  }
+}
 
 export const getters = {
+  getAuthUser (state) {
+    return state.authUser
+  },
   getPathCredentials () {
     return path.join(
       appDataPath,
@@ -27,15 +51,17 @@ export const actions = {
   readCredentials ({ getters }) {
     return new Promise((resolve, reject) => {
       const _credentialsNotFound = function () {
-        reject(new Error('Credentials not found.'))
+        return reject(new Error('Credentials not found.'))
       }
       if (!fs.existsSync(getters.getPathCredentials)) {
         _credentialsNotFound()
       }
-
+      if (process.env.NODE_ENV === 'development') {
+        console.log(getters.getPathCredentials)
+      }
       const credentials = fs.readJSONSync(getters.getPathCredentials)
       if (credentials) {
-        resolve(credentials)
+        return resolve(credentials)
       } else {
         _credentialsNotFound()
       }
@@ -44,14 +70,14 @@ export const actions = {
   writeCredentials ({ getters }, data) {
     return new Promise((resolve, reject) => {
       const _unableToWriteCredentials = function (err) {
-        reject(new Error('Failed to write credentials.' + err ? err.message : ''))
+        return reject(new Error('Failed to write credentials.' + err ? err.message : ''))
       }
       const _write = function (credentials) {
         fs.writeJSONSync(
           getters.getPathCredentials,
           credentials
         )
-        resolve()
+        return resolve()
       }
 
       if (!isValidCredentials(data)) {
@@ -67,14 +93,9 @@ export const actions = {
           isArray(credentials) &&
           credentials.length > 0
         ) {
-          if (
-            credentials.filter(x =>
-              x.domain === data.domain ||
-              x.token === data.token
-            ).length > 0
-          ) {
+          if (credentials.findIndex(x => x.domain === data.domain && x.token === data.token) > -1) {
             // Credentials are already exists. No need to write them again.
-            resolve()
+            return resolve()
           }
           // Restore old credentials
           updatedCredentials = Object.assign([], credentials)
@@ -87,17 +108,56 @@ export const actions = {
       _write(updatedCredentials)
     })
   },
-  signIn ({ mutations }, data) {
+  signIn ({ dispatch, commit }, data) {
     return new Promise((resolve, reject) => {
       const _unableToSignIn = function (err) {
-        reject(new Error('Failed to sign-in.' + err ? err.message : ''))
+        return reject(new Error('Failed to sign-in.' + err ? err.message : ''))
       }
 
       if (!isValidCredentials(data)) {
         _unableToSignIn(new Error('Invalid Credentials'))
       }
 
+      dbfs.getStatus(data)
+        .then(() => {
+          dispatch('writeCredentials', data)
+          commit('ADD_AUTH_USER', data)
+          return resolve()
+        })
+        .catch(err => {
+          return reject(err)
+        })
+    })
+  },
+  signOut ({ commit }) {
+    return commit('CLEAR_DATA')
+  },
+  listFolder ({ getters, commit }, { path, setList }) {
+    return new Promise((resolve, reject) => {
+      const authUser = getters.getAuthUser
+      if (!authUser) {
+        return reject(new Error('Invalid credentials'))
+      }
 
+      if (!path) {
+        return reject(new Error('Invalid path'))
+      }
+
+      dbfs.list(authUser, path)
+        .then(res => {
+          if (res.status === 200) {
+            const { files } = res.data
+            if (files && setList) {
+              commit('SET_LIST', files)
+            }
+            return resolve(files)
+          } else {
+            return reject(res)
+          }
+        })
+        .catch(err => {
+          return reject(err)
+        })
     })
   }
 }

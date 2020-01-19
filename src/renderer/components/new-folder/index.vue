@@ -26,7 +26,7 @@
         v-model="name"
         class="bg-accent-two w-full px-2 h-full text-white rounded-sm text-xs"
         placeholder="Enter name of the folder"
-      />
+      >
       <button class="bg-primary px-2 h-full text-xs rounded-sm text-white ml-2">
         CREATE
       </button>

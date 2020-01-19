@@ -1,8 +1,8 @@
 <template>
   <div
+    id="app-downloader"
     :full="full"
     :close="!show"
-    id="app-downloader"
     class="shadow-2xl z-50 bg-container"
   >
     <div class="absolute top-0 right-0 left-0 h-10">
@@ -48,6 +48,9 @@
 import Icon from '@/components/icon'
 
 export default {
+  components: {
+    Icon
+  },
   props: {
     show: {
       type: Boolean,
@@ -65,9 +68,6 @@ export default {
       default: () => {}
     }
   },
-  components: {
-    Icon
-  },
   data () {
     return {
       full: false
@@ -83,7 +83,7 @@ export default {
     })
   },
   methods: {
-    onClickToggleFull: function () {
+    onClickToggleFull () {
       this.full = Boolean(!this.full)
     }
   }

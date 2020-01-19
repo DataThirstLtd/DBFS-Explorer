@@ -3,7 +3,7 @@
     <explorer
       :list="list"
       :nav-stack="navStack"
-      :dbClickFileFolder="onOpenFileFolder"
+      :db-click-file-folder="onOpenFileFolder"
     />
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     ...mapActions(['listFolder']),
-    onOpenFileFolder: function (item) {
+    onOpenFileFolder (item) {
       console.log(item)
       if (item && item.constructor === {}.constructor) {
         if (item.is_dir) {

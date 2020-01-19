@@ -37,7 +37,7 @@ function index (props) {
         ]
       }
     )
-    
+
     if (!selection) {
       pButtonCallback()
     } else if (nButtonCallback && typeof nButtonCallback === 'function') {

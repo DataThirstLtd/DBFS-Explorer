@@ -31,11 +31,11 @@
 import TitleBar from '@/components/title-bar'
 import Logo from '@/components/logo'
 export default {
-  props: ['error'],
   components: {
     Logo,
     TitleBar
   },
+  props: ['error'],
   transition: 'page'
 }
 </script>

@@ -10,8 +10,8 @@ function index (authUser, path) {
     }
 
     axios({
-      method: 'get',
-      url: `${authUser.url}/${LIST}?path=${path}`,
+      method: LIST.type,
+      url: `${authUser.url}/${LIST.value}?path=${path}`,
       headers: {
         'Authorization': `Bearer ${authUser.token}`,
         'Access-Control-Allow-Origin': '*'

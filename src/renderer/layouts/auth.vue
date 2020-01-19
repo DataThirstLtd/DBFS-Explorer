@@ -1,7 +1,7 @@
 <template>
   <div class="fade-in-transition">
     <loader />
-    <title-bar :transparent="false" :authMenu="true" />
+    <title-bar :transparent="false" :auth-menu="true" />
     <div class="main-content">
       <nuxt />
     </div>

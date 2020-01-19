@@ -10,8 +10,8 @@ function index (authUser) {
     }
 
     axios({
-      method: 'get',
-      url: `${authUser.url}/${GET_STATUS}?path=/`,
+      method: GET_STATUS.type,
+      url: `${authUser.url}/${GET_STATUS.value}?path=/`,
       headers: {
         'Authorization': `Bearer ${authUser.token}`,
         'Access-Control-Allow-Origin': '*'

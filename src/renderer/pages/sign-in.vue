@@ -83,11 +83,11 @@ export default {
     onChangeDomain (domain) {
       console.log('onChangeDomain', domain)
       if (domain && typeof domain === 'string') {
-        this.form.url = `https://${domain}.${ this.provider === 'provider-azure' ? 'azuredatabricks.net' : 'cloud.databricks.com'}`
+        this.form.url = `https://${domain}.${this.provider === 'provider-azure' ? 'azuredatabricks.net' : 'cloud.databricks.com'}`
       }
     },
     onChangeProvider (provider) {
-      this.form.url = `https://${this.form.domain}.${ provider === 'provider-azure' ? 'azuredatabricks.net' : 'cloud.databricks.com'}`
+      this.form.url = `https://${this.form.domain}.${provider === 'provider-azure' ? 'azuredatabricks.net' : 'cloud.databricks.com'}`
     }
   },
   mounted () {

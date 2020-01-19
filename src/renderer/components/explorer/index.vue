@@ -16,7 +16,7 @@
           >
             <folder
               :item="item"
-              :dbClick="dbClickFileFolder"
+              :db-click="dbClickFileFolder"
             />
           </div>
         </template>
@@ -29,6 +29,9 @@
 import Folder from './folder'
 
 export default {
+  components: {
+    Folder
+  },
   props: {
     list: {
       type: Array,
@@ -45,9 +48,6 @@ export default {
       required: false,
       default: () => {}
     }
-  },
-  components: {
-    Folder
   },
   methods: {
     getAbsolutePath (stack) {

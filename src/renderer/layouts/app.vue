@@ -8,8 +8,8 @@
     </div>
     <downloader
       :show="downloader.show"
-      :onClickShow="onShowDownloader"
-      :onClickClose="onCloseDownloader"
+      :on-click-show="onShowDownloader"
+      :on-click-close="onCloseDownloader"
     />
     <new-folder />
   </div>
@@ -38,10 +38,10 @@ export default {
     }
   },
   methods: {
-    onCloseDownloader: function () {
+    onCloseDownloader () {
       this.downloader.show = false
     },
-    onShowDownloader: function () {
+    onShowDownloader () {
       this.downloader.show = true
     }
   }

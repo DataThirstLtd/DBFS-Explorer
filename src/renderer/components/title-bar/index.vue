@@ -113,7 +113,7 @@ import Icon from '@/components/icon'
 import { buildMenu, messageBox } from '@/utils'
 
 const idPrefixMenuItem = 'title-bar-key-no-credentials-index'
-var menuCredentials = null
+let menuCredentials = null
 
 function getdefaultStates () {
   return {
@@ -154,7 +154,7 @@ export default {
   created () {
     const self = this
     const _credentialsFound = function (data) {
-      let menuItems = []
+      const menuItems = []
       data.forEach((item, index) => {
         menuItems.push({
           id: `title-bar-key-no-credentials-index-${index}`,
@@ -177,7 +177,7 @@ export default {
       ])
     }
     this.readCredentials()
-      .then((data) => {
+      .then(data => {
         if (data && Array.isArray(data) && data.length > 0) {
           // update credentials
           this.credentials = Object.assign([], data)

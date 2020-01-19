@@ -27,6 +27,9 @@ import Icon from '@/components/icon'
 import { getNameFromFileEntry } from '@/utils'
 
 export default {
+  components: {
+    Icon
+  },
   props: {
     item: {
       type: Object,
@@ -38,9 +41,6 @@ export default {
       required: false,
       default: () => {}
     }
-  },
-  components: {
-    Icon
   },
   methods: {
     getNameFromFileEntry

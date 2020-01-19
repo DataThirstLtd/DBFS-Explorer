@@ -17,8 +17,8 @@ function index (authUser) {
         'Access-Control-Allow-Origin': '*'
       }
     })
-      .then(data => {
-        return resolve(data)
+      .then(res => {
+        return resolve(res)
       })
       .catch(err => {
         return reject(err)

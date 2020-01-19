@@ -9,6 +9,8 @@ function index (authUser, path) {
       reject(new Error('Invalid credentials'))
     }
 
+    console.log(authUser.token)
+
     axios({
       method: LIST.type,
       url: `${authUser.url}/${LIST.value}?path=${path}`,

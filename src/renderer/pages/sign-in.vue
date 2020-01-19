@@ -111,6 +111,12 @@ export default {
         .then(() => {
           this.$router.push({ path: '/home' })
         })
+        .catch(err => {
+          this.$root.$emit('in-app-notify/error', {
+            title: 'Unable to sign in',
+            message: err.message
+          })
+        })
         .finally(() => {
           setTimeout(() => {
             this.$root.$emit('loader/hide')

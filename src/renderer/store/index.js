@@ -119,10 +119,16 @@ export const actions = {
       }
 
       dbfs.getStatus(data)
-        .then(() => {
-          dispatch('writeCredentials', data)
-          commit('ADD_AUTH_USER', data)
-          return resolve()
+        .then(res => {
+          console.log(res)
+          if (res.status === 200) {
+            if (res.data.constructor === {}.constructor) {
+              dispatch('writeCredentials', data)
+              commit('ADD_AUTH_USER', data)
+              return resolve()
+            }
+          }
+          return reject(new Error('Failed to sign in! Please check your credentials and try again.'))
         })
         .catch(err => {
           return reject(err)
@@ -132,7 +138,8 @@ export const actions = {
   signOut ({ commit }) {
     return commit('CLEAR_DATA')
   },
-  listFolder ({ getters, commit }, { path, setList }) {
+  listFolder ({ getters, commit }, { path, save }) {
+    console.log('entry list folder')
     return new Promise((resolve, reject) => {
       const authUser = getters.getAuthUser
       if (!authUser) {
@@ -147,10 +154,12 @@ export const actions = {
         .then(res => {
           if (res.status === 200) {
             const { files } = res.data
-            if (files && setList) {
+            if (files && save) {
               commit('SET_LIST', files)
+              return resolve(files)
             }
-            return resolve(files)
+
+            return reject(new Error('Unable to get files.'))
           } else {
             return reject(res)
           }

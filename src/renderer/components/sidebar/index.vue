@@ -84,9 +84,17 @@ export default {
   },
   created () {
     const self = this
-    this.listFolder({ path: '/' })
+    this.$root.$emit('loader/show')
+
+    this.listFolder({
+      path: '/',
+      save: true /* If true, store the list for rendering */
+    })
       .then(data => {
         this.files = Object.assign([], data)
+      })
+      .finally(() => {
+        this.$root.$emit('loader/hide')
       })
   },
   methods: {

@@ -27,7 +27,10 @@
         class="bg-accent-two w-full px-2 h-full text-white rounded-sm text-xs"
         placeholder="Enter name of the folder"
       >
-      <button class="bg-primary px-2 h-full text-xs rounded-sm text-white ml-2">
+      <button
+        class="bg-primary px-2 h-full text-xs rounded-sm text-white ml-2"
+        @click="onClickCreate"
+      >
         CREATE
       </button>
     </div>
@@ -35,7 +38,11 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 import Icon from '@/components/icon'
+
+const path = require('path')
+
 export default {
   components: {
     Icon
@@ -46,11 +53,12 @@ export default {
       name: ''
     }
   },
-  computed: {
+  computed: mapState({
+    navStack: state => state.explorer.navStack,
     onChangeShow () {
       return this.show
     }
-  },
+  }),
   watch: {
     onChangeShow (show) {
       if (!show) {
@@ -75,6 +83,30 @@ export default {
     })
   },
   methods: {
+    ...mapActions(['createFolder']),
+    onClickCreate () {
+      const name = this.name
+
+      // validate data
+      if (!(name && this.navStack)) {
+        return
+      }
+
+      // construct path
+      const newFolderPath = path.join(
+        this.navStack.join('/'),
+        name
+      )
+
+      if (name) {
+        this.createFolder({ path: newFolderPath }).catch(err => {
+          this.$root.$emit('in-app-notify/error', {
+            title: 'Failed to create folder',
+            message: 'Unable to create folder. Please try again later.'
+          })
+        })
+      }
+    },
     onClickClose () {
       this.closeView()
     },

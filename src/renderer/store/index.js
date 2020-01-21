@@ -1,29 +1,45 @@
 import { isArray } from 'util'
 import { remote } from 'electron'
-import dbfs from '@/dbfs'
+import DBFS from '@/DBFS'
 
 const path = require('path')
 const fs = require('fs-extra')
+
+// Construct app data path
 const appDataPath = path.join(
   remote.app.getPath('appData'),
   remote.app.getName()
 )
 
+// Make sure data directory exists at app data path
 fs.ensureDirSync(appDataPath)
 
+/**
+ * Get default store states
+ */
 function getDefaultStates () {
   return {
     authUser: null,
     explorer: {
       list: [],
       navStack: ['/']
-    }
+    },
+    dbfs: null
   }
 }
 
+/**
+ * Store States
+ */
 export const state = () => (getDefaultStates())
 
+/**
+ * Store mutations
+ */
 export const mutations = {
+  SET_DBFS_INSTANCE (state, data) {
+    state.dbfs = data
+  },
   ADD_AUTH_USER (state, data) {
     state.authUser = Object.assign({}, data)
   },
@@ -35,10 +51,20 @@ export const mutations = {
   }
 }
 
+/**
+ * Store Getters
+ */
 export const getters = {
+  /**
+   * Get current authenticated user
+   */
   getAuthUser (state) {
     return state.authUser
   },
+
+  /**
+   * Get path for credentials
+   */
   getPathCredentials () {
     return path.join(
       appDataPath,
@@ -47,7 +73,14 @@ export const getters = {
   }
 }
 
+/**
+ * Store Actions
+ */
 export const actions = {
+
+  /**
+   * Read all credentials from app data directory
+   */
   readCredentials ({ getters }) {
     return new Promise((resolve, reject) => {
       const _credentialsNotFound = function () {
@@ -67,6 +100,11 @@ export const actions = {
       }
     })
   },
+
+  /**
+   * Save or write credentials into app data directory
+   * @param {Object} data - Sign in credentials to save { domain, token, url }
+   */
   writeCredentials ({ getters }, data) {
     return new Promise((resolve, reject) => {
       const _unableToWriteCredentials = function (err) {
@@ -108,6 +146,11 @@ export const actions = {
       _write(updatedCredentials)
     })
   },
+
+  /**
+   * Sign in by connecting into DBFS
+   * @param {Object} data - Authentication data as an object { domain, token, url }
+   */
   signIn ({ dispatch, commit }, data) {
     return new Promise((resolve, reject) => {
       const _unableToSignIn = function (err) {
@@ -118,12 +161,14 @@ export const actions = {
         _unableToSignIn(new Error('Invalid Credentials'))
       }
 
-      dbfs.getStatus(data)
+      const dbfs = new DBFS(data)
+
+      dbfs.getStatus({ path: '/' })
         .then(res => {
-          console.log(res)
           if (res.status === 200) {
             if (res.data.constructor === {}.constructor) {
               dispatch('writeCredentials', data)
+              commit('SET_DBFS_INSTANCE', dbfs)
               commit('ADD_AUTH_USER', data)
               return resolve()
             }
@@ -135,11 +180,20 @@ export const actions = {
         })
     })
   },
+
+  /**
+   * Signout by clear all store data
+   */
   signOut ({ commit }) {
     return commit('CLEAR_DATA')
   },
-  listFolder ({ getters, commit }, { path, save }) {
-    console.log('entry list folder')
+
+  /**
+   * List folder contents
+   * @param {String} path - target path in DBFS
+   * @param {Boolean} save - If true, the data will be saved in store
+   */
+  listFolder ({ state, getters, commit }, { path, save }) {
     return new Promise((resolve, reject) => {
       const authUser = getters.getAuthUser
       if (!authUser) {
@@ -150,7 +204,7 @@ export const actions = {
         return reject(new Error('Invalid path'))
       }
 
-      dbfs.list(authUser, path)
+      state.dbfs.list({ path })
         .then(res => {
           if (res.status === 200) {
             const { files } = res.data
@@ -168,6 +222,10 @@ export const actions = {
           return reject(err)
         })
     })
+  },
+
+  createFolder ({ state }, data) {
+    return state.dbfs.create(data)
   }
 }
 

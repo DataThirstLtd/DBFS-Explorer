@@ -1,20 +1,24 @@
 'use strict'
 
-const axios = require('axios')
-const { GET_STATUS } = require('@/app.config.js').endpoints
+const { GET_STATUS } = require('../endpoints')
 
-function index (authUser) {
+export default function (props) {
   return new Promise((resolve, reject) => {
-    if (!authUser) {
-      reject(new Error('Invalid credentials'))
+    // Default path
+    let path = '/'
+
+    if (props && props.constructor === {}.constructor) {
+      if (props.path) {
+        // Path from the props
+        path = props.path
+      }
     }
 
-    axios({
-      method: GET_STATUS.type,
-      url: `${authUser.url}/${GET_STATUS.value}?path=/`,
-      headers: {
-        'Authorization': `Bearer ${authUser.token}`,
-        'Access-Control-Allow-Origin': '*'
+    this.axios({
+      method: GET_STATUS.method,
+      url: `/${GET_STATUS.route}`,
+      data: {
+        path
       }
     })
       .then(res => {
@@ -25,5 +29,3 @@ function index (authUser) {
       })
   })
 }
-
-export default index

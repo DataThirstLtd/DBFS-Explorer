@@ -25,10 +25,16 @@ export default {
   methods: {
     ...mapActions(['listFolder']),
     onOpenFileFolder (item) {
-      console.log(item)
       if (item && item.constructor === {}.constructor) {
         if (item.is_dir) {
           this.listFolder({ path: item.path, save: true })
+            .catch(err => {
+              console.error(err)
+              this.$root.$emit('in-app-notify/error', {
+                title: 'Failed',
+                message: 'Unable to open folder!'
+              })
+            })
         }
       }
     }

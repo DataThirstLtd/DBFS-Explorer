@@ -1,0 +1,42 @@
+{
+    "ADD_BLOCK": {
+        "method": "POST",
+        "route": "2.0/dbfs/add-block"
+    },
+    "CLOSE": {
+        "method": "POST",
+        "route": "2.0/dbfs/close"
+    },
+    "CREATE": {
+        "method": "POST",
+        "route": "2.0/dbfs/create"
+    },
+    "DELETE": {
+        "method": "POST",
+        "route": "2.0/dbfs/delete"
+    },
+    "GET_STATUS": {
+        "method": "GET",
+        "route": "2.0/dbfs/get-status"
+    },
+    "LIST": {
+        "method": "GET",
+        "route": "2.0/dbfs/list"
+    },
+    "MKDIRS": {
+        "method": "POST",
+        "route": "2.0/dbfs/mkdirs"
+    },
+    "MOVE": {
+        "method": "POST",
+        "route": "2.0/dbfs/move"
+    },
+    "PUT": {
+        "method": "POST",
+        "route": "2.0/dbfs/put"
+    },
+    "READ": {
+        "method": "GET",
+        "route": "2.0/dbfs/read"
+    }
+}

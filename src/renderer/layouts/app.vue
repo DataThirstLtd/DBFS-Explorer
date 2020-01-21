@@ -1,6 +1,7 @@
 <template>
   <div>
     <loader />
+    <in-app-notify />
     <title-bar :menu="true" />
     <sidebar />
     <div class="nav-content">
@@ -21,6 +22,7 @@ import Sidebar from '@/components/sidebar'
 import Loader from '@/components/loader'
 import NewFolder from '@/components/new-folder'
 import Downloader from '@/components/downloader'
+import InAppNotify from '@/components/in-app-notify'
 
 export default {
   components: {
@@ -28,7 +30,8 @@ export default {
     Sidebar,
     Loader,
     Downloader,
-    NewFolder
+    NewFolder,
+    InAppNotify
   },
   data () {
     return {
@@ -49,7 +52,7 @@ export default {
 </script>
 
 <style lang="scss">
-  @import url('@/assets/sass/_default.scss')
+  @import url('@/assets/sass/_default.scss');
 </style>
 
 <style scoped>

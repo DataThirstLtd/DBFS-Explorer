@@ -1,64 +1,64 @@
 <template>
-    <div
-        class="wrapper px-4 py-3 z-50 text-white bg-container-border m-4 text-sm shadow-2xl"
-        :show="show"
-    >
-        <p>
-            {{ title }}
-        </p>
-        <p class="my-2">
-            {{ message }}
-        </p>
-        <div class="flex items-center">
-            <div class="flex-grow" />
-            <button
-                class="bg-white rounded-sm px-4 py-1 text-black"
-                @click="onClickOK"
-            >
-                OK
-            </button>
-        </div>
+  <div
+    class="wrapper px-4 py-3 text-white bg-container-border m-4 text-sm shadow-2xl"
+    :show="show"
+  >
+    <p>
+      {{ title }}
+    </p>
+    <p class="my-2 text-gray-500">
+      {{ message }}
+    </p>
+    <div class="flex items-center">
+      <div class="flex-grow" />
+      <button
+        class="bg-white rounded-sm px-4 py-1 text-black"
+        @click="onClickOK"
+      >
+        OK
+      </button>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-    data () {
-        return {
-            title: '',
-            message: '',
-            type: '',
-            show: false
-        }
-    },
-    computed: {
-        onChangeShow () {
-            return this.show
-        }
-    },
-    watch: {
-         onChangeShow (state) {
-            if (!state) {
-                // Clean up states
-                this.title = ''
-                this.message = ''
-                this.type = ''
-            }
-        }
-    },
-    mounted () {
-        this.$root.$on('in-app-notify/error', ({ title, message }) => {
-            this.title = title
-            this.message = message
-            this.type = 'error'
-            this.show = true
-        })
-    },
-    methods: {
-        onClickOK () {
-            this.show = false
-        }
+  data () {
+    return {
+      title: '',
+      message: '',
+      type: '',
+      show: false
     }
+  },
+  computed: {
+    onChangeShow () {
+      return this.show
+    }
+  },
+  watch: {
+    onChangeShow (state) {
+      if (!state) {
+        // Clean up states
+        this.title = ''
+        this.message = ''
+        this.type = ''
+      }
+    }
+  },
+  mounted () {
+    this.$root.$on('in-app-notify/error', ({ title, message }) => {
+      this.title = title
+      this.message = message
+      this.type = 'error'
+      this.show = true
+    })
+  },
+  methods: {
+    onClickOK () {
+      this.show = false
+    }
+  }
 }
 </script>
 
@@ -70,6 +70,7 @@ export default {
         width: 300px;
         min-height: 100px;
         display: none;
+        z-index: 600;
     }
 
     .wrapper[show] {

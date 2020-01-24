@@ -10,13 +10,7 @@ module.exports = {
     title: 'dbfs-explorer'
   },
   loading: false,
-  plugins: [
-    '@/plugins/axios'
-  ],
   buildModules: [
     '@nuxtjs/tailwindcss'
-  ],
-  modules: [
-    '@nuxtjs/axios'
   ]
 }

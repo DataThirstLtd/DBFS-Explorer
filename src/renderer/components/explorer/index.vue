@@ -7,16 +7,16 @@
         </p>
       </div>
     </div>
-    <div class="absolute right-0 bottom-0 left-0 px-3 py-2" style="top: 2.5rem;">
-      <div class="flex h-full w-full">
+    <div class="absolute right-0 bottom-0 left-0 px-3 py-2 overflow-y-auto" style="top: 2.5rem;">
+      <div class="flex h-auto w-full flex-wrap">
         <template v-for="(item, index) in list">
           <div
             :key="`explorer-item-index-${index}`"
-            class="flex-auto"
           >
             <folder
               :item="item"
               :db-click="dbClickFileFolder"
+              :selection="selection"
             />
           </div>
         </template>
@@ -47,6 +47,11 @@ export default {
       type: Function,
       required: false,
       default: () => {}
+    }
+  },
+  data () {
+    return {
+      selection: '',
     }
   },
   methods: {

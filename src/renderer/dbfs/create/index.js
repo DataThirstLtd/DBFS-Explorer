@@ -14,7 +14,7 @@ export default function (props) {
         path = props.path
       }
       if (props.overwrite) {
-          overwrite = true
+        overwrite = true
       }
     }
 

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="folder-item relative h-20 w-20 text-white text-xs rounded cursor-pointer hover:bg-container-border"
+    class="folder-item relative h-20 w-20 text-white text-xs rounded cursor-pointer hover:bg-container-border my-1"
     @dblclick="dbClick(item)"
   >
     <div class="absolute top-0 right-0 left-0 h-10">
@@ -40,6 +40,11 @@ export default {
       type: Function,
       required: false,
       default: () => {}
+    },
+    selection: {
+      type: String,
+      required: false,
+      default: () => ''
     }
   },
   methods: {

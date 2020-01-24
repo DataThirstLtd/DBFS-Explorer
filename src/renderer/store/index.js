@@ -209,6 +209,7 @@ export const actions = {
           if (res.status === 200) {
             const { files } = res.data
             if (files && save) {
+              console.log(files)
               commit('SET_LIST', files)
               return resolve(files)
             }

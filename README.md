@@ -1,23 +1,28 @@
 # dbfs_explorer
 
-> DBFS EXPLORER
-
-![Screenshot of DBFS-Explorer](screenshots/DBFS_explorer_context_menu.png)
+> DBFS Explorer for Databricks 
 
 #### Build Setup
 
 ``` bash
 # install dependencies
-npm install
+yarn install
 
-# serve with hot reload at localhost:9080
-npm run dev
+# serve app with hot reload
+yarn run dev
 
 # build electron application for production
-npm run build
+yarn run build
+
+# yarn tests
+yarn test
 
 
 # lint all JS/Vue component files in `src/`
-npm run lint
+yarn run lint
 
 ```
+
+---
+
+This project was generated with [electron-nuxt](https://github.com/michalzaq12/electron-nuxt) v1.5.0 using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://github.com/michalzaq12/electron-nuxt/blob/master/README.md).

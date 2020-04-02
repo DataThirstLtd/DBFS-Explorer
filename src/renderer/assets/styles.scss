@@ -1,0 +1,31 @@
+.drag-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 22px;
+  -webkit-app-region: drag;
+  z-index: 600;
+}
+
+.folder {
+  position: relative;
+  width: 76px;
+  height: 64px;
+  $iconWrapperHeight: 40px;
+  display: block;
+  & .icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: $iconWrapperHeight;
+  }
+  & .label {
+    position: absolute;
+    top: $iconWrapperHeight;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}

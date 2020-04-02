@@ -1,11 +1,14 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
 
-import modules from './modules'
+function getDefaultAppStates () {
+  return {
+    provider: 'AWS',
+    credentials: {
+      domain: 'westeurope',
+      bearerToken: ''
+    }
+  }
+}
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
-  modules,
-  strict: process.env.NODE_ENV !== 'production'
+export const state = () => ({
+  app: { ...getDefaultAppStates() }
 })

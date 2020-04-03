@@ -2,6 +2,8 @@
 
 > DBFS Explorer for Databricks 
 
+![Screenshot of DBFS-Explorer](screenshots/Screenshot_2020-04-03_at_9.46.29_AM.png)
+
 #### Build Setup
 
 ``` bash

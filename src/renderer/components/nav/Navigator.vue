@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Grid view -->
     <div v-if="viewAs === 'view_module'">
       <div class="d-flex align-center justify-space-start flex-wrap">
         <template v-for="(item, i) in 22">
@@ -27,8 +28,15 @@
         </template>
       </div>
     </div>
+    <!-- List view -->
     <div v-else-if="viewAs === 'view_list'">
-      TODO: Implement <code>`v-data-table`</code>
+      <v-data-table
+        :headers="headers"
+        :items="items"
+        :items-per-page="10"
+        class="black--text"
+        show-select
+      />
     </div>
   </div>
 </template>
@@ -40,6 +48,24 @@ export default {
       type: String,
       required: false,
       default: () => 'view_module'
+    }
+  },
+  data () {
+    return {
+      headers: [
+        { text: 'Name', align: 'start', value: 'name' },
+        { text: 'File size', value: 'file_size' },
+        { text: 'Actions', value: 'actions' }
+      ],
+      items: [
+        { name: 'Folder Name', file_size: '1 MB' },
+        { name: 'File Name' },
+        { name: 'File Name' },
+        { name: 'Folder Name' },
+        { name: 'Folder Name' },
+        { name: 'File Name' },
+        { name: 'Folder Name' }
+      ]
     }
   }
 }

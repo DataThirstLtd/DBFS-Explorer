@@ -1,5 +1,7 @@
 <template>
   <v-app class="app">
+    <!-- Register global components -->
+    <downloader-uploader />
     <div class="drag-bar" />
     <div class="sidebar grey lighten-4">
       <div style="height: 22px;" />
@@ -37,6 +39,16 @@
     </div>
   </v-app>
 </template>
+
+<script>
+import DownloaderUploader from '@/components/DownloaderUploader'
+
+export default {
+  components: {
+    DownloaderUploader
+  }
+}
+</script>
 
 <style lang="scss">
   @import '@/assets/styles.scss';

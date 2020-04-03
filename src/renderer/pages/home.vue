@@ -11,6 +11,14 @@
         <h3 class="title mx-2">
           {{ credentials && credentials.domain }}
         </h3>
+        <v-chip label outlined class="mb-2 my-auto">
+          /path/to/folder
+          <v-btn small icon class="ml-1">
+            <v-icon small>
+              assignment
+            </v-icon>
+          </v-btn>
+        </v-chip>
         <v-spacer />
         <v-menu offset-y>
           <template v-slot:activator="{ on }">
@@ -42,8 +50,15 @@
             </v-list-item>
           </v-list>
         </v-menu>
-        <v-btn icon class="mx-1">
-          <v-icon>get_app</v-icon>
+        <v-btn
+          icon
+          :class="{
+            'mx-1': true,
+            'grey lighten-3': downloads.show
+          }"
+          @click="onClickDownloads"
+        >
+          <v-icon>import_export</v-icon>
         </v-btn>
         <v-btn icon>
           <v-icon>more_vert</v-icon>
@@ -69,6 +84,9 @@ export default {
   },
   data () {
     return {
+      downloads: {
+        show: false
+      },
       viewAs: {
         selection: 'view_module',
         menu: [
@@ -81,6 +99,21 @@ export default {
   computed: mapState({
     provider: state => state.app.provider,
     credentials: state => state.app.credentials
-  })
+  }),
+  mounted () {
+    this.$root.$on('downloader-uploadershow', this.onShowDownloads)
+    this.$root.$on('downloader-uploaderhide', this.onHideDownloads)
+  },
+  methods: {
+    onShowDownloads () {
+      this.downloads.show = true
+    },
+    onHideDownloads () {
+      this.downloads.show = false
+    },
+    onClickDownloads () {
+      this.$root.$emit('downloader-uploadertoggle')
+    }
+  }
 }
 </script>

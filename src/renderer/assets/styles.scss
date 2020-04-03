@@ -6,6 +6,9 @@
   height: 22px;
   -webkit-app-region: drag;
   z-index: 600;
+  >* {
+    z-index: 600;
+  }
 }
 
 .folder {

@@ -1,3 +1,7 @@
+# DEPRECATED
+
+**This code is no longer maintained.**
+
 # dbfs_explorer
 
 > DBFS EXPLORER
